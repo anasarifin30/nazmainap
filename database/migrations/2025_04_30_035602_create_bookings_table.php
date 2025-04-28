@@ -16,12 +16,14 @@ return new class extends Migration
             $table->foreignId('user_id')
                   ->constrained('users')
                   ->onDelete('cascade');
-            $table->foreignId('room_id')
-                  ->constrained('rooms')
+            $table->foreignId('homestay_id')
+                  ->constrained('homestays')
                   ->onDelete('cascade');
             $table->date('check_in');
             $table->date('check_out');
-            $table->decimal('total_price', 10, 2);
+            $table->decimal('base_price', 10, 2);    // total harga kamar
+            $table->decimal('tax_amount', 10, 2);    // nilai PPN
+            $table->decimal('grand_total', 10, 2);   // total bayar
             $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])
                   ->default('pending');
             $table->timestamps();
