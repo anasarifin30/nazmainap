@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/', function () {
+    return view('users.landingpage');
+});
+Route::get('/kataloghomestay', function () {
+    return view('users.kataloghomestay');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
