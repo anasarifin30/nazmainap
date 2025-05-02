@@ -22,8 +22,8 @@ return new class extends Migration
             $table->date('check_in');
             $table->date('check_out');
             $table->decimal('base_price', 10, 2);    // total harga kamar
-            $table->decimal('tax_amount', 10, 2);    // nilai PPN
-            $table->decimal('grand_total', 10, 2);   // total bayar
+            $table->decimal('service_price', 10, 2);    // nilai layanan
+            $table->decimal('total_price', 10, 2);   // total bayar
             $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])
                   ->default('pending');
             $table->timestamps();

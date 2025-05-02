@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('homestays', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('kodebumdes')->nullable();
             $table->string('name');
             $table->text('description');
             $table->text('address');
