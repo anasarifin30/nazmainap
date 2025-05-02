@@ -1,0 +1,57 @@
+        /* Header CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        /* Header styling */
+        .header {
+            width: 100%;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .logo {
+            color: #2a3990;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav a {
+            text-decoration: none;
+        }
+        
+        .nav a.active {
+            color: #ff8000;
+        }
+        
+        .nav a:not(.active) {
+            color: #2a3990;
+        }
+        
+        .login-btn {
+            background-color: #2a3990;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        

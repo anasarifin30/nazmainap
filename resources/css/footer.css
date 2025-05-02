@@ -1,0 +1,96 @@
+/* Footer */
+.footer {
+    background: #2a3990; /* Warna latar belakang footer */
+    color: white;
+    padding: 20px 0;
+    width: 100%; /* Full width */
+    position: relative;
+}
+
+.footer .container {
+    max-width: 1200px; /* Batas lebar konten */
+    margin: 0 auto; /* Tengah secara horizontal */
+    padding: 0 15px; /* Padding untuk responsif */
+    display: flex;
+    flex-wrap: wrap; /* Membuat konten fleksibel */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Jarak antar elemen */
+    width: 100%;
+    justify-content: space-between;
+}
+
+.footer-cta,
+.footer-contact {
+    flex: 1 1 300px; /* Responsif, minimal 300px */
+    text-align: center;
+}
+
+.footer-cta h3,
+.footer-contact h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.footer-cta .register-btn {
+    background: #ff8000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.footer-cta .register-btn:hover {
+    background: #fb923c;
+}
+
+.footer-contact .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.footer-contact .social-icon {
+    color: white;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.footer-contact .social-icon:hover {
+    color: #ff8000;
+}
+
+/* Copyright Section */
+.copyright {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .footer .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .footer-cta,
+    .footer-contact {
+        flex: 1 1 100%;
+    }
+}
