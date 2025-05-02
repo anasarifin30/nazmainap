@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Rule;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RuleSeeder extends Seeder
 {
@@ -12,6 +13,10 @@ class RuleSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Rule::create([
+            'homestay_id' => 1,
+            'rule_text' => 'Tidak boleh merokok di dalam kamar.'
+        ]);
+        
     }
 }

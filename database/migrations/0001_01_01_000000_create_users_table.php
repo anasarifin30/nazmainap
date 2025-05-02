@@ -17,10 +17,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('nomorhp');
-            $table->text('address')->nullable();
+            $table->string('address')->nullable();
+            $table->string('provinsi')->nullable();
+            $table->string('kabupaten')->nullable();   
+            $table->string('kecamatan')->nullable();
             $table->enum('gender', ['L', 'P']);
             $table->string('foto')->nullable();
-            $table->enum('role', ['admin', 'subadmin', 'user']);
+            $table->enum('role', ['admin', 'subadmin', 'owner', 'guest']);
             $table->timestamps();
         });
 
