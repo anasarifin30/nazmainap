@@ -13,6 +13,21 @@ Route::get('/', function () {
 Route::get('/kataloghomestay', function () {
     return view('users.kataloghomestay');
 });
+Route::get('/detailhomestay', function () {
+    return view('users.detailhomestay');
+});
+
+Route::get('/allphotohomestay', function () {
+    return view('users.allphotohomestay');
+});
+
+Route::get('/registerguest', function () {
+    return view('auth.registerguest');
+});
+
+Route::get('/registerowner', function () {
+    return view('auth.registerowner');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
