@@ -30,7 +30,7 @@
 <div class="container">
     <!-- Recommendations -->
     <h2>Katalog Penginapan di Pacitan</h2>
-    
+        
     <!-- Catalog -->
     <section class="catalog">
         <div class="catalog-grid">
