@@ -11,9 +11,8 @@
     <!-- Include custom CSS -->
     @vite(['resources/css/allphotohomestay.css'])
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <x-header></x-header>
+<!-- Header -->
+<x-header></x-header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
