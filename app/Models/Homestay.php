@@ -24,4 +24,12 @@ class Homestay extends Model
     
     /** @use HasFactory<\Database\Factories\HomestayFactory> */
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'description',
+        'address',
+        'kodebumdes',
+        'status',
+        'user_id',
+    ];
 }
