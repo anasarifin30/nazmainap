@@ -1,0 +1,167 @@
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+body { 
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Main container */
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Left side with illustration */
+.left-side {
+    background-color: #2D3072; /* Dark blue background */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border-top-right-radius: 50px; /* Rounded top-right corner */
+    border-bottom-right-radius: 50px; /* Rounded bottom-right corner */
+}
+
+.illustration img {
+    width: 80%;
+    height: auto;
+}
+
+/* Right side with form */
+.right-side {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Header */
+h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* User type selector */
+.user-type-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    gap: 8px;
+}
+
+.user-type-btn {
+    background-color: #fff;
+    border: 1px solid #2D3072;
+    color: #2D3072;
+    padding: 0.5rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-type-btn.active {
+    background-color: #2D3072;
+    color: white;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2D3072;
+}
+
+/* Submit button */
+.submit-btn {
+    width: 100%;
+    background-color: #F97316; /* Orange color */
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    background-color: #EA580C; /* Darker orange for hover */
+}
+
+/* Login link */
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.login-link a {
+    color: #2D3072;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .left-side {
+        height: 200px;
+    }
+
+    .right-side {
+        padding: 1.5rem;
+    }
+}
