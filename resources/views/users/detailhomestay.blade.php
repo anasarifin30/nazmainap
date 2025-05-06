@@ -1,41 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacienda Watukarung - NAZMAINAP</title>
-    <!-- Include Tailwind CSS from CDN for preview purposes -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Include Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Include custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <title>NAZMAINAP - Penginapan dan Akomodasi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    vite(['resources/css/detailhomestay.css'])
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <x-header></x-header>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="#">NAZMAINAP</a>
+                </div>
+                <nav class="main-nav">
+                    <a href="#" class="active">Beranda</a>
+                    <a href="#">Tentang</a>
+                    <a href="#">Bantuan</a>
+                </nav>
+                <div class="user-profile">
+                    <button class="profile-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-6">
-        <!-- Image Gallery -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="md:col-span-2 h-48 md:h-64 overflow-hidden rounded-lg">
-                <img src="https://images.unsplash.com/photo-1615571022219-eb45cf7faa9d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                     alt="Main Villa Image" 
-                     class="w-full h-full object-cover">
+    <main class="container">
+        <!-- Property Overview -->
+        <div class="property-gallery">
+            <div class="main-image">
+                <img src="images/hacienda-exterior.jpg" alt="Hacienda Watukarung exterior">
             </div>
-            <div class="grid grid-rows-2 gap-4">
-                <div class="overflow-hidden rounded-lg h-48">
-                    <img src="https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" 
-                         alt="Hammock Detail" 
-                         class="w-full h-full object-cover">
+            <div class="side-images">
+                <div class="side-image">
+                    <img src="images/hammock.jpg" alt="Hammock">
                 </div>
-                <div class="relative overflow-hidden rounded-lg h-48">
-                    <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                         alt="Pool Image" 
-                         class="w-full h-full object-cover brightness-75">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                <div class="side-image photo-overlay">
+                    <img src="images/pool.jpg" alt="Pool area">
+                    <div class="photo-overlay-content">
+                        <button class="btn-primary">
                             Lihat semua foto
                         </button>
                     </div>
@@ -43,132 +53,176 @@
             </div>
         </div>
 
-        <!-- Content Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Left Column - Property Details -->
-            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-sm">
-                <h1 class="text-3xl font-bold text-gray-900 mb-4">Hacienda Watukarung</h1>
-                
-                <p class="text-gray-700 mb-6">
-                    Hacienda Villa Watukarung menyediakan akomodasi dengan taman di Watukarung. Properti ini menyediakan tempat parkir pribadi gratis, serta berjarak 3 menit jalan kaki dari Pantai Watu Karung dan 2,3 km dari Pantai Kasap.
-                </p>
-
-                <!-- Address -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Alamat</h2>
-                    <p class="text-gray-700">
-                        Ketro, Watukarung, Kec. Pringkuku, Kabupaten Pacitan, Jawa Timur 63552, Watukarung 63552
+        <!-- Property Details -->
+        <div class="property-details">
+            <!-- Left Column - Property Info -->
+            <div class="property-info">
+                <div class="info-card">
+                    <h1>Hacienda Watukarung</h1>
+                    <p class="description">
+                        Hacienda Villa Watukarung menyediakan akomodasi dengan taman di Watukarung. Properti ini menyediakan tempat parkir pribadi gratis, serta berjarak 3 menit jalan kaki dari Pantai Watu Karung dan 2,3 km dari Pantai Kasap.
                     </p>
-                </div>
 
-                <!-- Contact -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold mb-2">No HP</h2>
-                    <p class="text-gray-700">081687906467</p>
-                </div>
+                    <div class="info-section">
+                        <h2>Alamat</h2>
+                        <p>
+                            Ketro, Watukarung, Kec. Pringkuku, Kabupaten Pacitan, Jawa Timur 63552, Watukarung 63552
+                        </p>
+                    </div>
 
-                <!-- BUMDES -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Kode Bumdes</h2>
-                    <p class="text-gray-700">BUMDES1</p>
-                </div>
+                    <div class="info-section">
+                        <h2>No HP</h2>
+                        <p>081687906467</p>
+                    </div>
 
-                <!-- Room Facilities -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Fasilitas Kamar</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-snowflake text-gray-500 mr-2"></i>
-                            <span>AC</span>
+                    <div class="info-section">
+                        <h2>Fasilitas Kamar</h2>
+                        <ul class="facilities-list">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                AC
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Kasur
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Meja
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Lemari Baju
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Ventilasi
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Bantal
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Guling
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="info-section">
+                        <h2>Peraturan</h2>
+                        <ol class="rules-list">
+                            <li>Seluruh fasilitas penginapan, hanya diperuntukkan bagi penyewa bukan untuk umum</li>
+                            <li>Penyewa penginapan dilarang menerima tamu dan/atau membawa teman ke kamar. Sebaiknya menerima tamu atau teman di tempat terbuka atau tempat umum lainnya, seperti cafe/resto</li>
+                            <li>Penyewa dilarang membawa tamu atau teman lawan jenis</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Room Types -->
+            <div class="room-types">
+                <h2>Tipe Kamar</h2>
+                
+                <!-- Room Type 1 -->
+                <div class="room-card">
+                    <img src="images/room-1.jpg" alt="Room Type 1">
+                    <div class="room-info">
+                        <h3>Hacienda Watukarung</h3>
+                        <p class="location">Pacitan</p>
+                        <div class="features">
+                            <span>WiFi • Kasur • Terverifikasi</span>
                         </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-bed text-gray-500 mr-2"></i>
-                            <span>Kasur</span>
+                        <div class="room-footer">
+                            <div class="price-info">
+                                <p class="price">Rp200.000</p>
+                                <p class="availability">Sisa 1 kamar</p>
+                            </div>
+                            <button class="btn-detail">Detail</button>
                         </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-table text-gray-500 mr-2"></i>
-                            <span>Meja</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-tshirt text-gray-500 mr-2"></i>
-                            <span>Lemari Baju</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-fan text-gray-500 mr-2"></i>
-                            <span>Ventilasi</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-bed text-gray-500 mr-2"></i>
-                            <span>Bantal</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-blanket text-gray-500 mr-2"></i>
-                            <span>Guling</span>
+                        <!-- Hidden details that will be shown on expand -->
+                        <div class="room-details hidden">
+                            <div class="details-content">
+                                <p><span>Deskripsi:</span> Kamar nyaman dengan pemandangan taman</p>
+                                <p><span>Max Pengunjung:</span> 2 orang</p>
+                                <p><span>Total Kamar:</span> 3 kamar</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Rules -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Peraturan</h2>
-                    <ol class="list-decimal pl-5 space-y-3 text-gray-700">
-                        <li>Seluruh fasilitas penginapan, hanya diperuntukkan bagi penyewa bukan untuk umum</li>
-                        <li>Penyewa penginapan dilarang menerima tamu dan/atau membawa teman ke kamar. Sebaiknya menerima tamu atau teman di tempat terbka atau tempat umum lainnya, seperti cafe/resto</li>
-                        <li>Penyewa dilarang membawa tamu atau teman lawan jenis</li>
-                    </ol>
+                
+                <!-- Room Type 2 -->
+                <div class="room-card">
+                    <img src="images/room-2.jpg" alt="Room Type 2">
+                    <div class="room-info">
+                        <h3>Hacienda Watukarung</h3>
+                        <p class="location">Pacitan</p>
+                        <div class="features">
+                            <span>WiFi • Kasur • Terverifikasi</span>
+                        </div>
+                        <div class="room-footer">
+                            <div class="price-info">
+                                <p class="price">Rp200.000</p>
+                                <p class="availability">Sisa 1 kamar</p>
+                            </div>
+                            <button class="btn-detail">Detail</button>
+                        </div>
+                        <!-- Hidden details that will be shown on expand -->
+                        <div class="room-details hidden">
+                            <div class="details-content">
+                                <p><span>Deskripsi:</span> Kamar nyaman dengan pemandangan taman</p>
+                                <p><span>Max Pengunjung:</span> 2 orang</p>
+                                <p><span>Total Kamar:</span> 3 kamar</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Room Types Section -->
-        <section class="mt-10">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Tipe Kamar</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Room Type A -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                         alt="Room Type A" 
-                         class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold mb-1">Tipe Kamar A</h3>
-                        <p class="text-gray-500 text-sm mb-2">Pacitan</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <span>9x9 Kamar • Terverifikasi</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <p class="font-bold text-gray-900">Rp200.000</p>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium py-1 px-3 rounded transition duration-300">
-                                Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Room Type B -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                         alt="Room Type B" 
-                         class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold mb-1">Tipe Kamar B</h3>
-                        <p class="text-gray-500 text-sm mb-2">Pacitan</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <span>9x9 Kamar • Terverifikasi</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <p class="font-bold text-gray-900">Rp200.000</p>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium py-1 px-3 rounded transition duration-300">
-                                Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- Footer -->
-    <x-footer></x-footer>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-cta">
+                    <h3>Punya rumah kosong atau kamar tersedia?</h3>
+                    <button class="btn-primary">
+                        Daftarkan sekarang
+                    </button>
+                </div>
+                <div class="footer-contact">
+                    <h3>Kontak Kami</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-envelope"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright 2025 - Develop By NaZMa Office</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

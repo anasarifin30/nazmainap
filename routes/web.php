@@ -21,12 +21,24 @@ Route::get('/allphotohomestay', function () {
     return view('users.allphotohomestay');
 });
 
+Route::get('/detailrooms', function () {
+    return view('users.detailrooms');
+});
+
 Route::get('/registerguest', function () {
     return view('auth.registerguest');
 });
 
 Route::get('/registerowner', function () {
     return view('auth.registerowner');
+});
+
+Route::get('/loginguest', function () {
+    return view('auth.loginguest');
+});
+
+Route::get('/loginowner', function () {
+    return view('auth.loginowner');
 });
 
 Route::get('/dashboard', function () {
