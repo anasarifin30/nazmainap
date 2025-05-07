@@ -7,9 +7,16 @@ use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\HomestayController;
 
 //ADMIN IKII
-Route::get('/admin', function () {
-    return view('admin.dashboard');
+Route::get('/admin/login', function () {
+    return view('auth.login');
+})->name('auth.login');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
 });
+
 
 //TABEL USER
 Route::get('/admin/user', [UserController::class, 'index'])->name('users.index');
@@ -26,6 +33,8 @@ Route::get('/admin/homestay/create', [HomestayController::class, 'create'])->nam
 Route::post('/admin/homestay', [HomestayController::class, 'store'])->name('homestays.store');
 Route::get('/admin/homestay/{homestay}/edit', [HomestayController::class, 'edit'])->name('homestays.edit');
 Route::put('/admin/homestay/{homestay}', [HomestayController::class, 'update'])->name('homestays.update');
+
+Route::get('/admin/homestay/{homestay}', [HomestayController::class, 'show'])->name('homestays.show');
 
 
 //USER IKII

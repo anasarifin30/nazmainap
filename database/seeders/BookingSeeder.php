@@ -13,16 +13,17 @@ class BookingSeeder extends Seeder
      */
     public function run(): void
     {
-        Booking::create([
-            'user_id' => 2,
-            'homestay_id' => 1,
-            'check_in' => now()->addDays(1),
-            'check_out' => now()->addDays(3),
-            'base_price' => 600000,
-            'service_price' => 60000,
-            'total_price' => 660000,
-            'status' => 'confirmed',
-        ]);
-        
+        for ($i = 1; $i <= 20; $i++) {
+            Booking::create([
+                'user_id' => rand(1, 10),
+                'homestay_id' => rand(1, 5),
+                'check_in' => now()->addDays(rand(1, 10)),
+                'check_out' => now()->addDays(rand(11, 20)),
+                'base_price' => rand(500000, 1000000),
+                'service_price' => rand(50000, 100000),
+                'total_price' => rand(500000, 1000000) + rand(50000, 100000),
+                'status' => 'confirmed',
+            ]);
+        }
     }
 }
