@@ -13,18 +13,20 @@ class RoomPhotoSeeder extends Seeder
      */
     public function run(): void
     {
-        RoomPhoto::insert([
-            [
-                'room_id' => 1,
-                'photo_url' => '',
+        $roomPhotos = [];
+        for ($i = 1; $i <= 20; $i++) {
+            $roomPhotos[] = [
+                'room_id' => $i,
+                'photo_url' => "https://example.com/photos/room{$i}_cover.jpg",
                 'is_cover' => true,
-            ],
-            [
-                'room_id' => 1,
-                'photo_url' => '',
+            ];
+            $roomPhotos[] = [
+                'room_id' => $i,
+                'photo_url' => "https://example.com/photos/room{$i}_extra.jpg",
                 'is_cover' => false,
-            ],
-        ]);
-        
+            ];
+        }
+
+        RoomPhoto::insert($roomPhotos);
     }
 }

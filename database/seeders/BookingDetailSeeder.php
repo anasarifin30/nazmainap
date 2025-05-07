@@ -13,13 +13,14 @@ class BookingDetailSeeder extends Seeder
      */
     public function run(): void
     {
-        BookingDetail::create([
-            'booking_id' => 1,
-            'room_id' => 1,
-            'quantity' => 2,
-            'price_per_night' => 200000,
-            'subtotal_price' => 400000
-        ]);
-        
+        for ($i = 1; $i <= 20; $i++) {
+            BookingDetail::create([
+                'booking_id' => $i,
+                'room_id' => rand(1, 10),
+                'quantity' => rand(1, 5),
+                'price_per_night' => rand(100000, 500000),
+                'subtotal_price' => rand(1, 5) * rand(100000, 500000)
+            ]);
+        }
     }
 }

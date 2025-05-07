@@ -14,8 +14,7 @@ class RoomFacilitySeeder extends Seeder
     public function run(): void
     {
         Room::all()->each(function ($room) {
-            $room->facilities()->attach([1, 2]); // WiFi dan AC
+            $room->facilities()->attach(range(1, 20)); // Attach 20 facilities
         });
-        
     }
 }

@@ -13,13 +13,14 @@ class CommissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Commission::create([
-            'transaction_id' => 1,
-            'admin_fee' => 10000,
-            'subadmin_fee' => 15000,
-            'owner_fee' => 50000,
-            'status' => 'unpaid'
-        ]);
-        
+        for ($i = 1; $i <= 20; $i++) {
+            Commission::create([
+                'transaction_id' => $i,
+                'admin_fee' => rand(5000, 20000),
+                'subadmin_fee' => rand(10000, 30000),
+                'owner_fee' => rand(40000, 60000),
+                'status' => 'unpaid'
+            ]);
+        }
     }
 }

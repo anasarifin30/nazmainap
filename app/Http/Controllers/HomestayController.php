@@ -58,4 +58,12 @@ class HomestayController extends Controller
         return redirect()->route('homestays.index')->with('success', 'Homestay berhasil dihapus.');
     }
 
+
+
+    public function show($id)
+{
+    $homestay = Homestay::findOrFail($id);
+    return view('admin.homestay-detail', compact('homestay'));
+}
+
 }

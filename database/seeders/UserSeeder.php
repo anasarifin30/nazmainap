@@ -13,67 +13,32 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::insert([
-            [
-                'name' => 'Admin Utama',
-                'email' => 'admin@nazma.com',
+        $users = [];
+        for ($i = 1; $i <= 20; $i++) {
+            $role = match (true) {
+                $i === 1 => 'admin',
+                $i % 3 === 0 => 'owner',
+                $i % 2 === 0 => 'subadmin',
+                default => 'guest',
+            };
+
+            $users[] = [
+                'name' => "User $i",
+                'email' => "user$i@nazma.com",
                 'password' => bcrypt('password'),
-                'nomorhp' => '081234567890',
+                'nomorhp' => '08' . str_pad($i, 10, '0', STR_PAD_LEFT),
                 'provinsi' => 'Jawa Tengah',
                 'kabupaten' => 'Kebumen',
-                'kecamatan' => 'Kutowinangun',
-                'address' => 'Jl. Raya No. 1',
-                'gender' => 'L',
+                'kecamatan' => "Kecamatan $i",
+                'address' => "Alamat $i",
+                'gender' => $i % 2 == 0 ? 'L' : 'P',
                 'foto' => null,
-                'role' => 'admin',
+                'role' => $role,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'name' => 'BUMDes Desa A',
-                'email' => 'subadmin@desa-a.com',
-                'password' => bcrypt('password'),
-                'nomorhp' => '081111111111',
-                'provinsi' => 'Jawa Tengah',
-                'kabupaten' => 'Kebumen',
-                'kecamatan' => 'Desa A',
-                'address' => 'Kantor Desa A',
-                'gender' => 'L',
-                'foto' => null,
-                'role' => 'subadmin',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Pemilik Rumah 1',
-                'email' => 'owner1@nazma.com',
-                'password' => bcrypt('password'),
-                'nomorhp' => '082222222222',
-                'provinsi' => 'Jawa Tengah',
-                'kabupaten' => 'Kebumen',
-                'kecamatan' => 'Desa A',
-                'address' => 'RT 02 RW 01',
-                'gender' => 'P',
-                'foto' => null,
-                'role' => 'owner',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'User Pengunjung',
-                'email' => 'guest@nazma.com',
-                'password' => bcrypt('password'),
-                'nomorhp' => '083333333333',
-                'provinsi' => 'Jawa Tengah',
-                'kabupaten' => 'Banyumas',
-                'kecamatan' => 'Purwokerto',
-                'address' => 'Jl. Melati No. 12',
-                'gender' => 'P',
-                'foto' => null,
-                'role' => 'guest',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
+            ];
+        }
+
+        User::insert($users);
     }
 }
