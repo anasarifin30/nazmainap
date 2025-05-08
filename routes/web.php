@@ -38,9 +38,8 @@ Route::get('/admin/homestay/{homestay}', [HomestayController::class, 'show'])->n
 
 
 //USER IKII
-Route::get('/', function () {
-    return view('users.landingpage');
-});
+Route::get('/', [UserController::class, 'landingPage'])->name('users.landingpage');
+
 Route::get('/kataloghomestay', function () {
     return view('users.kataloghomestay');
 });
