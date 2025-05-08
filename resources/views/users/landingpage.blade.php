@@ -6,6 +6,9 @@
     <title>Nazmainap - Penginapan Desa di Pacitan</title>
     @vite(['resources/css/landingpage.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </head>
 <body>
 
@@ -15,7 +18,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <h1 class="hero-title">Nikmati kemudahan mencari, memesan, dan mengelola<br class="desktop-only">penginapan desa di Pacitan.</h1>
+            <h1 class="hero-title font-bold">Nikmati kemudahan mencari, memesan, dan mengelola<br class="desktop-only">penginapan desa di Pacitan.</h1>
 
             <!-- Search Bar -->
             <div class="search-bar">
@@ -33,68 +36,57 @@
         
     <!-- Catalog -->
     <section class="catalog">
-        <div class="catalog-grid">
-            <div class="card">
-                <img src="images/hacienda.jpg" alt="Hacienda Watukarung" />
-                <div class="card-body">
-                    <h3>Hacienda Watukarung</h3>
-                    <p>Pacitan</p>
-                    <div class="tags">WiFi &bull; Kamar &bull; Terverifikasi</div>
-                    <div class="price-detail">
-                        <div>
-                            <p class="price">Rp200.000</p>
-                            <p class="stock">Sisa 1 Kamar</p>
-                        </div>
-                        <a href="#" class="btn-detail">Detail</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Additional cards for demonstration -->
-            <div class="card">
-                <img src="images/hacienda.jpg" alt="Villa Panorama" />
-                <div class="card-body">
-                    <h3>Villa Panorama</h3>
-                    <p>Pacitan</p>
-                    <div class="tags">WiFi &bull; Kamar &bull; Pool</div>
-                    <div class="price-detail">
-                        <div>
-                            <p class="price">Rp350.000</p>
-                            <p class="stock">Sisa 3 Kamar</p>
-                        </div>
-                        <a href="#" class="btn-detail">Detail</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <img src="images/hacienda.jpg" alt="Pacitan Beach House" />
-                <div class="card-body">
-                    <h3>Pacitan Beach House</h3>
-                    <p>Pacitan</p>
-                    <div class="tags">WiFi &bull; Dapur &bull; AC</div>
-                    <div class="price-detail">
-                        <div>
-                            <p class="price">Rp275.000</p>
-                            <p class="stock">Sisa 2 Kamar</p>
-                        </div>
-                        <a href="#" class="btn-detail">Detail</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-                            <div class="pagination">
-                                <a href="{{ url('/kataloghomestay') }}"><i class="fas fa-chevron-left"></i></a>
-                                <a href="{{ url('/kataloghomestay') }}" class="view-all">Lihat Semua</a>
-                                <a href="{{ url('/kataloghomestay') }}"><i class="fas fa-chevron-right"></i></a>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                @foreach ($homestaysslide as $homestay)
+                    <div class="swiper-slide">
+                        <div class="card">
+                            <img src="{{ asset('storage/' . $homestay->image) }}" alt="{{ $homestay->name }}" />
+                            <div class="card-body">
+                                <h3>{{ $homestay->name }}</h3>
+                                <p>{{ $homestay->address }}</p>
+                                <div class="tags">{{ $homestay->kodebumdes }}</div>
+                                <div class="price-detail">
+                                    <div>
+                                        <p class="price">Rp{{ number_format($homestay->price, 0, ',', '.') }}</p>
+                                        <p class="stock">Sisa {{ $homestay->available_rooms }} Kamar</p>
+                                    </div>
+                                    <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                @endforeach
             </div>
+            <div class="swiper-pagination"></div>
         </div>
+        
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Swiper(".mySwiper", {
+                loop: true,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+                slidesPerView: 1,
+                spaceBetween: 10,
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                    },
+                },
+            });
+        });
+    </script>
+
 
     <!-- About Section -->
     <section id="about" class="about-section">
@@ -184,7 +176,6 @@
         </div>
     </section>
 
-    <x-footer></x-footer>
 
 
     <!-- Script -->
@@ -214,4 +205,6 @@
         });
     </script>
 </body>
+<x-footer></x-footer>
+
 </html>

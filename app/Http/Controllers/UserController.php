@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage; 
+use App\Models\Homestay;
 
 class UserController extends Controller
 {
@@ -112,5 +113,14 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+    }
+
+    public function landingPage()
+    {
+        // Ambil data homestay untuk ditampilkan di landing page
+        $homestaysslide = Homestay::where('status', 'verified')->paginate(6);
+
+        // Kirim data ke view landing page
+        return view('users.landingpage', compact('homestaysslide'));
     }
 }
