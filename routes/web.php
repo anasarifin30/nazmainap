@@ -1,84 +1,96 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WilayahController;
-use App\Http\Controllers\HomestayController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\HomestayController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
 
-//ADMIN IKII
-Route::get('/admin/login', function () {
-    return view('auth.login');
-})->name('auth.login');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-});
-
-
-//TABEL USER
-Route::get('/admin/user', [UserController::class, 'index'])->name('users.index');
-Route::delete('/admin/user/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-Route::get('/admin/user/create', [UserController::class, 'create'])->name('users.create');
-Route::post('/admin/user', [UserController::class, 'store'])->name('users.store');
-Route::get('/admin/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-Route::put('/admin/user/{user}', [UserController::class, 'update'])->name('users.update');
-
-//TABEL HOMESTAY
-Route::get('/admin/homestay', [HomestayController::class, 'index'])->name('homestays.index');
-Route::delete('/admin/homestay/{homestay}', [HomestayController::class, 'destroy'])->name('homestays.destroy');
-Route::get('/admin/homestay/create', [HomestayController::class, 'create'])->name('homestays.create');
-Route::post('/admin/homestay', [HomestayController::class, 'store'])->name('homestays.store');
-Route::get('/admin/homestay/{homestay}/edit', [HomestayController::class, 'edit'])->name('homestays.edit');
-Route::put('/admin/homestay/{homestay}', [HomestayController::class, 'update'])->name('homestays.update');
-
-Route::get('/admin/homestay/{homestay}', [HomestayController::class, 'show'])->name('homestays.show');
-
-
-//USER IKII
+/*
+|--------------------------------------------------------------------------
+| Landing Page & Public Routes
+|--------------------------------------------------------------------------
+*/
 Route::get('/', [UserController::class, 'landingPage'])->name('users.landingpage');
 
-Route::get('/kataloghomestay', function () {
-    return view('users.kataloghomestay');
-});
-Route::get('/detailhomestay', function () {
-    return view('users.detailhomestay');
+Route::view('/kataloghomestay', 'users.kataloghomestay');
+Route::view('/detailhomestay', 'users.detailhomestay');
+Route::view('/allphotohomestay', 'users.allphotohomestay');
+Route::view('/detailrooms', 'users.detailrooms');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+// Login Routes
+Route::get('/login/admin', [AuthenticatedSessionController::class, 'showAdminLogin'])->name('login.admin');
+Route::get('/login/subadmin', [AuthenticatedSessionController::class, 'showSubadminLogin'])->name('login.subadmin');
+Route::get('/login/owner', [AuthenticatedSessionController::class, 'showOwnerLogin'])->name('login.owner');
+Route::get('/login/guest', [AuthenticatedSessionController::class, 'showGuestLogin'])->name('login.guest');
+
+// Login Process
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
+
+// Register Routes
+Route::view('/admin/register', 'auth.registeradmin')->name('register.admin');
+Route::view('/subadmin/register', 'auth.registersubadmin')->name('register.subadmin');
+Route::view('/owner/register', 'auth.registerowner')->name('register.owner');
+Route::view('/guest/register', 'auth.registerguest')->name('register.guest');
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:guest'])->group(function () {
+    Route::get('/', fn () => view('guest.home'))->name('guest.home');
 });
 
-Route::get('/allphotohomestay', function () {
-    return view('users.allphotohomestay');
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
+    Route::view('/', 'admin.dashboard')->name('dashboard');
+
+    // Homestay Management
+    Route::get('/homestay', [HomestayController::class, 'index'])->name('homestays.index');
+    Route::get('/homestay/create', [HomestayController::class, 'create'])->name('homestays.create');
+    Route::post('/homestay', [HomestayController::class, 'store'])->name('homestays.store');
+    Route::get('/homestay/{homestay}', [HomestayController::class, 'show'])->name('homestays.show');
+    Route::get('/homestay/{homestay}/edit', [HomestayController::class, 'edit'])->name('homestays.edit');
+    Route::put('/homestay/{homestay}', [HomestayController::class, 'update'])->name('homestays.update');
+    Route::delete('/homestay/{homestay}', [HomestayController::class, 'destroy'])->name('homestays.destroy');
+
+    // User Management
+    Route::get('/user', [UserController::class, 'index'])->name('users.index');
+    Route::get('/user/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/user', [UserController::class, 'store'])->name('users.store');
+    Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/user/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
-Route::get('/detailrooms', function () {
-    return view('users.detailrooms');
+/*
+|--------------------------------------------------------------------------
+| Owner Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::view('/', 'owner.dashboard')->name('dashboard');
+    Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestays.index');
 });
 
-Route::get('/registerguest', function () {
-    return view('auth.registerguest');
-});
 
-Route::get('/registerowner', function () {
-    return view('auth.registerowner');
-});
-
-Route::get('/loginguest', function () {
-    return view('auth.loginguest');
-});
-
-Route::get('/loginowner', function () {
-    return view('auth.loginowner');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+/*
+|--------------------------------------------------------------------------
+| Subadmin Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->group(function () {
+    Route::view('/', 'subadmin.dashboard')->name('subadmin.dashboard');
 });
 
 require __DIR__.'/auth.php';

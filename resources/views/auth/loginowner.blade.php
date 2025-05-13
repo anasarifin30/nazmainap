@@ -7,12 +7,13 @@
     @vite(['resources/css/loginowner.css'])
 </head>
 <body>
-    
+    <x-notif></x-notif>
+
     <div class="container">
         <!-- Left Side -->
         <div class="left-side">
             <div class="illustration">
-                <img src="images/ilustrasi-register.png" alt="Ilustrasi Registrasi">
+                <img src="{{ asset('images/ilustrasi-register.png') }}" alt="Ilustrasi Registrasi">
             </div>
         </div>
 
@@ -23,16 +24,16 @@
                 
                 <!-- User Type Selector -->
                 <div class="user-type-selector">
-                    <button class="user-type-btn active" id="pengunjung-btn">Pengunjung</button>
-                    <button class="user-type-btn" id="pemilik-btn">Pemilik Rumah</button>
+                    <a href="{{ route('login.guest') }}" class="user-type-btn {{ request()->routeIs('login.guest') ? 'active' : '' }}">Pengunjung</a>
+                    <a href="{{ route('login.owner') }}" class="user-type-btn {{ request()->routeIs('login.owner') ? 'active' : '' }}">Pemilik Rumah</a>
                 </div>
                 
+                
                 <!-- Login Form -->
-                <form id="loginowner-form" action="loginowner.php" method="POST">
-                    <div class="form-group">
-                        <label for="nama">Nama Lengkap</label>
-                        <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
-                    </div>
+                <form id="loginowner-form" action="{{ route('login') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="login_role" value="owner">
+
                     
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -49,7 +50,7 @@
                 
                 <!-- Register Link -->
                 <div class="register-link">
-                    Apakah sudah punya akun? <a href="register.html">Masuk</a>
+                    Belum punya akun? <a href="{{ route('register.owner') }}">Daftar</a>
                 </div>
             </div>
         </div>
