@@ -7,12 +7,13 @@
     @vite(['resources/css/registerguest.css'])
 </head>
 <body>
-    
+    <x-notif></x-notif>
+
     <div class="container">
         <!-- Left Side -->
         <div class="left-side">
             <div class="illustration">
-                <img src="images/ilustrasi-register.png" alt="Ilustrasi Registrasi">
+                <img src="{{ asset('images/ilustrasi-register.png') }}" alt="Ilustrasi Registrasi">
             </div>
         </div>
 
@@ -23,8 +24,8 @@
                 
                 <!-- User Type Selector -->
                 <div class="user-type-selector">
-                    <button class="user-type-btn active" id="pengunjung-btn">Pengunjung</button>
-                    <button class="user-type-btn" id="pemilik-btn">Pemilik Rumah</button>
+                    <a href="{{ route('register.guest') }}" class="user-type-btn {{ request()->routeIs('register.guest') ? 'active' : '' }}">Pengunjung</a>
+                    <a href="{{ route('register.owner') }}" class="user-type-btn {{ request()->routeIs('register.owner') ? 'active' : '' }}">Pemilik Rumah</a>
                 </div>
                 
                 <!-- Registration Form -->
@@ -59,7 +60,7 @@
                 
                 <!-- Login Link -->
                 <div class="login-link">
-                    Apakah sudah punya akun? <a href="login.html">Masuk</a>
+                    Apakah sudah punya akun? <a href="{{ route('login.guest') }}">Masuk</a>
                 </div>
             </div>
         </div>
