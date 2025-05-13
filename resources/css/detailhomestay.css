@@ -1,97 +1,141 @@
-/* Image Gallery */
-.image-gallery img {
-    border-radius: 10px;
+/* Main Styles for Detail Homestay Page */
+
+/* Custom font settings */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Ensure images fit within their containers */
+img {
+    width: 100%; /* Make the image fill the width of its container */
+    height: 100%; /* Make the image fill the height of its container */
+    object-fit: cover; /* Ensure the image covers the container without distortion */
+    border-radius: 0.5rem; /* Apply rounded corners to match the container */
+}
+
+/* Main Image Styling */
+.h-80 {
+    height: 20rem; /* Set height for the main image */
+}
+
+.h-40 {
+    height: 10rem; /* Set height for the side images */
+}
+
+.overflow-hidden {
+    overflow: hidden; /* Ensure content does not overflow the container */
+}
+
+.rounded-lg {
+    border-radius: 0.5rem; /* Apply rounded corners */
+}
+
+/* Custom header styling */
+.container h1 {
+    color: #333;
+    border-bottom: 2px solid #f97316; /* Orange border bottom for main heading */
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Custom card styling */
+.bg-white {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Enhance image hover effects */
+.bg-white img {
     transition: transform 0.3s ease;
 }
 
-.image-gallery img:hover {
-    transform: scale(1.05);
+.bg-white img:hover {
+    transform: scale(1.03);
 }
 
-/* Thumbnail Grid */
-.thumbnail-grid {
-    display: grid;
-    grid-template-rows: repeat(2, 1fr);
-    gap: 10px;
+/* Custom button hover effect */
+.bg-orange-500:hover {
+    box-shadow: 0 4px 6px rgba(249, 115, 22, 0.25);
 }
 
-.thumbnail {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
+/* Custom sticky sidebar behavior */
+.sticky {
+    position: sticky;
+    top: 20px;
 }
 
-/* Overlay Content */
-.overlay-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-radius: 10px;
+/* Enhance facility icons */
+.flex.items-center svg {
+    transition: transform 0.2s ease;
 }
 
-.thumbnail-overlay:hover .overlay-content {
-    opacity: 1;
+.flex.items-center:hover svg {
+    transform: scale(1.2);
 }
 
-/* View All Button */
-.view-all-btn {
-    background-color: #F97316;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sticky {
+        position: relative;
+        top: 0;
+    }
+    
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
 }
 
-.view-all-btn:hover {
-    background-color: #EA580C;
+/* Price highlighting */
+.font-bold.text-gray-800 {
+    color: #f97316;
+    font-size: 1.1rem;
 }
 
-/* Property Details */
-.property-title {
-    font-size: 2rem;
-    color: #2a3990;
+/* Custom shadow for room selection area */
+.bg-white.p-4 {
+    transition: all 0.3s ease;
 }
 
-.property-description {
-    color: #4b5563;
-    margin-bottom: 1.5rem;
+.bg-white.p-4:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
-.property-section {
-    margin-bottom: 1.5rem;
+/* Availability button glow effect */
+.bg-orange-500.text-white.p-3 {
+    position: relative;
+    overflow: hidden;
 }
 
-.section-title {
-    font-size: 1.25rem;
-    color: #2a3990;
-    margin-bottom: 0.5rem;
+.bg-orange-500.text-white.p-3:after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(60deg, rgba(255,255,255,0) 10%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0) 30%);
+    transform: rotate(30deg);
+    animation: shine 3s infinite linear;
 }
 
-.section-content {
-    color: #4b5563;
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) rotate(30deg);
+    }
+    100% {
+        transform: translateX(100%) rotate(30deg);
+    }
 }
 
-.facilities-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+/* Custom styling for facility section */
+.mb-4 h2 {
+    border-left: 4px solid #f97316;
+    padding-left: 10px;
 }
 
-.facility-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #4b5563;
-}
-
-.rules-list {
-    list-style: decimal;
-    padding-left: 1.5rem;
-    color: #4b5563;
+/* Enhance room image appearance */
+.w-24.h-24 {
+    border: 2px solid #f3f4f6;
+    border-radius: 6px;
 }
