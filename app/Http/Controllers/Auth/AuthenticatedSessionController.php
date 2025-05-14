@@ -16,7 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('auth.loginguest');
     }
 
     /**
@@ -88,5 +88,9 @@ class AuthenticatedSessionController extends Controller
     {
         return view('auth.loginadmin');
     }
-
+    
+    public function showSubadminLogin()
+    {
+        return view('auth.loginsubadmin');
+    }
 }

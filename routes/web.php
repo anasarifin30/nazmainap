@@ -28,9 +28,6 @@ Route::get('/login/subadmin', [AuthenticatedSessionController::class, 'showSubad
 Route::get('/login/owner', [AuthenticatedSessionController::class, 'showOwnerLogin'])->name('login.owner');
 Route::get('/login/guest', [AuthenticatedSessionController::class, 'showGuestLogin'])->name('login.guest');
 
-// Login Process
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
-
 // Register Routes
 Route::view('/admin/register', 'auth.registeradmin')->name('register.admin');
 Route::view('/subadmin/register', 'auth.registersubadmin')->name('register.subadmin');
@@ -43,9 +40,9 @@ Route::view('/guest/register', 'auth.registerguest')->name('register.guest');
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:guest'])->group(function () {
-    Route::get('/', fn () => view('guest.home'))->name('guest.home');
 });
 
+Route::get('/', fn () => view('users.landingpage'))->name('users.landingpage');
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
