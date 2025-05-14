@@ -2,6 +2,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomestayController;
+
+use App\Http\Controllers\User\UserController as UsersController;
+use App\Http\Controllers\User\HomestayController as UserHomestayController;
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
 
@@ -10,9 +14,10 @@ use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
 | Landing Page & Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', [UserController::class, 'landingPage'])->name('users.landingpage');
+Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpage');
 
-Route::view('/kataloghomestay', 'users.kataloghomestay');
+Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
+Route::get('/homestay/{homestay}', [UserHomestayController::class, 'show'])->name('homestays.show');
 Route::view('/detailhomestay', 'users.detailhomestay');
 Route::view('/allphotohomestay', 'users.allphotohomestay');
 Route::view('/detailrooms', 'users.detailrooms');
@@ -42,7 +47,7 @@ Route::view('/guest/register', 'auth.registerguest')->name('register.guest');
 Route::middleware(['auth', 'role:guest'])->group(function () {
 });
 
-Route::get('/', fn () => view('users.landingpage'))->name('users.landingpage');
+
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
