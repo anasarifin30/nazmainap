@@ -21,13 +21,15 @@
             <h1 class="hero-title font-bold">Nikmati kemudahan mencari, memesan, dan mengelola<br class="desktop-only">penginapan desa di Pacitan.</h1>
 
             <!-- Search Bar -->
-            <div class="search-bar">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Lokasi penginapan">
-                    <button>Cari</button>
-                </div>
-            </div>
+<div class="search-bar">
+        <div class="search-container">
+            <form action="{{ route('users.kataloghomestay') }}" method="GET" class="search-form">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" name="search" class="search-input" placeholder="Lokasi penginapan" value="{{ request('search') }}">
+                <button type="submit" class="search-button">Cari</button>
+            </form>
+        </div>
+    </div>
 
 <!-- Main Content -->
 <div class="container">
@@ -41,15 +43,20 @@
                 @foreach ($homestaysslide as $homestay)
                     <div class="swiper-slide">
                         <div class="card">
-                            <img src="{{ asset('storage/' . $homestay->image) }}" alt="{{ $homestay->name }}" />
+                            <img src="{{ $homestay->image ? asset('storage/' . $homestay->image) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $homestay->name }}" />
                             <div class="card-body">
                                 <h3>{{ $homestay->name }}</h3>
-                                <p>{{ $homestay->address }}</p>
+                                <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
                                 <div class="tags">{{ $homestay->kodebumdes }}</div>
                                 <div class="price-detail">
                                     <div>
-                                        <p class="price">Rp{{ number_format($homestay->price, 0, ',', '.') }}</p>
-                                        <p class="stock">Sisa {{ $homestay->available_rooms }} Kamar</p>
+                                        @if ($homestay->rooms->isNotEmpty())
+                                            <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
+                                            <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+                                        @else
+                                            <p class="price">Harga tidak tersedia</p>
+                                            <p class="stock">Kamar tidak tersedia</p>
+                                        @endif
                                     </div>
                                     <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
                                 </div>

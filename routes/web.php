@@ -1,12 +1,14 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomestayController;
 
+use App\Http\Controllers\User\RoomController as RoomController;
 use App\Http\Controllers\User\UserController as UsersController;
 use App\Http\Controllers\User\HomestayController as UserHomestayController;
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
 
 /*
@@ -18,9 +20,9 @@ Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpag
 
 Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
 Route::get('/homestay/{homestay}', [UserHomestayController::class, 'show'])->name('homestays.show');
-Route::view('/detailhomestay', 'users.detailhomestay');
-Route::view('/allphotohomestay', 'users.allphotohomestay');
-Route::view('/detailrooms', 'users.detailrooms');
+
+Route::get('/homestay/{homestay}/photos', [UserHomestayController::class, 'photos'])->name('homestays.photos');
+Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 
 /*
 |--------------------------------------------------------------------------

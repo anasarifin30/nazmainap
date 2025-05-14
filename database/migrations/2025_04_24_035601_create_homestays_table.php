@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('kodebumdes')->nullable();
             $table->string('name');
             $table->text('description');
-            $table->text('address');
+            $table->string('address')->nullable();
+            $table->string('provinsi')->nullable();
+            $table->string('kabupaten')->nullable();   
+            $table->string('kecamatan')->nullable();
             $table->enum('status', ['menunggu', 'terverifikasi', 'ditolak'])->default('menunggu');
             $table->timestamps();
         });
