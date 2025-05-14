@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Homestay;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class HomestayController extends Controller
 {
@@ -17,7 +18,7 @@ class HomestayController extends Controller
 
     public function create()
     {
-        return view('homestays.create');
+        return view('admin.homestays.create');
     }
 
     public function store(Request $request)
@@ -27,16 +28,20 @@ class HomestayController extends Controller
             'description' => 'required|string',
             'address' => 'required|string',
             'kodebumdes' => 'nullable|string|max:255',
-            'status' => 'required|in:pending,verified,rejected',
+            'status' => 'required|in:menunggu,terverifikasi,ditolak',
         ]);
 
-        Homestay::create($request->all());
-        return redirect()->route('homestays.index')->with('success', 'Homestay berhasil ditambahkan.');
+        // Tambahkan user_id dari pengguna yang sedang login
+        Homestay::create(array_merge($request->all(), [
+            'user_id' => Auth::user()->id,
+        ]));
+
+        return redirect()->route('admin.homestays.index')->with('success', 'Homestay berhasil ditambahkan.');
     }
 
     public function edit(Homestay $homestay)
     {
-        return view('homestays.edit', compact('homestay'));
+        return view('admin.homestays.edit', compact('homestay'));
     }
 
     public function update(Request $request, Homestay $homestay)
@@ -46,17 +51,17 @@ class HomestayController extends Controller
             'description' => 'required|string',
             'address' => 'required|string',
             'kodebumdes' => 'nullable|string|max:255',
-            'status' => 'required|in:pending,verified,rejected',
+            'status' => 'required|in:menunggu,terverifikasi,ditolak',
         ]);
 
         $homestay->update($request->all());
-        return redirect()->route('homestays.index')->with('success', 'Homestay berhasil diperbarui.');
+        return redirect()->route('admin.homestays.index')->with('success', 'Homestay berhasil diperbarui.');
     }
 
     public function destroy(Homestay $homestay)
     {
         $homestay->delete();
-        return redirect()->route('homestays.index')->with('success', 'Homestay berhasil dihapus.');
+        return redirect()->route('admin.homestays.index')->with('success', 'Homestay berhasil dihapus.');
     }
 
 

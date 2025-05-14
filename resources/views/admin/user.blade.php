@@ -93,7 +93,7 @@
                     <button class="text-yellow-500 hover:text-yellow-600" data-modal-target="editUserModal-{{ $user->id }}" data-modal-toggle="editUserModal-{{ $user->id }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
                     </button>
-                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
+                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-500 hover:text-red-600">
@@ -118,7 +118,7 @@
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+                        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
                             @csrf
                             @method('PUT')
                             <div class="grid gap-4 mb-4 grid-cols-2">
@@ -200,7 +200,7 @@
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+                        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
                             @csrf
                             @method('PUT')
                             <div class="grid gap-4 mb-4 grid-cols-2">
@@ -282,7 +282,7 @@
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+                        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
                             @csrf
                             @method('PUT')
                             <div class="grid gap-4 mb-4 grid-cols-2">
@@ -368,7 +368,7 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data" class="p-4 md:p-5">
+            <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data" class="p-4 md:p-5">
                 @csrf
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">

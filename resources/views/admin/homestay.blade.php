@@ -45,13 +45,13 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 flex space-x-2">
-                    <a href="{{ route('homestays.show', $homestay->id) }}" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
+                    <a href="{{ route('admin.homestays.show', $homestay->id) }}" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2M4 19V5h16l.002 14z"/><path fill="currentColor" d="M6 7h12v2H6zm0 4h12v2H6zm0 4h6v2H6z"/></svg>
                     </a>
                     <button class="text-yellow-500 hover:text-yellow-600 dark:text-yellow-400 dark:hover:text-yellow-300" data-modal-target="editHomestayModal-{{ $homestay->id }}" data-modal-toggle="editHomestayModal-{{ $homestay->id }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
                     </button>
-                    <form action="{{ route('homestays.destroy', $homestay->id) }}" method="POST" class="inline">
+                    <form action="{{ route('admin.homestays.destroy', $homestay->id) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16m-10 4v6m4-6v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg></button>
@@ -67,7 +67,7 @@
                             <h3 class="text-lg font-semibold dark:text-white">Edit Homestay</h3>
                             <button type="button" class="text-gray-400 dark:text-gray-300" data-modal-hide="editHomestayModal-{{ $homestay->id }}">X</button>
                         </div>
-                        <form action="{{ route('homestays.update', $homestay->id) }}" method="POST" class="p-4">
+                        <form action="{{ route('admin.homestays.update', $homestay->id) }}" method="POST" class="p-4">
                             @csrf
                             @method('PUT')
                             <div class="grid gap-4 mb-4">
@@ -86,9 +86,9 @@
                                 <div>
                                     <label for="status" class="block mb-2 text-sm font-medium dark:text-gray-300">Status</label>
                                     <select name="status" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
-                                        <option value="pending" {{ $homestay->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="verified" {{ $homestay->status == 'verified' ? 'selected' : '' }}>Verified</option>
-                                        <option value="rejected" {{ $homestay->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        <option value="menunggu" {{ $homestay->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                                        <option value="terverifikasi" {{ $homestay->status == 'terverifikasi' ? 'selected' : '' }}>Terverifikasi</option>
+                                        <option value="ditolak" {{ $homestay->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                                     </select>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form action="{{ route('homestays.store') }}" method="POST" class="p-4">
+            <form action="{{ route('admin.homestays.store') }}" method="POST" class="p-4">
                 @csrf
                 <div class="grid gap-4 mb-4">
                     <div>
@@ -137,9 +137,9 @@
                     <div>
                         <label for="status" class="block mb-2 text-sm font-medium dark:text-gray-300">Status</label>
                         <select name="status" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
-                            <option value="pending">Pending</option>
-                            <option value="verified">Verified</option>
-                            <option value="rejected">Rejected</option>
+                            <option value="menunggu">Menunggu</option>
+                            <option value="terverifikasi">Terverifikasi</option>
+                            <option value="ditolak">Ditolak</option>
                         </select>
                     </div>
                 </div>
