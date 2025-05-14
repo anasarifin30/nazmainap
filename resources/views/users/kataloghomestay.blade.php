@@ -22,76 +22,39 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container">
-        <!-- Recommendations -->
-        <h2>Katalog Penginapan di Pacitan</h2>
-        
-        <!-- Catalog -->
-        <section class="catalog">
-            <div class="catalog-grid">
-                <div class="card">
-                    <img src="images/hacienda.jpg" alt="Hacienda Watukarung" />
-                    <div class="card-body">
-                        <h3>Hacienda Watukarung</h3>
-                        <p>Pacitan</p>
-                        <div class="tags">WiFi &bull; Kamar &bull; Terverifikasi</div>
-                        <div class="price-detail">
-                            <div>
-                                <p class="price">Rp200.000</p>
-                                <p class="stock">Sisa 1 Kamar</p>
-                            </div>
-                            <a href="#" class="btn-detail">Detail</a>
+<div class="container">
+    <!-- Recommendations -->
+    <h2>Katalog Penginapan di Pacitan</h2>
+
+    <!-- Catalog -->
+    <section class="catalog">
+        <div class="catalog-grid">
+            @foreach($homestays as $homestay)
+            <div class="card">
+                <img src="{{ asset('storage/homestay_images/' . $homestay->image) }}" alt="{{ $homestay->name }}" />
+                <div class="card-body">
+                    <h3>{{ $homestay->name }}</h3>
+                    <p>{{ $homestay->location }}</p>
+                    <div class="tags">{{ $homestay->tags }}</div>
+                    <div class="price-detail">
+                        <div>
+                            <p class="price">Rp{{ number_format($homestay->price, 0, ',', '.') }}</p>
+                            <p class="stock">Sisa {{ $homestay->stock }} Kamar</p>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Additional cards for demonstration -->
-                <div class="card">
-                    <img src="images/hacienda.jpg" alt="Villa Panorama" />
-                    <div class="card-body">
-                        <h3>Villa Panorama</h3>
-                        <p>Pacitan</p>
-                        <div class="tags">WiFi &bull; Kamar &bull; Pool</div>
-                        <div class="price-detail">
-                            <div>
-                                <p class="price">Rp350.000</p>
-                                <p class="stock">Sisa 3 Kamar</p>
-                            </div>
-                            <a href="#" class="btn-detail">Detail</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <img src="images/hacienda.jpg" alt="Pacitan Beach House" />
-                    <div class="card-body">
-                        <h3>Pacitan Beach House</h3>
-                        <p>Pacitan</p>
-                        <div class="tags">WiFi &bull; Dapur &bull; AC</div>
-                        <div class="price-detail">
-                            <div>
-                                <p class="price">Rp275.000</p>
-                                <p class="stock">Sisa 2 Kamar</p>
-                            </div>
-                            <a href="#" class="btn-detail">Detail</a>
-                        </div>
+                        <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
                     </div>
                 </div>
             </div>
-            
-            <!-- Pagination -->
-            <div class="pagination">
-                <a href="#"><i class="fas fa-chevron-left"></i></a>
-                <a href="#" class="active">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <span>...</span>
-                <a href="#">8</a>
-                <a href="#"><i class="fas fa-chevron-right"></i></a>
-            </div>
-        </section>
-        
-    </div>
+            @endforeach
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {{ $homestays->links() }}
+        </div>
+    </section>
+</div>
+
     <x-footer></x-footer>
 
     <!-- Script -->
