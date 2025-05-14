@@ -1,0 +1,314 @@
+/* History Cart CSS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary-color: #303F9F;
+  --primary-light: #E8EAF6;
+  --secondary-color: #FF9800;
+  --text-color: #333333;
+  --bg-color: #FFFFFF;
+  --border-color: #E0E0E0;
+  --success-color: #4CAF50;
+  --danger-color: #F44336;
+  --warning-color: #FFC107;
+  --grey-color: #9E9E9E;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #F5F7FA;
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+.nav-header {
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-header .logo {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-menu a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.nav-menu a:hover {
+  color: var(--secondary-color);
+}
+
+.history-container {
+  max-width: 1200px;
+  margin: 1rem auto;
+  background-color: var(--bg-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.breadcrumb {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.85rem;
+  color: #666;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.breadcrumb span {
+  color: #999;
+}
+
+.history-content {
+  display: flex;
+  min-height: 600px;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--primary-color);
+  border-radius: 0 0 0 0.5rem;
+  padding: 1.5rem 1rem;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+/* Sidebar Menu */
+.sidebar-menu {
+  margin-top: 1rem; /* Jarak atas menu */
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 0.25rem;
+  margin-bottom: 0.25rem; /* Jarak antar item menu */
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.menu-item.active, .menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.menu-item i {
+  margin-right: 0.5rem; /* Jarak antara ikon dan teks */
+}
+
+.history-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+.history-filter {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-button:hover, .filter-button.active {
+  background-color: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.history-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.history-card {
+  background-color: var(--bg-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.history-card:hover {
+  transform: translateY(-3px);
+}
+
+.card-image {
+  height: 160px;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+}
+
+.badge-success {
+  background-color: var(--success-color);
+}
+
+.badge-danger {
+  background-color: var(--danger-color);
+}
+
+.badge-warning {
+  background-color: var(--warning-color);
+  color: #333;
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.card-location {
+  display: flex;
+  align-items: center;
+  color: var(--grey-color);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-location i {
+  margin-right: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.card-dates {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+}
+
+.card-price {
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 0.75rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid var(--border-color);
+}
+
+.card-status {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-completed {
+  color: var(--success-color);
+}
+
+.status-cancelled {
+  color: var(--danger-color);
+}
+
+.status-active {
+  color: var(--primary-color);
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-detail {
+  background-color: #ED7E21; /* Warna tombol diubah menjadi ED7E21 */
+  color: white;
+}
+
+.btn-detail:hover {
+  background-color: #D96A1C; /* Warna hover sedikit lebih gelap */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 0.25rem;
+}
+
+.pagination-item {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.25rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-item:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.pagination-item.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}

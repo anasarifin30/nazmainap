@@ -68,12 +68,12 @@
 }
 
 .book-button {
-  background-color: #f97316;
+  background-color: #ED7E21;
   transition: background-color 0.2s;
 }
 
 .book-button:hover {
-  background-color: #ea580c;
+  background-color: #ED7E21;
 }
 
 .chat-button {
