@@ -15,9 +15,11 @@
     <!-- Search Bar -->
     <div class="search-bar">
         <div class="search-container">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Lokasi penginapan">
-            <button>Cari</button>
+            <form action="{{ route('users.kataloghomestay') }}" method="GET" class="search-form">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" name="search" class="search-input" placeholder="Lokasi penginapan" value="{{ request('search') }}">
+                <button type="submit" class="search-button">Cari</button>
+            </form>
         </div>
     </div>
 
@@ -31,7 +33,7 @@
         <div class="catalog-grid">
             @foreach($homestays as $homestay)
             <div class="card">
-                <img src="{{ asset('storage/homestay_images/' . $homestay->image) }}" alt="{{ $homestay->name }}" />
+                <img src="{{ $homestay->image ? asset('storage/homestay_images/' . $homestay->image) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $homestay->name }}" />
                 <div class="card-body">
                     <h3>{{ $homestay->name }}</h3>
                     <p>{{ $homestay->location }}</p>
@@ -49,9 +51,36 @@
         </div>
 
         <!-- Pagination -->
-        <div class="pagination">
-            {{ $homestays->links() }}
-        </div>
+        <!-- Pagination -->
+@if ($homestays->hasPages())
+    <div class="flex justify-center mt-6">
+        <nav class="inline-flex items-center space-x-1">
+            {{-- Previous Page Link --}}
+            @if ($homestays->onFirstPage())
+                <span class="px-3 py-1 text-sm text-gray-400 bg-gray-200 rounded">«</span>
+            @else
+                <a href="{{ $homestays->previousPageUrl() }}" class="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-100">«</a>
+            @endif
+
+            {{-- Pagination Elements --}}
+            @foreach ($homestays->getUrlRange(1, $homestays->lastPage()) as $page => $url)
+                @if ($page == $homestays->currentPage())
+                    <span class="px-3 py-1 text-sm text-white bg-blue-500 rounded">{{ $page }}</span>
+                @else
+                    <a href="{{ $url }}" class="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-100">{{ $page }}</a>
+                @endif
+            @endforeach
+
+            {{-- Next Page Link --}}
+            @if ($homestays->hasMorePages())
+                <a href="{{ $homestays->nextPageUrl() }}" class="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-100">»</a>
+            @else
+                <span class="px-3 py-1 text-sm text-gray-400 bg-gray-200 rounded">»</span>
+            @endif
+        </nav>
+    </div>
+@endif
+
     </section>
 </div>
 
@@ -83,6 +112,7 @@
             });
         });
     </script>
+
 
 </body>
 </html>
