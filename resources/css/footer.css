@@ -1,20 +1,40 @@
-/* Footer */
+/* Footer normal (non-fixed) */
 .footer {
     background: #2a3990; /* Warna latar belakang footer */
     color: white;
     padding: 20px 0;
     width: 100%; /* Full width */
-    position: relative;
+    position: relative; /* Posisi normal, bukan fixed */
+    z-index: 100; /* Tidak perlu z-index yang sangat tinggi */
 }
 
-.footer .container {
-    max-width: 1200px; /* Batas lebar konten */
-    margin: 0 auto; /* Tengah secara horizontal */
-    padding: 0 15px; /* Padding untuk responsif */
+/* Struktur halaman */
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
     display: flex;
-    justify-content: space-between; /* Elemen kiri dan kanan */
+    flex-direction: column;
+}
+
+/* Konten utama mengisi ruang yang tersedia */
+main, .content-wrapper, .container, #main-content, .content {
+    flex: 1;
+}
+
+/* Pastikan konten di dalam footer terlihat baik */
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Responsif untuk layar kecil */
+    flex-wrap: wrap;
 }
 
 .footer-content {
@@ -94,17 +114,16 @@
 /* Responsiveness */
 @media (max-width: 768px) {
     .footer .container {
-        flex-direction: column; /* Tata letak vertikal untuk layar kecil */
+        flex-direction: column;
         align-items: center;
         text-align: center;
     }
-
-    .footer-content,
-    .footer-contact {
-        align-items: center; /* Rata tengah untuk layar kecil */
+    
+    .footer-content, .footer-contact {
+        align-items: center;
         margin: 10px 0;
     }
-
+    
     .footer-contact .social-links {
         justify-content: center;
     }
