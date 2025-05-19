@@ -12,9 +12,20 @@
 <body class="bg-gray-50">
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
+        
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a href="javascript:history.back()" class="back-button inline-flex items-center px-4 py-2 rounded-md text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali 
+            </a>
+        </div>
+        
         <div class="flex flex-wrap -mx-4">
             <!-- Left Column - Room Details -->
-            <div class="w-full lg:w-8/12 px-4 mb-8">
+            <div class="w-full lg:w-8/12 px-4 mb-8 static-column">
                 <!-- Room Title -->
                 <div class="mb-6">
                     <h1 class="text-2xl font-bold mb-2">{{ $room->name }}</h1>
@@ -165,5 +176,25 @@
     </div>
 </div>
 <x-footer></x-footer>
+
+<script>
+    // JavaScript for gallery image switching
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainImage = document.querySelector('.gallery-main-image');
+        const thumbnails = document.querySelectorAll('.gallery-thumbnail');
+        
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                mainImage.src = this.src;
+                
+                // Remove active class from all thumbnails
+                thumbnails.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked thumbnail
+                this.classList.add('active');
+            });
+        });
+    });
+</script>
 </body>
 </html>
