@@ -1,8 +1,11 @@
 /* Main Styles for Detail Homestay Page */
 
 /* Custom font settings */
-body {
-    font-family: 'Poppins', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Terapkan font Poppins ke seluruh halaman */
+body, html {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
 }
 
 /* Ensure images fit within their containers */
@@ -138,4 +141,30 @@ img {
 .w-24.h-24 {
     border: 2px solid #f3f4f6;
     border-radius: 6px;
+}
+
+/* Scrollable room types sidebar */
+.room-types-scroll {
+    max-height: 90vh;      /* Lebih tinggi agar hampir sepanjang layar */
+    min-height: 500px;     /* Minimal tinggi agar sejajar dengan card kiri */
+    overflow-y: auto;
+    /* Scrollbar styling tetap */
+    scrollbar-width: thin;
+    scrollbar-color: #f97316 #f3f4f6;
+}
+.room-types-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+.room-types-scroll::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 8px;
+}
+.room-types-scroll::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 8px;
+}
+
+/* card kiri */
+.md\:col-span-2 > .bg-white {
+    margin-bottom: 2.5rem; /* 40px, bisa disesuaikan */
 }

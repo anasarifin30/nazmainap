@@ -1,10 +1,17 @@
 /* Additional custom styles to complement Tailwind */
 
-.breadcrumb-item + .breadcrumb-item::before {
-  content: ">";
-  padding: 0 0.5rem;
-  color: #6b7280;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+body, html {
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
 }
+
+.breadcrumb-item + .breadcrumb-item::before {
+   content: ">";
+   padding: 0 0.5rem;
+   color: #6b7280;
+}
+
 /* Title Styling with Vertical Line and Spacing */
 .detail-section h3 span {
     display: inline-block;
@@ -44,8 +51,7 @@
   transition: opacity 0.2s;
 }
 
-.gallery-thumbnail:hover,
-.gallery-thumbnail.active {
+.gallery-thumbnail:hover, .gallery-thumbnail.active {
   opacity: 1;
   border: 2px solid #f97316;
 }
@@ -91,4 +97,27 @@
 
 .room-preview-card:hover {
   transform: translateY(-4px);
+}
+
+/* Back Button Styles */
+.back-button {
+  background-color: #ED7E21;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #e67018;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Make sure the left column doesn't move */
+.static-column {
+  position: relative;
+}
+
+/* Ensure the right column's sticky behavior works correctly */
+@media (min-width: 1024px) {
+  .static-column {
+    position: static;
+  }
 }

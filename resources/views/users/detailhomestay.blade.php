@@ -9,7 +9,7 @@
     @vite(['resources/css/detailhomestay.css'])
 </head>
 
-<body class="bg-gray-100 font-sans">
+
     <!-- Header -->
     <x-header></x-header>
 
@@ -80,8 +80,9 @@
             </div>
 
             <!-- Right side - Room types -->
-            <div>
-                <h2 class="text-lg font-bold mb-4">Tipe Kamar</h2>
+            <div class="sticky top-24">
+    <h2 class="text-lg font-bold mb-4">Tipe Kamar</h2>
+    <div class="room-types-scroll">
 
                 <!-- Room Type A -->
                 @foreach ($homestay->rooms as $room)
