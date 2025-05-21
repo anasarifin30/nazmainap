@@ -16,24 +16,30 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Semua Foto</h2>
-        <div class="photo-grid">
-            <img src="https://images.unsplash.com/photo-1615571022219-eb45cf7faa9d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                 alt="Foto 1" class="photo-item">
-            <img src="https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" 
-                 alt="Foto 2" class="photo-item">
-            <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                 alt="Foto 3" class="photo-item">
-            <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                 alt="Foto 4" class="photo-item">
-            <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-                 alt="Foto 5" class="photo-item">
-        </div>
         <div class="mt-6">
             <a href="{{ url()->previous() }}" class="back-button">
                 Kembali
             </a>
         </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Semua Foto {{ $homestay->name }}</h2>
+        @forelse($categories as $category)
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">{{ $category->name }}</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    @forelse($category->homestayPhotos as $photo)
+                        <a href="{{ asset('storage/images-homestay/' . $photo->photo_path) }}" data-lightbox="homestay-gallery-{{ $category->id }}" data-title="{{ $category->name }}">
+                            <img src="{{ asset('storage/images-homestay/' . $photo->photo_path) }}" alt="{{ $category->name }}" class="rounded-lg shadow-md w-full h-40 object-cover">
+                        </a>
+                    @empty
+                        <div class="col-span-4 text-gray-400 italic">Tidak ada foto pada kategori ini.</div>
+                    @endforelse
+                </div>
+            </div>
+        @empty
+            <div class="text-gray-500">Belum ada foto untuk homestay ini.</div>
+        @endforelse
+
+        
     </main>
 
     <!-- Footer -->

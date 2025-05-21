@@ -9,7 +9,12 @@ class RoomPhoto extends Model
 {
     public function room()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(PhotoCategory::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(PhotoCategory::class);
     }
     
     /** @use HasFactory<\Database\Factories\RoomPhotoFactory> */

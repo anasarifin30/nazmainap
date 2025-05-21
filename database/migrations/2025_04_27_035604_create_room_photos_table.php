@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('room_photos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')
-                  ->constrained('rooms')
-                  ->onDelete('cascade');
+            $table->unsignedBigInteger('room_id');
+            $table->unsignedBigInteger('category_id');
             $table->string('photo_path');
             $table->boolean('is_cover')->default(false);
             $table->timestamps();
-        });
+
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('photo_categories')->onDelete('restrict');
+        }); 
     }
 
     /**

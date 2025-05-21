@@ -17,26 +17,40 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Main image and gallery -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <!-- Main Image -->
+            <!-- Main Image (cover) -->
             <div class="md:col-span-2 h-80 bg-gray-300 rounded-lg overflow-hidden">
-                <img src="{{ asset('storage/images-room/default-room.jpg') }}" alt="Hacienda Watukarung" class="w-full h-full object-cover">
+                        @if ($homestay->photos->isNotEmpty())
+                            <img src="{{ asset('storage/images-homestay/' . $homestay->photos->first()->photo_path) }}" alt="{{ $homestay->name }}" class="gallery-main-image rounded-lg">
+                        @else
+                            <img src="{{ asset('storage/images-homestay/default-homestay.jpg') }}" alt="Default homestay" class="gallery-main-image rounded-lg">
+                        @endif
             </div>
 
-            <!-- Side Images -->
             <div class="grid grid-rows-2 gap-4">
-                <!-- Image 1 -->
-                <div class="bg-gray-300 rounded-lg overflow-hidden h-40">
-                    <img src="{{ asset('storage/images-room/default-room.jpg') }}" alt="Hammock" class="w-full h-full object-cover">
-                </div>
+    @php
+        $sidePhotos = $homestay->photos->where('is_cover', false)->take(2)->values();
+    @endphp
 
-                <!-- Image 2 with Overlay -->
-                <div class="bg-gray-300 rounded-lg overflow-hidden h-40 relative">
-                    <img src="{{ asset('storage/images-room/default-room.jpg') }}" alt="Default Room" class="w-full h-48 object-cover">
-                    <div class="absolute bottom-0 right-0 bg-orange-500 text-white px-3 py-1 m-2 rounded text-sm">
-                        <a href="{{ route('homestays.photos', $homestay->id) }}" class="hover:underline">Lihat semua foto</a>
-                    </div>
+    @for ($i = 0; $i < 2; $i++)
+        @php
+            $photo = $sidePhotos->get($i);
+        @endphp
+
+        <div class="bg-gray-300 rounded-lg overflow-hidden h-40 relative">
+            <img src="{{ asset('storage/images-homestay/' . ($photo->photo_path ?? 'default-homestay.jpg')) }}"
+                 alt="{{ $photo->homestay->name ?? 'Default homestay' }}"
+                 class="w-full h-48 object-cover rounded-lg">
+
+            {{-- Tambahkan tombol "Lihat semua foto" hanya di gambar ke-2 --}}
+            @if ($i === 1)
+                <div class="absolute bottom-0 right-0 bg-orange-500 text-white px-3 py-1 m-2 rounded text-sm">
+                    <a href="{{ route('homestays.photos', $homestay->id) }}" class="hover:underline">Lihat semua foto</a>
                 </div>
-            </div>
+            @endif
+        </div>
+    @endfor
+</div>
+
         </div>
 
         <!-- Main details and room types -->
