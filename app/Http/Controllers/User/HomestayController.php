@@ -29,15 +29,24 @@ class HomestayController extends Controller
     // Show the details of a specific homestay
     public function show($id)
     {
-        $homestay = Homestay::with(['rooms.photos', 'rules'])->findOrFail($id);
+        $homestay = Homestay::with(['coverPhoto', 'photos', 'rooms.photos', 'rules'])->findOrFail($id);
         return view('users.detailhomestay', compact('homestay'));
     }
 
     public function photos($id)
     {
-        $homestay = Homestay::with('rooms.photos')->findOrFail($id);
+        $homestay = \App\Models\Homestay::with([
+            'photos.category' // relasi ke kategori pada foto homestay
+        ])->findOrFail($id);
 
-        return view('users.allphotohomestay', compact('homestay'));
+        // Ambil semua kategori yang memiliki foto pada homestay ini
+        $categories = \App\Models\PhotoCategory::whereHas('homestayPhotos', function($q) use ($id) {
+            $q->where('homestay_id', $id);
+        })->with(['homestayPhotos' => function($q) use ($id) {
+            $q->where('homestay_id', $id);
+        }])->get();
+
+        return view('users.allphotohomestay', compact('homestay', 'categories'));
     }
     
 }

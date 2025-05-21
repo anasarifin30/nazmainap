@@ -21,6 +21,16 @@ class Homestay extends Model
     {
         return $this->hasMany(Rule::class);
     }
+
+    public function photos()
+    {
+        return $this->hasMany(HomestayPhoto::class);
+    }
+
+    public function coverPhoto()
+    {
+        return $this->hasOne(HomestayPhoto::class)->where('is_cover', true);
+    }
     
     /** @use HasFactory<\Database\Factories\HomestayFactory> */
     use HasFactory;

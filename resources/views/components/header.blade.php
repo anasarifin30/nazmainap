@@ -68,8 +68,20 @@
                 <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                     <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300" id="user-menu-button" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                         <span class="sr-only">Open user menu</span>
-                        <img class="w-8 h-8 rounded-full" src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '/docs/images/people/profile-picture-3.jpg' }}" alt="user photo">
-                    </button>
+                        @if (Auth::user()->profile_picture)
+                                        <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" 
+                                            alt="Profile Picture" 
+                                            class="w-8 h-8 rounded-full mr-4">
+                                    @else
+                                        <div class="w-8 h-8 rounded-full dark:bg-white bg-black flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 dark:text-black text-white" viewBox="0 0 24 24">
+                                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                                    <path d="M16 9a4 4 0 1 1-8 0a4 4 0 0 1 8 0m-2 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/>
+                                                    <path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11s11-4.925 11-11S18.075 1 12 1M3 12c0 2.09.713 4.014 1.908 5.542A8.99 8.99 0 0 1 12.065 14a8.98 8.98 0 0 1 7.092 3.458A9 9 0 1 0 3 12m9 9a8.96 8.96 0 0 1-5.672-2.012A6.99 6.99 0 0 1 12.065 16a6.99 6.99 0 0 1 5.689 2.92A8.96 8.96 0 0 1 12 21"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    @endif                    </button>
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm" id="user-dropdown">
                         <div class="px-4 py-3">
                             <span class="block text-sm text-gray-900">{{ Auth::user()->name }}</span>

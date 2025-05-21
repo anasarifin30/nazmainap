@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\RoomPhoto;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RoomPhotoSeeder extends Seeder
 {
@@ -13,20 +12,46 @@ class RoomPhotoSeeder extends Seeder
      */
     public function run(): void
     {
-        $roomPhotos = [];
-        for ($i = 1; $i <= 20; $i++) {
-            $roomPhotos[] = [
-                'room_id' => $i,
-                'photo_url' => "https://example.com/photos/room{$i}_cover.jpg",
-                'is_cover' => true,
-            ];
-            $roomPhotos[] = [
-                'room_id' => $i,
-                'photo_url' => "https://example.com/photos/room{$i}_extra.jpg",
-                'is_cover' => false,
-            ];
-        }
+        RoomPhoto::create([
+            'room_id' => 1,
+            'category_id' => 1,
+            'photo_path' => 'room1.jpg',
+            'is_cover' => true,
+        ]);
 
-        RoomPhoto::insert($roomPhotos);
+        RoomPhoto::create([
+            'room_id' => 1,
+            'category_id' => 2,
+            'photo_path' => 'room1.jpg',
+            'is_cover' => false,
+        ]);
+
+        RoomPhoto::create([
+            'room_id' => 2,
+            'category_id' => 3,
+            'photo_path' => 'room1.jpg',
+            'is_cover' => false,
+        ]);
+
+        RoomPhoto::create([
+            'room_id' => 2,
+            'category_id' => 4,
+            'photo_path' => 'room1.jpg',
+            'is_cover' => false,
+        ]);
+
+        RoomPhoto::create([
+            'room_id' => 3,
+            'category_id' => 5,
+            'photo_path' => 'room2.jpg',
+            'is_cover' => false,
+        ]);
+
+        RoomPhoto::create([
+            'room_id' => 3,
+            'category_id' => 6,
+            'photo_path' => 'room2.jpg',
+            'is_cover' => false,
+        ]);
     }
 }
