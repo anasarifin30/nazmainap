@@ -1,15 +1,24 @@
+/* 
+ * Nazmainap - Landing Page Styles
+ * =============================
+ */
+
 /* Base Styles */
 :root {
   --indigo-900: #312e81;
   --indigo-800: #3730a3;
   --orange-500: #f97316;
   --orange-600: #ea580c;
+  --gray-500: #6b7280;
+  --gray-700: #4b5563;
+  --gray-900: #1f2937;
 }
 
 body {
-  font-family: 'poppins', sans-serif;
-  color: #1f2937;
+  font-family: 'Poppins', sans-serif;
+  color: var(--gray-900);
   line-height: 1.5;
+  margin: 0;
 }
 
 .container {
@@ -21,9 +30,20 @@ body {
   padding-right: 1rem;
 }
 
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktop-only {
+    display: inline;
+  }
+}
+
 /* Typography */
 h1, h2, h3 {
   font-weight: 600;
+  margin-top: 0;
 }
 
 h1 {
@@ -33,14 +53,25 @@ h1 {
 h2 {
   font-size: 1.125rem;
   margin-bottom: 1.5rem;
+  text-align: center;
+  color: #2a3990;
 }
 
 h3 {
   font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: #2a3990;
 }
 
 p {
   margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -54,93 +85,8 @@ p {
   }
 }
 
-/* Navigation */
-nav {
-  background-color: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
 
-nav .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
 
-nav a.logo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--indigo-900);
-}
-
-nav .nav-links {
-  display: none;
-}
-
-nav .nav-links a {
-  margin-left: 2rem;
-  color: #4b5563;
-  transition: color 0.3s ease;
-}
-
-nav .nav-links a:first-child {
-  color: var(--orange-500);
-  font-weight: 500;
-}
-
-nav .nav-links a:hover {
-  color: var(--orange-500);
-}
-
-nav .login-button {
-  display: none;
-}
-
-.login-button {
-  background-color: var(--indigo-900);
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.375rem;
-  text-decoration: none;
-}
-
-.mobile-menu-button {
-  color: #6b7280;
-  cursor: pointer;
-}
-
-.mobile-menu-button:hover {
-  color: var(--indigo-900);
-}
-
-.mobile-menu {
-  display: none;
-  background-color: white;
-  padding-bottom: 1rem;
-}
-
-.mobile-menu a {
-  display: block;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  color: #4b5563;
-}
-
-.mobile-menu a:first-child {
-  color: var(--orange-500);
-  font-weight: 500;
-}
-
-.mobile-menu a:hover {
-  color: var(--orange-500);
-}
-
-.mobile-menu .login-button {
-  display: block;
-  text-align: center;
-  margin-top: 0.5rem;
-}
 
 /* Hero Section */
 .hero-section {
@@ -160,114 +106,90 @@ nav .login-button {
   display: flex;
   justify-content: center;
   margin: 30px auto;
-  background: #2a3990; /* Warna biru untuk latar belakang */
-  padding: 10px 20px; /* Kurangi padding untuk memperpendek */
-  border-radius: 25px; /* Membuat sudut membulat */
-  max-width: 600px; /* Batasi lebar maksimal */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan */
+  background: #2a3990;
+  padding: 10px 20px;
+  border-radius: 25px;
+  max-width: 900px;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
 }
 
-.search-bar .search-container {
+.search-container {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 550px; /* Perpanjang lebar maksimal */
+  max-width: 850px;
   border-radius: 25px;
   background: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
-/* Icon di dalam search */
-.search-bar .search-container i {
+.search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-container i {
   margin-left: 15px;
+  margin-right: 0;
   color: #666;
 }
 
-/* Input di dalam search */
-.search-bar .search-container input {
-  flex: 1;
+.search-container input {
+  flex: 1 1 0%;
   border: none;
   padding: 12px 15px;
   outline: none;
-  font-size: 0.875rem;
+  min-width: 0;
 }
 
-/* Tombol Cari */
-.search-bar .search-container button {
+.search-container button {
   background: #ff8000;
   color: white;
   border: none;
   padding: 12px 25px;
   cursor: pointer;
   font-weight: 500;
-  border-radius: 0 25px 25px 0; /* Membuat sudut kanan membulat */
+  border-radius: 0 25px 25px 0;
   transition: background 0.3s ease;
+  margin-left: 0;
 }
 
-.search-bar .search-container button:hover {
-  background: #fb923c; /* Warna hover untuk tombol */
+.search-container button:hover {
+  background: #fb923c;
 }
 
-/* Recommendations */
-.recommendations {
-  margin-bottom: 1.5rem;
-}
- /* Catalog heading */
- h2 {
-  text-align: center;
-  color: #2a3990;
-  margin: 30px 0;
-  font-size: 24px;
-}
-
-/* Katalog */
+/* Catalog */
 .catalog {
   margin-top: 20px;
-}
-
-/* Grid Card */
-.catalog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsif dengan ukuran minimal 280px */
-  gap: 20px; /* Jarak antar card */
-  margin-bottom: 30px; /* Jarak bawah grid */
+  margin-bottom: 2rem;
 }
 
 /* Card */
 .card {
   background: white;
-  border-radius: 10px; /* Membuat sudut membulat */
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efek hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Efek hover untuk mengangkat card */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Tambahkan bayangan saat hover */
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .card img {
   width: 100%;
-  height: 180px; /* Tinggi gambar */
-  object-fit: cover; /* Pastikan gambar tidak terdistorsi */
+  height: 180px;
+  object-fit: cover;
 }
 
 .card-body {
   padding: 15px;
-}
-
-.card-body h3 {
-  font-size: 18px;
-  margin-bottom: 5px;
-  color: #2a3990; /* Warna teks judul */
-}
-
-.card-body p {
-  color: #666;
-  margin-bottom: 10px;
-  font-size: 14px;
 }
 
 .tags {
@@ -286,12 +208,14 @@ nav .login-button {
   font-weight: bold;
   color: #333;
   font-size: 16px;
+  margin-bottom: 0;
 }
 
 .stock {
   color: #666;
   font-size: 12px;
   margin-top: 5px;
+  margin-bottom: 0;
 }
 
 .btn-detail {
@@ -306,35 +230,7 @@ nav .login-button {
 }
 
 .btn-detail:hover {
-  background: #fb923c; /* Warna hover untuk tombol */
-}
-
-/* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.pagination a {
-  margin: 0 1rem;
-  color: #4b5563;
-  transition: color 0.3s ease;
-}
-
-.pagination a:hover {
-  color: var(--indigo-900);
-}
-
-.pagination .view-all {
-  color: var(--orange-500);
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.pagination .view-all:hover {
-  color: var(--orange-600);
+  background: #fb923c;
 }
 
 /* About Section */
@@ -356,7 +252,7 @@ nav .login-button {
 }
 
 .about-content p {
-  color: #4b5563;
+  color: var(--gray-700);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -369,6 +265,7 @@ nav .login-button {
   border-radius: 9999px;
   font-size: 0.875rem;
   transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .about-button:hover {
@@ -382,7 +279,7 @@ nav .login-button {
   width: 100%;
 }
 
-/* Why Choose Us */
+/* Features Section */
 .features-section {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -419,6 +316,10 @@ nav .login-button {
 .feature-icon i {
   color: var(--indigo-900);
   font-size: 1.25rem;
+}
+
+.feature-item p {
+  margin-bottom: 0;
 }
 
 /* How It Works */
@@ -461,10 +362,11 @@ nav .login-button {
   align-items: center;
   justify-content: center;
   margin-bottom: 0.75rem;
+  font-size: 1.125rem;
 }
 
-.step-number span {
-  font-size: 1.125rem;
+.step-item p {
+  margin-bottom: 0;
 }
 
 /* Destinations */
@@ -514,13 +416,12 @@ nav .login-button {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.destination-name {
+.destination-overlay h3 {
   color: white;
-  font-size: 1.25rem;
-  font-weight: 600;
+  margin: 0;
 }
 
-/* Contact Form */
+/* Contact Section */
 .contact-section {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -537,7 +438,7 @@ nav .login-button {
 }
 
 .contact-info p {
-  color: #4b5563;
+  color: var(--gray-700);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -558,6 +459,14 @@ nav .login-button {
   margin-bottom: 0;
 }
 
+.contact-details {
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 0.75rem;
+}
+
 .contact-form label {
   display: block;
   font-size: 0.875rem;
@@ -571,20 +480,19 @@ nav .login-button {
   border: 1px solid #d1d5db;
   border-radius: 10px;
   font-size: 0.875rem;
-  margin-bottom: 0.75rem;
+  box-sizing: border-box;
 }
 
 .contact-form textarea {
-  border-radius: 10px;
   resize: vertical;
-  rows: 3;
+  min-height: 80px;
 }
 
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  ring: 2px;
-  ring-color: #6366f1;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 .contact-form button {
@@ -603,47 +511,11 @@ nav .login-button {
   background-color: var(--orange-600);
 }
 
-/* Pre-Footer */
-.pre-footer {
-  background: linear-gradient(to right, var(--indigo-900), var(--indigo-800));
-  color: white;
-  padding: 1.5rem 0;
-}
-
-.pre-footer-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-}
-
-.pre-footer h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.pre-footer-button {
-  background-color: var(--orange-500);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.pre-footer-button:hover {
-  background-color: var(--orange-600);
-}
-
 /* Footer */
 .footer {
   background-color: var(--indigo-900);
   color: white;
   padding: 1.5rem 0;
-  border-top: 1px solid var(--indigo-800);
 }
 
 .footer-container {
@@ -668,6 +540,7 @@ nav .login-button {
   font-size: 0.75rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: white;
 }
 
 .footer-social {
@@ -684,28 +557,28 @@ nav .login-button {
   color: var(--orange-500);
 }
 
+/* Swiper Carousel */
+.swiper {
+  width: 100%;
+  padding-bottom: 40px;
+}
+
+.swiper-pagination {
+  bottom: 0 !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--orange-500);
+}
+
 /* Media Queries */
 @media (min-width: 640px) {
-  .recommendations-grid,
   .destinations-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .features-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .steps-grid {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 768px) {
-  /* Typography */
-  .text-base {
-    font-size: 1rem;
-  }
-  
   /* Layout */
   .hero-section,
   .about-section,
@@ -720,7 +593,6 @@ nav .login-button {
   /* Navigation */
   nav .nav-links {
     display: flex;
-    gap: 2rem;
   }
   
   nav .login-button {
@@ -731,28 +603,10 @@ nav .login-button {
     display: none;
   }
   
-  /* Hero Section */
-  .search-bar {
-    padding: 0.75rem;
-    margin-bottom: 3rem;
-  }
-  
-  .search-bar input,
-  .search-bar button {
-    font-size: 1rem;
-  }
-  
-  .search-bar input {
-    padding: 0.5rem 1rem;
-  }
-  
-  .search-bar button {
-    padding: 0.5rem 1.5rem;
-  }
-  
   /* About Section */
   .about-container {
     flex-direction: row;
+    gap: 2rem;
   }
   
   .about-content {
@@ -770,24 +624,14 @@ nav .login-button {
     grid-template-columns: repeat(4, 1fr);
   }
   
+  /* Steps */
+  .steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
   /* Contact */
   .contact-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  
-  /* Cards */
-  .recommendation-card img {
-    height: 12rem;
-  }
-  
-  .recommendation-card .card-content {
-    padding: 1rem;
-  }
-  
-  /* Pre-Footer */
-  .pre-footer-container {
-    flex-direction: row;
-    text-align: left;
   }
   
   /* Footer */
@@ -810,69 +654,11 @@ nav .login-button {
 }
 
 @media (min-width: 1024px) {
-  .recommendations-grid {
+  .destinations-grid {
     grid-template-columns: repeat(3, 1fr);
   }
   
   .destination-item {
     height: 16rem;
   }
-  
-  .destination-name {
-    font-size: 1.5rem;
-  }
-}
-/* Card Desa */
-.recommendation-card .card-content p {
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Batasi hingga 3 baris */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.5; /* Sesuaikan jarak antar baris */
-  max-height: calc(1.5em * 3); /* Tinggi maksimum untuk 3 baris */
-}
-
-/* Grid Card Desa */
-.desa-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 kolom ke samping */
-    gap: 20px; /* Jarak antar card */
-    margin-bottom: 30px; /* Jarak bawah grid */
-}
-
-/* Card Desa */
-.desa-card {
-    background: white;
-    border-radius: 10px; /* Membuat sudut membulat */
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efek hover */
-}
-
-.desa-card:hover {
-    transform: translateY(-5px); /* Efek hover untuk mengangkat card */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Tambahkan bayangan saat hover */
-}
-
-.desa-card img {
-    width: 100%;
-    height: 180px; /* Tinggi gambar */
-    object-fit: cover; /* Pastikan gambar tidak terdistorsi */
-}
-
-.desa-card-body {
-    padding: 15px;
-}
-
-.desa-card-body h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-    color: #2a3990; /* Warna teks judul */
-}
-
-.desa-card-body p {
-    color: #666;
-    margin-bottom: 10px;
-    font-size: 14px;
 }
