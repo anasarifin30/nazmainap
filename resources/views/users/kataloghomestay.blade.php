@@ -51,7 +51,6 @@
         </div>
 
         <!-- Pagination -->
-        <!-- Pagination -->
 @if ($homestays->hasPages())
     <div class="flex justify-center mt-6">
         <nav class="inline-flex items-center space-x-1">

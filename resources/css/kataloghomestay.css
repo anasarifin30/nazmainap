@@ -9,58 +9,65 @@
         padding: 20px;
     }
 
-    /* Search Bar */
-    .search-bar {
-        display: flex;
-        justify-content: center;
-        margin: 30px auto;
-        background: #2a3990; /* Warna biru untuk latar belakang */
-        padding: 10px 20px; /* Kurangi padding untuk memperpendek */
-        border-radius: 25px; /* Membuat sudut membulat */
-        max-width: 600px; /* Batasi lebar maksimal */
-    }
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto;
+    background: #2a3990;
+    padding: 10px 20px;
+    border-radius: 25px;
+    max-width: 900px; /* Lebar maksimal, agar tidak terlalu panjang */
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+}
 
-    /* Search Container */
-    .search-container {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        max-width: 550px; /* Perpanjang lebar maksimal */
-        border-radius: 25px;
-        background: white;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 850px;
+    border-radius: 25px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
-    /* Icon di dalam search */
-    .search-container i {
-        margin-left: 15px;
-        color: #666;
-    }
+.search-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
 
-    /* Input di dalam search */
-    .search-container input {
-        flex: 1;
-        border: none;
-        padding: 12px 15px;
-        outline: none;
-    }
+.search-container i {
+    margin-left: 15px;
+    margin-right: 0; /* Pastikan tidak ada margin kanan */
+    color: #666;
+}
 
-    /* Tombol Cari */
-    .search-container button {
-        background: #ff8000;
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        cursor: pointer;
-        font-weight: 500;
-        border-radius: 0 25px 25px 0; /* Membuat sudut kanan membulat */
-        transition: background 0.3s ease;
-    }
+.search-container input {
+    flex: 1 1 0%;
+    border: none;
+    padding: 12px 15px;
+    outline: none;
+    min-width: 0;
+}
 
-    .search-container button:hover {
-        background: #fb923c; /* Warna hover untuk tombol */
-    }
+.search-container button {
+    background: #ff8000;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    cursor: pointer;
+    font-weight: 500;
+    border-radius: 0 25px 25px 0;
+    transition: background 0.3s ease;
+    margin-left: 0; /* Pastikan tidak ada margin kiri */
+}
+
+.search-container button:hover {
+    background: #fb923c;
+}
 
     /* Recommendations */
 .recommendations {
