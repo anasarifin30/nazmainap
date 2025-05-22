@@ -13,7 +13,7 @@
         <!-- Left Side -->
         <div class="left-side">
             <div class="illustration">
-                <img src="{{ asset('images/ilustrasi-register.png') }}" alt="Ilustrasi Registrasi">
+                <img src="{{ asset('images/masuk-pemilik-rumah.png') }}" alt="Ilustrasi Registrasi">
             </div>
         </div>
 
