@@ -14,6 +14,7 @@
 
     <!-- Header -->
     <x-header></x-header>
+    
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -21,99 +22,70 @@
             <h1 class="hero-title font-bold">Nikmati kemudahan mencari, memesan, dan mengelola<br class="desktop-only">penginapan desa di Pacitan.</h1>
 
             <!-- Search Bar -->
-<div class="search-bar">
-        <div class="search-container">
-            <form action="{{ route('users.kataloghomestay') }}" method="GET" class="search-form">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" name="search" class="search-input" placeholder="Lokasi penginapan" value="{{ request('search') }}">
-                <button type="submit" class="search-button">Cari</button>
-            </form>
+            <div class="search-bar">
+                <div class="search-container">
+                    <form action="{{ route('users.kataloghomestay') }}" method="GET" class="search-form">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" name="search" class="search-input" placeholder="Lokasi penginapan" value="{{ request('search') }}">
+                        <button type="submit" class="search-button">Cari</button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
-<!-- Main Content -->
-<div class="container">
-    <!-- Recommendations -->
-    <h2>Katalog Penginapan di Pacitan</h2>
-        
-    <!-- Catalog -->
-    <section class="catalog">
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                @foreach ($homestaysslide as $homestay)
-                    <div class="swiper-slide">
-                        <div class="card">
-                            <img src="{{ $homestay->image ? asset('storage/' . $homestay->image) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $homestay->name }}" />
-                            <div class="card-body">
-                                <h3>{{ $homestay->name }}</h3>
-                                <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
-                                <div class="tags">{{ $homestay->kodebumdes }}</div>
-                                <div class="price-detail">
-                                    <div>
-                                        @if ($homestay->rooms->isNotEmpty())
-                                            <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
-                                            <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
-                                        @else
-                                            <p class="price">Harga tidak tersedia</p>
-                                            <p class="stock">Kamar tidak tersedia</p>
-                                        @endif
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Catalog -->
+        <h2>Katalog Penginapan di Pacitan</h2>
+        <section class="catalog">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    @foreach ($homestaysslide as $homestay)
+                        <div class="swiper-slide">
+                            <div class="card">
+                                <img src="{{ $homestay->image ? asset('storage/' . $homestay->image) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $homestay->name }}" />
+                                <div class="card-body">
+                                    <h3>{{ $homestay->name }}</h3>
+                                    <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
+                                    <div class="tags">{{ $homestay->kodebumdes }}</div>
+                                    <div class="price-detail">
+                                        <div>
+                                            @if ($homestay->rooms->isNotEmpty())
+                                                <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
+                                                <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+                                            @else
+                                                <p class="price">Harga tidak tersedia</p>
+                                                <p class="stock">Kamar tidak tersedia</p>
+                                            @endif
+                                        </div>
+                                        <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
                                     </div>
-                                    <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
+                <div class="swiper-pagination"></div>
             </div>
-            <div class="swiper-pagination"></div>
-        </div>
-        
-    </section>
+        </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            new Swiper(".mySwiper", {
-                loop: true,
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true,
-                },
-                slidesPerView: 1,
-                spaceBetween: 10,
-                breakpoints: {
-                    640: {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 30,
-                    },
-                },
-            });
-        });
-    </script>
-
-
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <div class="container">
+        <!-- About Section -->
+        <section id="about" class="about-section">
             <div class="about-container">
                 <div class="about-content">
                     <h2>Selamat datang di Nazmainap</h2>
                     <p>Nazmainap adalah platform pemesanan homestay milik warga desa wisata Pacitan. Temukan pengalaman menginap yang unik dan nyaman di sini.</p>
-                    <a href="#contact" class="about-button">Hubungi Kami</a>
+                    <a href="#contact" class="about-button">Pesan</a>
                 </div>
                 <div class="about-image">
                     <img src="{{ asset('images/pacitan-desa.jpg') }}" alt="Pacitan">
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Why Choose Us -->
-    <section class="features-section">
-        <div class="container">
+        <!-- Why Choose Us -->
+        <section class="features-section">
             <h2>Kenapa Pilih Nazmainap?</h2>
             <p class="subtitle">Nikmati Kemudahan mencari, memesan, dan mengelola penginapan desa di Pacitan</p>
             <div class="features-grid">
@@ -122,24 +94,20 @@
                 <div class="feature-item"><i class="fas fa-shield-alt feature-icon"></i><p>Aman & transparan</p></div>
                 <div class="feature-item"><i class="fas fa-credit-card feature-icon"></i><p>Pembayaran Online</p></div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- How It Works -->
-    <section class="how-it-works">
-        <div class="container">
+        <!-- How It Works -->
+        <section class="how-it-works">
             <h2>Cara Kerja</h2>
             <div class="steps-grid">
                 <div class="step-item"><span class="step-number">1</span><p>Cari Penginapan</p></div>
                 <div class="step-item"><span class="step-number">2</span><p>Pesan Penginapan</p></div>
                 <div class="step-item"><span class="step-number">3</span><p>Transaksi & Pembayaran</p></div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Destinations -->
-    <section class="destinations-section">
-        <div class="container">
+        <!-- Destinations -->
+        <section class="destinations-section">
             <h2>Desa</h2>
             <div class="destinations-grid">
                 <div class="destination-item">
@@ -155,12 +123,10 @@
                     <div class="destination-overlay"><h3>Wonogiri</h3></div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
             <div class="contact-grid">
                 <div class="contact-info">
                     <h2>Kontak Kami</h2>
@@ -180,14 +146,13 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </section>
-
-
+        </section>
+    </div>
 
     <!-- Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
 
@@ -197,6 +162,7 @@
                 });
             }
 
+            // Smooth scrolling
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -209,9 +175,36 @@
                     }
                 });
             });
+            
+            // Initialize Swiper
+            new Swiper(".mySwiper", {
+                loop: true,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+                slidesPerView: 1,
+                spaceBetween: 10,
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                    },
+                    1024: {
+                        slidesPerView: 4, // 4 card per baris di desktop
+                        spaceBetween: 30,
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                    },
+                },
+            });
         });
     </script>
-</body>
-<x-footer></x-footer>
+    
+    <!-- Footer -->
+    <x-footer></x-footer>
 
+</body>
 </html>

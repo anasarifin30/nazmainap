@@ -7,13 +7,14 @@
     @vite(['resources/css/registerguest.css'])
 </head>
 <body>
+    <x-header></x-header>
     <x-notif></x-notif>
 
     <div class="container">
         <!-- Left Side -->
         <div class="left-side">
             <div class="illustration">
-                <img src="{{ asset('images/ilustrasi-register.png') }}" alt="Ilustrasi Registrasi">
+                <img src="{{ asset('images/daftar-pengunjung.png') }}" alt="Ilustrasi Registrasi">
             </div>
         </div>
 
