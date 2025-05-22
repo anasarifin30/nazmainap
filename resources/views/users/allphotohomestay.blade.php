@@ -17,7 +17,7 @@
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
         <div class="mt-6">
-            <a href="{{ url()->previous() }}" class="back-button">
+            <a href="{{ route('homestays.show', $homestay->id) }}" class="back-button">
                 Kembali
             </a>
         </div>

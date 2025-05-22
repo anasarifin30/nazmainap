@@ -40,8 +40,8 @@
                     <div class="tags">{{ $homestay->tags }}</div>
                     <div class="price-detail">
                         <div>
-                            <p class="price">Rp{{ number_format($homestay->price, 0, ',', '.') }}</p>
-                            <p class="stock">Sisa {{ $homestay->stock }} Kamar</p>
+                            <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
+                            <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
                         </div>
                         <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
                     </div>
