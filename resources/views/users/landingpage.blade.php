@@ -128,27 +128,7 @@
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="contact-section">
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <h2>Kontak Kami</h2>
-                    <p>Hubungi kami untuk informasi lebih lanjut tentang penginapan.</p>
-                    <div class="contact-details">
-                        <div class="contact-detail"><i class="fas fa-map-marker-alt"></i><p>Pacitan, Jawa Timur</p></div>
-                        <div class="contact-detail"><i class="fas fa-envelope"></i><p>info@nazmainap.co.id</p></div>
-                        <div class="contact-detail"><i class="fas fa-phone"></i><p>+62 812 3456 7890</p></div>
-                    </div>
-                </div>
-                <div class="contact-form">
-                    <form>
-                        <div class="form-group"><label>Nama Lengkap</label><input type="text" placeholder="Nama Lengkap"></div>
-                        <div class="form-group"><label>Email</label><input type="email" placeholder="Email Anda"></div>
-                        <div class="form-group"><label>Pesan</label><textarea rows="3" placeholder="Pesan"></textarea></div>
-                        <button type="submit">Kirim Pesan</button>
-                    </form>
-                </div>
-            </div>
-        </section>
+        
     </div>
 
     <!-- Script -->
