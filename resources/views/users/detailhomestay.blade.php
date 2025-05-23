@@ -41,11 +41,13 @@
                  alt="{{ $photo->homestay->name ?? 'Default homestay' }}"
                  class="w-full h-48 object-cover rounded-lg">
 
-            {{-- Tambahkan tombol "Lihat semua foto" hanya di gambar ke-2 --}}
+            {{-- Tombol "Lihat semua foto" hanya di gambar ke-2 --}}
             @if ($i === 1)
-                <div class="absolute bottom-0 right-0 bg-orange-500 text-white px-3 py-1 m-2 rounded text-sm">
-                    <a href="{{ route('homestays.photos', $homestay->id) }}" class="hover:underline">Lihat semua foto</a>
-                </div>
+                <a href="{{ route('homestays.photos', $homestay->id) }}"
+                   class="absolute bottom-3 right-3 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm shadow transition text-center"
+                   style="box-shadow: 0 2px 8px rgba(255,128,0,0.12);">
+                    Lihat semua foto
+                </a>
             @endif
         </div>
     @endfor
@@ -97,30 +99,28 @@
             <div class="sticky top-24">
     <h2 class="text-lg font-bold mb-4">Tipe Kamar</h2>
     <div class="room-types-scroll">
+        @foreach ($homestay->rooms as $room)
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+            <!-- Foto Utama -->
+            @if ($room->photos->isNotEmpty())
+                <img src="{{ asset('storage/images-room/' . $room->photos->first()->photo_path) }}" alt="{{ $room->name }}" class="w-full h-48 object-cover">
+            @else
+                <img src="{{ asset('storage/images-room/default-room.jpg') }}" alt="Default Room" class="w-full h-48 object-cover">
+            @endif
 
-                <!-- Room Type A -->
-                @foreach ($homestay->rooms as $room)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-                    <!-- Foto Utama -->
-                    @if ($room->photos->isNotEmpty())
-                        <img src="{{ asset('storage/images-room/' . $room->photos->first()->photo_path) }}" alt="{{ $room->name }}" class="w-full h-48 object-cover">
-                    @else
-                        <img src="{{ asset('storage/images-room/default-room.jpg') }}" alt="Default Room" class="w-full h-48 object-cover">
-                    @endif
-
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg mb-2">{{ $room->name }}</h3>
-                        <p class="text-sm text-gray-600 mb-2">{{ $room->description }}</p>
-                        <p class="text-sm text-gray-500 mb-4">Max Pengunjung: {{ $room->max_guests }}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-gray-800">Rp {{ number_format($room->price, 0, ',', '.') }}</span>
-                            <a href="{{ route('rooms.show', $room->id) }}" class="bg-orange-500 text-white px-4 py-2 rounded-md text-sm hover:bg-orange-600">Detail Rooms</a>
-                        </div>
-                    </div>
+            <div class="p-4">
+                <h3 class="font-bold text-lg mb-2">{{ $room->name }}</h3>
+                <p class="text-sm text-gray-600 mb-2">{{ $room->description }}</p>
+                <p class="text-sm text-gray-500 mb-4">Max Pengunjung: {{ $room->max_guests }}</p>
+                <div class="flex justify-between items-center">
+                    <span class="font-bold text-gray-800">Rp {{ number_format($room->price, 0, ',', '.') }}</span>
+                    <a href="{{ route('rooms.show', $room->id) }}" class="btn-detail-room">Detail Kamar</a>
                 </div>
-                @endforeach
-
             </div>
+        </div>
+        @endforeach
+    </div>
+</div>
         </div>
     </div>
 

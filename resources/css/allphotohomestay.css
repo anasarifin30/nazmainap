@@ -19,18 +19,16 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Back Button */
+
+/* Back Button Styles */
 .back-button {
-    display: inline-block;
-    background: #2a3990;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background 0.3s ease;
+  background-color: #ED7E21;
+  transition: background-color 0.2s;
 }
 
 .back-button:hover {
-    background: #1e3a8a;
+  background-color: #e67018;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+
