@@ -37,12 +37,17 @@
         <h2>Katalog Penginapan di Pacitan</h2>
         <section class="catalog">
             <div class="swiper mySwiper">
-                <div class="swiper-wrapper mt-3 mb-3">
+                <div class="swiper-wrapper">
                     @foreach ($homestaysslide as $homestay)
                         <div class="swiper-slide">
                             <div class="card">
-                                <img src="{{ $homestay->image ? asset('storage/' . $homestay->image) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $homestay->name }}" />
-                                <div class="card-body">
+                                    <img
+                                        src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
+                                            ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
+                                            : asset('storage/images-room/default-room.jpg') }}"
+                                        alt="{{ $homestay->name }}"
+                                    />                                
+                                    <div class="card-body">
                                     <h3>{{ $homestay->name }}</h3>
                                     <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
                                     <div class="tags">{{ $homestay->kodebumdes }}</div>
@@ -73,7 +78,7 @@
                 <div class="about-content">
                     <h2>Selamat datang di Nazmainap</h2>
                     <p>Nazmainap adalah platform pemesanan homestay milik warga desa wisata Pacitan. Temukan pengalaman menginap yang unik dan nyaman di sini.</p>
-                    <a href="#contact" class="about-button">Pesan</a>
+                    <a href="{{ route('users.kataloghomestay') }}" class="about-button">Pesan</a>
                 </div>
                 <div class="about-image">
                     <img src="{{ asset('images/pacitan-desa.jpg') }}" alt="Pacitan">

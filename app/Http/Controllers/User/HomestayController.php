@@ -13,14 +13,20 @@ class HomestayController extends Controller
     // Display a listing of the homestays
     public function index(Request $request)
     {
-        $query = Homestay::query();
+        $query = Homestay::with(['coverPhoto', 'rooms']);
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('address', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('kabupaten', 'like', '%' . $search . '%')
+                  ->orWhere('kecamatan', 'like', '%' . $search . '%')
+                  ->orWhere('kelurahan', 'like', '%' . $search . '%');
+            });
         }
 
-        $homestays = $query->paginate(12);
+        // Ambil semua, lalu groupBy kabupaten
+        $homestays = $query->where('status', 'terverifikasi')->get()->groupBy('kabupaten');
 
         return view('users.kataloghomestay', compact('homestays'));
     }
