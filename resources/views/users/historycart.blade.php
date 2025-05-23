@@ -23,15 +23,19 @@
                 <!-- Sidebar -->
                 <div class="sidebar">
                     <div class="sidebar-menu">
-                        <a href="#" class="menu-item">
+                        <a href="{{ route('users.profile') }}" class="menu-item">
                             <i class="fas fa-user"></i> Profil
                         </a>
-                        <a href="/historycart" class="menu-item active">
+                        <a href="{{ route('users.historycart') }}" class="menu-item active">
                             <i class="fas fa-history"></i> Riwayat
                         </a>
-                        <a href="#" class="menu-item">
+                        <a href="{{ route('logout') }}" class="menu-item"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fas fa-sign-out-alt"></i> Keluar
                         </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                            @csrf
+                        </form>
                     </div>
                 </div>
                 
@@ -49,155 +53,52 @@
                     
                     <!-- History Cards -->
                     <div class="history-cards">
-                        <!-- Card 1 -->
-                        <div class="history-card">
-                            <div class="card-image">
-                                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Villa Sunset">
-                                <div class="card-badge badge-success">Selesai</div>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Villa Sunset Indah</h3>
-                                <div class="card-location">
-                                    <i class="fas fa-map-marker-alt"></i> Bantul, Yogyakarta
+                        @forelse($riwayats as $riwayat)
+                            <div class="history-card">
+                                <div class="card-image">
+                                    <img src="{{ $riwayat->homestay->thumbnail_url ?? asset('images/default-homestay.jpg') }}" alt="{{ $riwayat->homestay->name }}">
+                                    <div class="card-badge badge-{{ strtolower($riwayat->status) }}">
+                                        @php
+                                            $statusText = [
+                                                'pending' => 'Menunggu',
+                                                'confirmed' => 'Aktif',
+                                                'completed' => 'Selesai',
+                                                'cancelled' => 'Dibatalkan'
+                                            ][$riwayat->status] ?? ucfirst($riwayat->status);
+                                        @endphp
+                                        {{ $statusText }}
+                                    </div>
                                 </div>
-                                <div class="card-dates">
-                                    <div>Check-in: <b>12 Apr 2025</b></div>
-                                    <div>Check-out: <b>15 Apr 2025</b></div>
+                                <div class="card-content">
+                                    <h3 class="card-title">{{ $riwayat->homestay->name ?? '-' }}</h3>
+                                    <div class="card-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {{ $riwayat->homestay->kabupaten ?? '-' }}, {{ $riwayat->homestay->provinsi ?? '-' }}
+                                    </div>
+                                    <div class="card-dates">
+                                        <div>Check-in: <b>{{ \Carbon\Carbon::parse($riwayat->check_in)->format('d M Y') }}</b></div>
+                                        <div>Check-out: <b>{{ \Carbon\Carbon::parse($riwayat->check_out)->format('d M Y') }}</b></div>
+                                    </div>
+                                    <div class="card-price">Rp {{ number_format($riwayat->total_price, 0, ',', '.') }}</div>
                                 </div>
-                                <div class="card-price">Rp 1.200.000</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-status status-completed">
-                                    <i class="fas fa-check-circle"></i> Selesai
+                                <div class="card-footer">
+                                    <div class="card-status status-{{ strtolower($riwayat->status) }}">
+                                        @if($riwayat->status == 'completed')
+                                            <i class="fas fa-check-circle"></i> Selesai
+                                        @elseif($riwayat->status == 'confirmed')
+                                            <i class="fas fa-clock"></i> Aktif
+                                        @elseif($riwayat->status == 'cancelled')
+                                            <i class="fas fa-times-circle"></i> Dibatalkan
+                                        @elseif($riwayat->status == 'pending')
+                                            <i class="fas fa-hourglass-half"></i> Menunggu
+                                        @endif
+                                    </div>
+                                    <a href="{{ route('riwayat.detail', $riwayat->id) }}" class="btn btn-detail">Detail</a>
                                 </div>
-                                <a href="#" class="btn btn-detail">Detail</a>
                             </div>
-                        </div>
-                        
-                        <!-- Card 2 -->
-                        <div class="history-card">
-                            <div class="card-image">
-                                <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Homestay Cozy">
-                                <div class="card-badge badge-warning">Aktif</div>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Homestay Cozy Garden</h3>
-                                <div class="card-location">
-                                    <i class="fas fa-map-marker-alt"></i> Sleman, Yogyakarta
-                                </div>
-                                <div class="card-dates">
-                                    <div>Check-in: <b>20 Mei 2025</b></div>
-                                    <div>Check-out: <b>22 Mei 2025</b></div>
-                                </div>
-                                <div class="card-price">Rp 850.000</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-status status-active">
-                                    <i class="fas fa-clock"></i> Aktif
-                                </div>
-                                <a href="#" class="btn btn-detail">Detail</a>
-                            </div>
-                        </div>
-                        
-                        <!-- Card 3 -->
-                        <div class="history-card">
-                            <div class="card-image">
-                                <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Guesthouse Modern">
-                                <div class="card-badge badge-danger">Dibatalkan</div>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Guesthouse Modern Minimalis</h3>
-                                <div class="card-location">
-                                    <i class="fas fa-map-marker-alt"></i> Kota Yogyakarta
-                                </div>
-                                <div class="card-dates">
-                                    <div>Check-in: <b>5 Mar 2025</b></div>
-                                    <div>Check-out: <b>7 Mar 2025</b></div>
-                                </div>
-                                <div class="card-price">Rp 750.000</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-status status-cancelled">
-                                    <i class="fas fa-times-circle"></i> Dibatalkan
-                                </div>
-                                <a href="#" class="btn btn-detail">Detail</a>
-                            </div>
-                        </div>
-                        
-                        <!-- Card 4 -->
-                        <div class="history-card">
-                            <div class="card-image">
-                                <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cottage Mountain">
-                                <div class="card-badge badge-success">Selesai</div>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Cottage Mountain View</h3>
-                                <div class="card-location">
-                                    <i class="fas fa-map-marker-alt"></i> Kaliurang, Yogyakarta
-                                </div>
-                                <div class="card-dates">
-                                    <div>Check-in: <b>15 Feb 2025</b></div>
-                                    <div>Check-out: <b>17 Feb 2025</b></div>
-                                </div>
-                                <div class="card-price">Rp 1.500.000</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-status status-completed">
-                                    <i class="fas fa-check-circle"></i> Selesai
-                                </div>
-                                <a href="#" class="btn btn-detail">Detail</a>
-                            </div>
-                        </div>
-                        
-                        <!-- Card 5 -->
-                        <div class="history-card">
-                            <div class="card-image">
-                                <img src="https://images.unsplash.com/photo-1564078516393-cf04bd966897?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Kamar Resort">
-                                <div class="card-badge badge-success">Selesai</div>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Kamar Resort Premium</h3>
-                                <div class="card-location">
-                                    <i class="fas fa-map-marker-alt"></i> Parangtritis, Bantul
-                                </div>
-                                <div class="card-dates">
-                                    <div>Check-in: <b>5 Jan 2025</b></div>
-                                    <div>Check-out: <b>8 Jan 2025</b></div>
-                                </div>
-                                <div class="card-price">Rp 2.100.000</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-status status-completed">
-                                    <i class="fas fa-check-circle"></i> Selesai
-                                </div>
-                                <a href="#" class="btn btn-detail">Detail</a>
-                            </div>
-                        </div>
-                        
-                        <!-- Card 6 -->
-                        <div class="history-card">
-                            <div class="card-image">
-                                <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Villa Family">
-                                <div class="card-badge badge-warning">Aktif</div>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Villa Family Paradise</h3>
-                                <div class="card-location">
-                                    <i class="fas fa-map-marker-alt"></i> Prambanan, Sleman
-                                </div>
-                                <div class="card-dates">
-                                    <div>Check-in: <b>1 Jun 2025</b></div>
-                                    <div>Check-out: <b>5 Jun 2025</b></div>
-                                </div>
-                                <div class="card-price">Rp 3.500.000</div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-status status-active">
-                                    <i class="fas fa-clock"></i> Aktif
-                                </div>
-                                <a href="#" class="btn btn-detail">Detail</a>
-                            </div>
-                        </div>
+                        @empty
+                            <div class="text-center text-gray-500 py-8">Belum ada riwayat pemesanan.</div>
+                        @endforelse
                     </div>
                     
                     <!-- Pagination -->

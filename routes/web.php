@@ -1,15 +1,19 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\HomestayController;
 
+use App\Http\Controllers\Admin\HomestayController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\User\RoomController as RoomController;
 use App\Http\Controllers\User\UserController as UsersController;
-use App\Http\Controllers\User\HomestayController as UserHomestayController;
 
+use App\Http\Controllers\User\HomestayController as UserHomestayController;
 use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
+
+use App\Http\Controllers\User\WilayahController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +21,12 @@ use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpage');
+Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile')->middleware('auth');
+Route::post('/profile/update', [UsersController::class, 'updateProfile'])->name('users.profile.update')->middleware('auth');
+
+Route::get('/historycart', [UsersController::class, 'historycart'])->name('users.historycart')->middleware('auth');
+Route::get('/historycart/{booking}', [\App\Http\Controllers\User\UserController::class, 'historyDetail'])->name('riwayat.detail')->middleware('auth');
+
 
 Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
 Route::get('/homestay/{homestay}', [UserHomestayController::class, 'show'])->name('homestays.show');
@@ -39,7 +49,8 @@ Route::get('/login/guest', [AuthenticatedSessionController::class, 'showGuestLog
 Route::view('/admin/register', 'auth.registeradmin')->name('register.admin');
 Route::view('/subadmin/register', 'auth.registersubadmin')->name('register.subadmin');
 Route::view('/owner/register', 'auth.registerowner')->name('register.owner');
-Route::view('/guest/register', 'auth.registerguest')->name('register.guest');
+Route::get('/register/guest', [RegisteredUserController::class, 'showGuestRegister'])->name('register.guest');
+Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])->name('register.guest.store');
 
 /*
 |--------------------------------------------------------------------------

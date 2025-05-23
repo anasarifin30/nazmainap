@@ -47,4 +47,31 @@ class RegisteredUserController extends Controller
 
         return redirect(route('dashboard', absolute: false));
     }
+
+    public function showGuestRegister()
+    {
+        return view('auth.registerguest');
+    }
+
+    public function storeGuest(Request $request)
+    {
+        $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'whatsapp' => ['required', 'string', 'max:20'],
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $request->nama,
+            'email' => $request->email,
+            'nomorhp' => $request->whatsapp,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'role' => 'guest',
+        ]);
+
+        \Illuminate\Support\Facades\Auth::login($user);
+
+        return redirect()->route('users.landingpage')->with('success', 'Registrasi berhasil!');
+    }
 }

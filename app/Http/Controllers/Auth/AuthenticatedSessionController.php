@@ -60,7 +60,7 @@ class AuthenticatedSessionController extends Controller
             'subadmin' => '/login/subadmin',
             'owner' => '/login/owner',
             'guest' => '/login/guest',
-            default => '/login',
+            default => '/login/guest',
         };
 
         // Logout pengguna

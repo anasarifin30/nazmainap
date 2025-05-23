@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('provinsi')->nullable();
             $table->string('kabupaten')->nullable();   
             $table->string('kecamatan')->nullable();
+            $table->string('kelurahan')->nullable();
             $table->enum('gender', ['L', 'P']);
             $table->string('foto')->nullable();
             $table->enum('role', ['admin', 'subadmin', 'owner', 'guest']);

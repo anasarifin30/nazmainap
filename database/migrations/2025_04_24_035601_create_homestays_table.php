@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('provinsi')->nullable();
             $table->string('kabupaten')->nullable();   
             $table->string('kecamatan')->nullable();
+            $table->string('kelurahan')->nullable();
             $table->enum('status', ['menunggu', 'terverifikasi', 'ditolak'])->default('menunggu');
             $table->timestamps();
         });

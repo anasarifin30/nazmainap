@@ -6,7 +6,6 @@
     <title>Nazmainap - Penginapan Desa di Pacitan</title>
     @vite(['resources/css/landingpage.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </head>
@@ -38,7 +37,7 @@
         <h2>Katalog Penginapan di Pacitan</h2>
         <section class="catalog">
             <div class="swiper mySwiper">
-                <div class="swiper-wrapper">
+                <div class="swiper-wrapper mt-3 mb-3">
                     @foreach ($homestaysslide as $homestay)
                         <div class="swiper-slide">
                             <div class="card">
