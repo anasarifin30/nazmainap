@@ -17,11 +17,14 @@
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
         <div class="mt-6">
-            <a href="{{ route('homestays.show', $homestay->id) }}" class="back-button">
-                Kembali
+            <a href="{{ route('homestays.show', $homestay->id) }}" class="back-button inline-flex items-center px-4 py-2 rounded-md text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali 
             </a>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Semua Foto {{ $homestay->name }}</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mt-8 mb-6">Semua Foto {{ $homestay->name }}</h2>
         @forelse($categories as $category)
             <div class="mb-6">
                 <h3 class="text-xl font-semibold mb-3">{{ $category->name }}</h3>

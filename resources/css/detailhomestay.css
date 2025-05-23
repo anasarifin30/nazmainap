@@ -168,3 +168,19 @@ img {
 .md\:col-span-2 > .bg-white {
     margin-bottom: 2.5rem; /* 40px, bisa disesuaikan */
 }
+
+.btn-detail-room {
+    background: #ff8000;
+    color: #fff;
+    padding: 0.35rem 0.9rem;
+    border-radius: 0.375rem;
+    font-weight: 400;         /* ubah dari 500 ke 400 agar tidak bold */
+    font-size: 0.90rem;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(255,128,0,0.08);
+    display: inline-block;
+    text-align: center;
+}
+.btn-detail-room:hover {
+    background: #ff9900;
+}

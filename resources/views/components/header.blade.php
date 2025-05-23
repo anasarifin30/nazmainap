@@ -23,6 +23,7 @@
             display: flex;
             align-items: center;
             position: relative;
+            justify-content: space-between;
         }
         .logo {
             flex: 0 0 auto;
@@ -32,11 +33,18 @@
             text-decoration: none;
             color: #2a3990;
         }
-        .logo-icon {
-            width: 24px; height: 24px; fill: #2a3990;
+        .logo-img {
+            height: 32px;
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
         }
         .logo-text {
-            font-size: 24px; font-weight: 600; color: #2a3990;
+            font-size: 24px;
+            font-weight: 600;
+            color: #2a3990;
+            vertical-align: middle;
         }
         .spacer {
             flex: 1 1 0;
@@ -79,30 +87,32 @@
             margin-left: 24px;
             flex: 0 0 auto;
         }
-        .login-btn {
-            background: linear-gradient(90deg, #ff8000 0%, #ffb347 100%);
+        .login-btn, .sidebar-login-btn {
+    background: #292f7b;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 18px;
+    font-weight: 400;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    min-width: 80px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+        .login-btn:hover, .sidebar-login-btn:hover,
+        .login-btn:focus, .sidebar-login-btn:focus {
+            background: #1d225a;
             color: #fff;
-            border: none;
-            border-radius: 25px;
-            padding: 8px 28px 8px 18px;
-            font-weight: 600;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(255,128,0,0.08);
-            transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-            cursor: pointer;
-            outline: none;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-        .login-btn:hover, .login-btn:focus {
-            background: linear-gradient(90deg, #ff9900 0%, #ff8000 100%);
-            box-shadow: 0 4px 16px rgba(255,128,0,0.18);
-            transform: translateY(-2px) scale(1.03);
-            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 4px 16px rgba(41,47,123,0.12);
         }
         .user-menu { position: relative; display: flex; align-items: center; }
         .user-name { font-weight: 500; color: #2a3990; font-size: 15px; margin-right: 8px; }
@@ -134,8 +144,13 @@
             font-size: 14px; font-family: inherit;
         }
         .mobile-menu-btn {
-            display: none; background: none; border: none; cursor: pointer;
-            padding: 8px; border-radius: 4px;
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            margin-left: 16px;
         }
         .mobile-menu-btn:hover { background: #f3f4f6; }
         .hamburger { width: 24px; height: 24px; stroke: #6b7280; }
@@ -199,6 +214,88 @@
             }
             .spacer { display: none; }
         }
+        /* Sidebar styles: RIGHT SIDEBAR */
+        .sidebar {
+            display: none;
+            position: fixed;
+            top: 0; right: 0; /* Ubah dari left:0 ke right:0 */
+            width: 260px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: -2px 0 16px rgba(44,48,114,0.08); /* Ubah arah shadow */
+            z-index: 9999;
+            flex-direction: column;
+            padding: 32px 24px 24px 24px;
+            transition: transform 0.3s;
+            transform: translateX(100%); /* Ubah dari -100% ke 100% */
+        }
+        .sidebar.show {
+            display: flex;
+            transform: translateX(0);
+        }
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 48px 0 24px 0; /* Tambahkan margin-top agar menu di bawah tanda silang */
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .sidebar-nav a {
+            color: #374151;
+            font-weight: 500;
+            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 8px 0;
+            border-radius: 6px;
+            transition: background 0.18s, color 0.18s;
+        }
+        .sidebar-nav a.active,
+        .sidebar-nav a:hover {
+            color: #ff8000;
+            background: #fff7ed;
+        }
+        .sidebar-auth {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .sidebar-login-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 12px;
+            font-size: 1rem;
+        }
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #2a3990;
+            position: absolute;
+            top: 12px;
+            left: 18px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.18);
+            z-index: 9998;
+        }
+        .sidebar.show ~ .sidebar-overlay {
+            display: block;
+        }
+        @media (max-width: 900px) {
+            .nav-container { display: none !important; }
+            .mobile-menu-btn { display: block; }
+        }
+        @media (min-width: 901px) {
+            .sidebar, .sidebar-overlay { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -206,14 +303,12 @@
         <nav class="navbar">
             <!-- Logo -->
             <a href="/" class="logo">
-                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-                <span class="logo-text">Mandhapa</span>
+                <img src="{{ asset('storage/logo/mandhapa.png') }}" alt="Mandhapa Logo" class="logo-img" style="height:32px;width:auto;display:inline-block;vertical-align:middle;">
+                <span class="logo-text" style="vertical-align:middle;"></span>
             </a>
             <div class="spacer"></div>
-            <!-- Mobile menu button -->
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+            <!-- Mobile menu button SEBELAH KANAN -->
+            <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
                 <svg class="hamburger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -225,7 +320,6 @@
                     <li><a href="/kataloghomestay">Penginapan</a></li>
                     <li><a href="/pemesanan">Pemesanan</a></li>
                 </ul>
-                <!-- Login button or User menu -->
                 <div class="auth-section">
                     @if (!Auth::check())
                         <a href="/login" class="login-btn">Masuk</a>
@@ -239,7 +333,9 @@
                                     <div class="dropdown-email">{{ Auth::user()->email }}</div>
                                 </div>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#" class="dropdown-item">Profil</a></li>
+                                    <li>
+                                        <a href="{{ route('users.profile') }}" class="dropdown-item">Profil</a>
+                                    </li>
                                     <li>
                                         <form class="logout-form" method="POST" action="{{ route('logout') }}">
                                             @csrf
@@ -252,13 +348,35 @@
                     @endif
                 </div>
             </div>
+            <!-- Sidebar for mobile (kanan) -->
+            <div class="sidebar" id="sidebarMenu">
+                <button class="close-sidebar" onclick="toggleSidebar()">&times;</button>
+                <ul class="sidebar-nav">
+                    <li><a href="/" class="active">Beranda</a></li>
+                    <li><a href="/kataloghomestay">Penginapan</a></li>
+                    <li><a href="/pemesanan">Pemesanan</a></li>
+                </ul>
+                <div class="sidebar-auth">
+                    @if (!Auth::check())
+                        <a href="/login" class="login-btn sidebar-login-btn">Masuk</a>
+                    @else
+                        <div class="user-menu">
+                            <span class="user-name">{{ Auth::user()->name }}</span>
+                            <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '/api/placeholder/36/36' }}" alt="User Avatar" class="user-avatar" onclick="toggleDropdown()">
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
         </nav>
     </header>
     <script>
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-            const navMenu = document.getElementById('navMenu');
-            navMenu.classList.toggle('show');
+        // Toggle sidebar kanan
+        function toggleSidebar() {
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            sidebarMenu.classList.toggle('show');
+            sidebarOverlay.classList.toggle('show');
         }
         // Toggle user dropdown
         function toggleDropdown() {
@@ -273,19 +391,24 @@
                 dropdown.classList.remove('show');
             }
         });
-        // Close mobile menu when clicking outside
+        // Close sidebar when clicking outside
         document.addEventListener('click', function(event) {
-            const navbar = document.querySelector('.navbar');
-            const navMenu = document.getElementById('navMenu');
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
             const mobileBtn = document.querySelector('.mobile-menu-btn');
-            if (!navbar.contains(event.target) && !mobileBtn.contains(event.target)) {
-                navMenu.classList.remove('show');
+            if (
+                sidebarMenu.classList.contains('show') &&
+                !sidebarMenu.contains(event.target) &&
+                !mobileBtn.contains(event.target)
+            ) {
+                sidebarMenu.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
             }
         });
         // Set active navigation based on current page
         function setActiveNav() {
             const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.nav a');
+            const navLinks = document.querySelectorAll('.nav a, .sidebar-nav a');
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === currentPath) {
