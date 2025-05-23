@@ -14,8 +14,6 @@
 
     <!-- Header -->
     <x-header></x-header>
-    
-
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
