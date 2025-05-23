@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Str; @endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,6 +7,8 @@
     <title>NAZMAINAP - Katalog Penginapan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/kataloghomestay.css']) 
+    <!-- SwiperJS CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 </head>
 <body>
 
@@ -24,93 +27,164 @@
     </div>
 
     <!-- Main Content -->
-<div class="container">
-    <!-- Recommendations -->
-    <h2>Katalog Penginapan di Pacitan</h2>
-
-    <!-- Catalog -->
-    <section class="catalog">
-        <div class="catalog-grid">
-            @foreach($homestays as $homestay)
-            <div class="card">
-                <img src="{{ $homestay->image ? asset('storage/homestay_images/' . $homestay->image) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $homestay->name }}" />
-                <div class="card-body">
-                    <h3>{{ $homestay->name }}</h3>
-                    <p>{{ $homestay->location }}</p>
-                    <div class="tags">{{ $homestay->tags }}</div>
-                    <div class="price-detail">
-                        <div>
-                            <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
-                            <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+    <div class="container">
+        <h2>Temukan Penginapan Terbaik</h2>
+        <p class="subjudul-desc">Jelajahi berbagai pilihan homestay dan penginapan nyaman sesuai kebutuhan Anda.</p>
+    
+    @if(request('search'))
+            {{-- Mode search tetap pakai grid --}}
+            @php $results = $homestays->flatten(1); @endphp
+            @if($results->count() > 0)
+                <div class="catalog-grid">
+                    @foreach($results as $homestay)
+                        <div class="card">
+                            <img src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
+                                ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
+                                : asset('storage/images-room/default-room.jpg') }}"
+                                alt="{{ $homestay->name }}" />
+                            <div class="card-body">
+                                <h3>{{ $homestay->name }}</h3>
+                                <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
+                                <div class="tags">{{ $homestay->kodebumdes }}</div>
+                                <div class="price-detail">
+                                    <div>
+                                        @if ($homestay->rooms->isNotEmpty())
+                                            <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
+                                            <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+                                        @else
+                                            <p class="price">Harga tidak tersedia</p>
+                                            <p class="stock">Kamar tidak tersedia</p>
+                                        @endif
+                                    </div>
+                                    <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
+                                </div>
+                            </div>
                         </div>
-                        <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
+                    @endforeach
+                </div>
+                <div style="text-align:center; margin:40px 0 0 0;">
+                    <a href="{{ route('users.kataloghomestay') }}" class="btn-kembali">
+                        &larr; Kembali ke Semua Wilayah
+                    </a>
+                </div>
+            @else
+                <div style="text-align:center; color:#888; margin:40px 0 20px 0; font-size:1.1rem;">
+                    Data homestay tidak ditemukan untuk pencarian "<b>{{ request('search') }}</b>".
+                </div>
+                <div style="text-align:center; margin-bottom:40px;">
+                    <a href="{{ route('users.kataloghomestay') }}" class="btn-kembali">
+                        &larr; Kembali ke Semua Wilayah
+                    </a>
+                </div>
+            @endif
+        @else
+            @foreach($homestays as $kabupaten => $list)
+                <div class="wilayah-section" style="margin-bottom: 32px;">
+                    <div class="wilayah-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <h3 style="margin:0;">{{ $kabupaten ?: 'Lainnya' }}</h3>
+                        <a href="{{ route('users.kataloghomestay', ['search' => $kabupaten]) }}" class="lihat-semua-btn">Lihat Semua</a>
+                    </div>
+                    <div class="swiper wilayah-swiper-{{ Str::slug($kabupaten) }}">
+                        <div class="swiper-wrapper">
+                            @php
+                                $showAll = request('search') == $kabupaten;
+                                $homestayList = $showAll ? $list : $list;
+                            @endphp
+                            @foreach($homestayList as $homestay)
+                                <div class="swiper-slide">
+                                    <div class="card">
+                                        <img src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
+                                            ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
+                                            : asset('storage/images-room/default-room.jpg') }}"
+                                            alt="{{ $homestay->name }}" />
+                                        <div class="card-body">
+                                            <h3>{{ $homestay->name }}</h3>
+                                            <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
+                                            <div class="tags">{{ $homestay->kodebumdes }}</div>
+                                            <div class="price-detail">
+                                                <div>
+                                                    @if ($homestay->rooms->isNotEmpty())
+                                                        <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
+                                                        <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+                                                    @else
+                                                        <p class="price">Harga tidak tersedia</p>
+                                                        <p class="stock">Kamar tidak tersedia</p>
+                                                    @endif
+                                                </div>
+                                                <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="swiper-pagination"></div>
                     </div>
                 </div>
-            </div>
             @endforeach
-        </div>
+        @endif
 
-        <!-- Pagination -->
-@if ($homestays->hasPages())
-    <div class="flex justify-center mt-6">
-        <nav class="inline-flex items-center space-x-1">
-            {{-- Previous Page Link --}}
-            @if ($homestays->onFirstPage())
-                <span class="px-3 py-1 text-sm text-gray-400 bg-gray-200 rounded">«</span>
-            @else
-                <a href="{{ $homestays->previousPageUrl() }}" class="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-100">«</a>
-            @endif
-
-            {{-- Pagination Elements --}}
-            @foreach ($homestays->getUrlRange(1, $homestays->lastPage()) as $page => $url)
-                @if ($page == $homestays->currentPage())
-                    <span class="px-3 py-1 text-sm text-white bg-blue-500 rounded">{{ $page }}</span>
-                @else
-                    <a href="{{ $url }}" class="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-100">{{ $page }}</a>
-                @endif
-            @endforeach
-
-            {{-- Next Page Link --}}
-            @if ($homestays->hasMorePages())
-                <a href="{{ $homestays->nextPageUrl() }}" class="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-100">»</a>
-            @else
-                <span class="px-3 py-1 text-sm text-gray-400 bg-gray-200 rounded">»</span>
-            @endif
-        </nav>
     </div>
-@endif
-
-    </section>
-</div>
 
     <x-footer></x-footer>
 
-    <!-- Script -->
+    <style>
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        @media (max-width: 1024px) {
+            .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .catalog-grid { grid-template-columns: 1fr; }
+        }
+        .lihat-semua-btn {
+            color: #ff8000;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid #ff8000;
+            transition: background 0.2s, color 0.2s;
+        }
+        .lihat-semua-btn:hover {
+            background: #ff8000;
+            color: #fff;
+        }
+    </style>
+
+    <!-- SwiperJS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            if (mobileMenuButton) {
-                mobileMenuButton.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
+            @foreach($homestays as $kabupaten => $list)
+                new Swiper('.wilayah-swiper-{{ \Illuminate\Support\Str::slug($kabupaten) }}', {
+                    loop: false,
+                    pagination: {
+                        el: '.wilayah-swiper-{{ \Illuminate\Support\Str::slug($kabupaten) }} .swiper-pagination',
+                        clickable: true,
+                    },
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                    breakpoints: {
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        1024: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                        },
+                        768: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                    },
                 });
-            }
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                            mobileMenu.classList.add('hidden');
-                        }
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
+            @endforeach
         });
-    </script>
-
+        </script>
 </body>
 </html>
