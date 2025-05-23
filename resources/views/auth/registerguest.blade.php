@@ -7,7 +7,6 @@
     @vite(['resources/css/registerguest.css'])
 </head>
 <body>
-    <x-header></x-header>
     <x-notif></x-notif>
 
     <div class="container">
@@ -30,7 +29,8 @@
                 </div>
                 
                 <!-- Registration Form -->
-                <form id="register-form" action="register.php" method="POST">
+                <form id="register-form" action="{{ route('register.guest.store') }}" method="POST">
+                    @csrf
                     <div class="form-group">
                         <label for="nama">Nama Lengkap</label>
                         <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
@@ -52,13 +52,22 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="confirm-password">Konfirmasi Kata Sandi</label>
-                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Konfirmasi kata sandi" required>
+                        <label for="password_confirmation">Konfirmasi Kata Sandi</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi kata sandi" required>
                     </div>
                     
                     <button type="submit" class="submit-btn">Buat Akun</button>
                 </form>
-                
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif                
                 <!-- Login Link -->
                 <div class="login-link">
                     Apakah sudah punya akun? <a href="{{ route('login.guest') }}">Masuk</a>
