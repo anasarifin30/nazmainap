@@ -71,12 +71,6 @@
                         <p class="text-gray-600">{{ $homestay->address }}, {{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}, {{ $homestay->provinsi }}</p>
                     </div>
 
-                    <!-- Kode BUMDes -->
-                    <div class="mb-4">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-2">Kode BUMDes</h2>
-                        <p class="text-gray-600">{{ $homestay->kodebumdes }}</p>
-                    </div>
-
                     <!-- Status -->
                     <div class="mb-4">
                         <h2 class="text-xl font-semibold text-gray-800 mb-2">Status</h2>
