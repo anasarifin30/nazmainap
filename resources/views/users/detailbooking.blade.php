@@ -16,6 +16,8 @@
         </div>
 
         <div class="confirmation-card">
+            
+
             <!-- Homestay & Gambar -->
             <div class="room-details">
                 <div class="room-image">
@@ -25,7 +27,22 @@
                         alt="{{ $riwayat->homestay->name ?? '-' }}">
                 </div>
                 <div class="room-info">
-                    <h2>{{ $riwayat->homestay->name ?? '-' }}</h2>
+                    <div class="booking-status status-{{ strtolower($riwayat->status) }}">
+                        @if($riwayat->status == 'selesai')
+                            <i class="fas fa-check-circle"></i> Selesai
+                        @elseif($riwayat->status == 'aktif')
+                            <i class="fas fa-clock"></i> Aktif
+                        @elseif($riwayat->status == 'dibatalkan')
+                            <i class="fas fa-times-circle"></i> Dibatalkan
+                        @elseif($riwayat->status == 'menunggu')
+                            <i class="fas fa-hourglass-half"></i> Menunggu
+                        @else
+                            {{ ucfirst($riwayat->status) }}
+                        @endif
+                    </div>
+                    <div class="homestay-title-row">
+                        <h2 class="homestay-title">{{ $riwayat->homestay->name ?? '-' }}</h2>
+                    </div>
                     <p class="hotel-name">{{ $riwayat->homestay->kabupaten ?? '-' }}, {{ $riwayat->homestay->provinsi ?? '-' }}</p>
                     <div class="amenities">
                         @if($riwayat->homestay && $riwayat->homestay->facilities)

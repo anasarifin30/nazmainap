@@ -56,7 +56,7 @@
                         @endphp
                         @foreach($statuses as $key => $label)
                             <a href="{{ route('users.historycart', ['status' => $key != 'semua' ? $key : null]) }}"
-                               class="filter-button{{ (request('status') == $key || (!request('status') && $key == 'semua')) ? ' active' : '' }}">
+                               class="filter-button filter-{{ $key }}{{ (request('status') == $key || (!request('status') && $key == 'semua')) ? ' active' : '' }}">
                                 {{ $label }}
                             </a>
                         @endforeach
@@ -67,21 +67,23 @@
                         @forelse($riwayats as $riwayat)
                             <div class="history-card">
                                 <div class="card-image">
+                                    <div class="card-badge badge-{{ strtolower($riwayat->status) }}">
+                                        @if($riwayat->status == 'selesai')
+                                            <i class="fas fa-check-circle"></i> Selesai
+                                        @elseif($riwayat->status == 'aktif')
+                                            <i class="fas fa-clock"></i> Aktif
+                                        @elseif($riwayat->status == 'dibatalkan')
+                                            <i class="fas fa-times-circle"></i> Dibatalkan
+                                        @elseif($riwayat->status == 'menunggu')
+                                            <i class="fas fa-hourglass-half"></i> Menunggu
+                                        @else
+                                            {{ ucfirst($riwayat->status) }}
+                                        @endif
+                                    </div>
                                     <img src="{{ ($riwayat->homestay && $riwayat->homestay->coverPhoto && $riwayat->homestay->coverPhoto->photo_path)
                                         ? asset('storage/images-homestay/' . $riwayat->homestay->coverPhoto->photo_path)
                                         : asset('storage/images-homestay/default-homestay.jpg') }}"
                                         alt="{{ $riwayat->homestay->name ?? '-' }}">
-                                    <div class="card-badge badge-{{ strtolower($riwayat->status) }}">
-                                        @php
-                                            $statusText = [
-                                                '1' => 'Menunggu',
-                                                '2' => 'Aktif',
-                                                '3' => 'Selesai',
-                                                '4' => 'Dibatalkan'
-                                            ][$riwayat->status] ?? ucfirst($riwayat->status);
-                                        @endphp
-                                        {{ $statusText }}
-                                    </div>
                                 </div>
                                 <div class="card-content">
                                     <h3 class="card-title">{{ $riwayat->homestay->name ?? '-' }}</h3>
@@ -93,27 +95,12 @@
                                         <div>Check-in: <b>{{ \Carbon\Carbon::parse($riwayat->check_in)->format('d M Y') }}</b></div>
                                         <div>Check-out: <b>{{ \Carbon\Carbon::parse($riwayat->check_out)->format('d M Y') }}</b></div>
                                     </div>
-                                    <div class="card-price">Rp {{ number_format($riwayat->total_price, 0, ',', '.') }}</div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="card-status status-{{ strtolower($riwayat->status) }}
-                                        @if($riwayat->status == 'completed') status-success
-                                        @elseif($riwayat->status == 'confirmed') status-active
-                                        @elseif($riwayat->status == 'cancelled') status-cancel
-                                        @elseif($riwayat->status == 'pending') status-wait
-                                        @endif">
-                                        @if($riwayat->status == 'completed')
-                                            <i class="fas fa-check-circle"></i> Selesai
-                                        @elseif($riwayat->status == 'confirmed')
-                                            <i class="fas fa-clock"></i> Aktif
-                                        @elseif($riwayat->status == 'cancelled')
-                                            <i class="fas fa-times-circle"></i> Dibatalkan
-                                        @elseif($riwayat->status == 'pending')
-                                            <i class="fas fa-hourglass-half"></i> Menunggu
-                                        @endif
+                                    <div class="card-action-row">
+                                        <div class="card-price">Rp {{ number_format($riwayat->total_price, 0, ',', '.') }}</div>
+                                        <a href="{{ route('users.detailbooking', $riwayat->id) }}" class="btn btn-detail">Detail</a>
                                     </div>
-                                    <a href="{{ route('users.detailbooking', $riwayat->id) }}" class="btn btn-detail">Detail</a>
                                 </div>
+                                
                             </div>
                         @empty
                             <div class="text-center text-gray-500 py-8">Belum ada riwayat pemesanan.</div>
