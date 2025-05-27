@@ -6,6 +6,7 @@
     <title>{{ $room->name }} - Detail Room</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     @vite(['resources/css/detailrooms.css'])
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <!-- Header -->
 <x-header></x-header>
@@ -55,7 +56,8 @@
 
                 <!-- Detail Sections -->
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <!-- Detail Kamar -->
+                    <!-- 
+                     -->
                     <div class="detail-section mb-6">
                         <h3 class="text-lg font-bold flex items-center mb-4">
                             <span class="border-l-4 border-orange-500 pl-3">Detail Kamar</span>
@@ -63,18 +65,25 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <ul class="space-y-2">
-                                    <li class="flex items-center">
-                                        <span>Check-in: {{ $room->check_in_time }}</span>
+                                    <li class="flex items-center gap-2">
+                                        <i class="bx bx-log-in-circle text-orange-500 text-xl"></i>
+                                        <span>Check-in: 14:00</span>
                                     </li>
-                                </ul>
-                                <ul class="space-y-2">
-                                    <li class="flex items-center">
-                                        <span>Check-out: {{ $room->check_out_time }}</span>
+                                    <li class="flex items-center gap-2">
+                                        <i class="bx bx-log-out-circle text-orange-500 text-xl"></i>
+                                        <span>Check-out: 12:00</span>
                                     </li>
-                                </ul>
-                                <ul class="space-y-2">
-                                    <li class="flex items-center">
+                                    <li class="flex items-center gap-2">
+                                        <i class="bx bx-user text-orange-500 text-xl"></i>
                                         <span>Max: {{ $room->max_guests }} Tamu</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i class="bx bxl-whatsapp text-green-500 text-xl"></i>
+                                        <span>
+                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $room->homestay->user->phone ?? '') }}" target="_blank" class="hover:underline">
+                                                {{ $room->homestay->user->phone ?? '-' }}
+                                            </a>
+                                        </span>
                                     </li>
                                 </ul>
                             </div>
@@ -89,7 +98,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             @foreach ($room->facilities as $facility)
                                 <ul class="space-y-2">
-                                    <li class="flex items-center">
+                                    <li class="flex items-center gap-2">
+                                        <i class="bx bx-check-circle text-orange-500 text-xl"></i>
                                         <span>{{ $facility->name }}</span>
                                     </li>
                                 </ul>
