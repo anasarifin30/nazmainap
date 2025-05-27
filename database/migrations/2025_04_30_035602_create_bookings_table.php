@@ -24,8 +24,8 @@ return new class extends Migration
             $table->decimal('base_price', 10, 2);    // total harga kamar
             $table->decimal('service_price', 10, 2);    // nilai layanan
             $table->decimal('total_price', 10, 2);   // total bayar
-            $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])
-                  ->default('pending');
+            $table->enum('status', ['menunggu', 'aktif', 'dibatalkan', 'selesai'])
+                  ->default('menunggu'); // status booking
             $table->timestamps();
         });
     }

@@ -20,13 +20,13 @@
             <!-- Sidebar -->
             <div class="sidebar">
                 <div class="sidebar-menu">
-                    <a href="{{ route('users.profile') }}" class="menu-item active">
+                    <a href="{{ route('users.profile') }}" class="menu-item{{ request()->routeIs('users.profile') ? ' active' : '' }}">
                         <i class="fas fa-user"></i> Profil
                     </a>
-                    <a href="{{ route('users.historycart') }}" class="menu-item">
+                    <a href="{{ route('users.historycart') }}" class="menu-item{{ request()->routeIs('users.historycart') ? ' active' : '' }}">
                         <i class="fas fa-history"></i> Riwayat
                     </a>
-                    <a href="{{ route('logout') }}" class="menu-item"
+                    <a href="{{ route('logout') }}" class="menu-item logout"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt"></i> Keluar
                     </a>
@@ -146,6 +146,9 @@
             </div>
         </div>
     </div>
+
+    <x-footer></x-footer>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const avatarPreview = document.getElementById('avatarPreview');

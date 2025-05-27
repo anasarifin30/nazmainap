@@ -78,16 +78,32 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 
-    public function historycart()
+    public function historycart(Request $request)
     {
-        $user = \App\Models\User::find(Auth::id());
-        $riwayats = \App\Models\Booking::with('homestay')->where('user_id', auth()->id())->latest()->get();
-        return view('users.historycart', compact('user', 'riwayats'));
+        $user = Auth::user();
+        $status = $request->get('status'); // status: aktif, selesai, dibatalkan, menunggu
+
+        $query = \App\Models\Booking::with(['homestay.coverPhoto'])
+            ->where('user_id', $user->id);
+
+        if ($status && $status != 'semua') {
+            $query->where('status', $status);
+        }
+
+        $riwayats = $query->orderBy('created_at', 'desc')->paginate(6)->withQueryString();
+
+        return view('users.historycart', compact('riwayats', 'status'));
     }
 
     public function historyDetail($bookingId)
     {
-        $riwayat = \App\Models\Booking::with('homestay')->where('id', $bookingId)->where('user_id', auth()->id())->firstOrFail();
-        return view('users.historycart_detail', compact('riwayat'));
+        $riwayat = \App\Models\Booking::with([
+            'homestay',
+            'bookingDetails.room'
+        ])->where('id', $bookingId)
+          ->where('user_id', Auth::id())
+          ->firstOrFail();
+
+        return view('users.detailbooking', compact('riwayat'));
     }
 }

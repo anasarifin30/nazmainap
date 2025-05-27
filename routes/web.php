@@ -20,16 +20,18 @@ use App\Http\Controllers\User\WilayahController;
 | Landing Page & Public Routes
 |--------------------------------------------------------------------------
 */
+Route::view('/syarat-ketentuan', 'users.syaratketentuan')->name('users.syaratketentuan');
+
 Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpage');
 Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile')->middleware('auth');
 Route::post('/profile/update', [UsersController::class, 'updateProfile'])->name('users.profile.update')->middleware('auth');
 
 Route::get('/historycart', [UsersController::class, 'historycart'])->name('users.historycart')->middleware('auth');
-Route::get('/historycart/{booking}', [\App\Http\Controllers\User\UserController::class, 'historyDetail'])->name('riwayat.detail')->middleware('auth');
+Route::get('/historycart/{booking}', [\App\Http\Controllers\User\UserController::class, 'historyDetail'])->name('users.detailbooking')->middleware('auth');
 
 
 Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
-Route::get('/homestay/{homestay}', [UserHomestayController::class, 'show'])->name('homestays.show');
+Route::get('/homestay/{kodebumdes}', [UserHomestayController::class, 'show'])->name('homestays.show');
 
 Route::get('/homestay/{homestay}/photos', [UserHomestayController::class, 'photos'])->name('homestays.photos');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');

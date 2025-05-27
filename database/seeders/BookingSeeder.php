@@ -22,7 +22,7 @@ class BookingSeeder extends Seeder
                 'base_price' => rand(500000, 1000000),
                 'service_price' => rand(50000, 100000),
                 'total_price' => rand(500000, 1000000) + rand(50000, 100000),
-                'status' => 'confirmed',
+                'status' => 'aktif',
             ]);
         }
     }

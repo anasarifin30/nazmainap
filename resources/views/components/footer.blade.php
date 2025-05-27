@@ -1,20 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footer Example</title>
+
     @vite(['resources/css/footer.css'])
-</head>
-<body>
-    <!-- Sample content above footer -->
-    <div class="page-container">
-        <main class="main-content">
-            <!-- Your page content would go here -->
-            <div class="content-placeholder">
-            </div>
-        </main>
-        
+
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
@@ -54,6 +40,3 @@
                 </div>
             </div>
         </footer>
-    </div>
-</body>
-</html>
