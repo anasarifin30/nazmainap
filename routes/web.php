@@ -20,11 +20,15 @@ use App\Http\Controllers\User\WilayahController;
 | Landing Page & Public Routes
 |--------------------------------------------------------------------------
 */
-Route::view('/syarat-ketentuan', 'users.syaratketentuan')->name('users.syaratketentuan');
 
 Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpage');
+
+Route::view('/syarat-ketentuan', 'users.syaratketentuan')->name('users.syaratketentuan');
+
 Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile')->middleware('auth');
 Route::post('/profile/update', [UsersController::class, 'updateProfile'])->name('users.profile.update')->middleware('auth');
+
+
 
 Route::get('/historycart', [UsersController::class, 'historycart'])->name('users.historycart')->middleware('auth');
 Route::get('/historycart/{booking}', [\App\Http\Controllers\User\UserController::class, 'historyDetail'])->name('users.detailbooking')->middleware('auth');
@@ -60,6 +64,9 @@ Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])-
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:guest'])->group(function () {
+    Route::get('/pemesanan', [\App\Http\Controllers\User\UserController::class, 'cart'])->name('users.cart');
+    Route::delete('/pemesanan/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'removeCartItem'])->name('cart.remove');
+    Route::patch('/cart/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'updateCartItem'])->name('cart.update');
 });
 
 

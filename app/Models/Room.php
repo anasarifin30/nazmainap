@@ -37,6 +37,14 @@ class Room extends Model
         return $this->hasMany(RoomPhoto::class, 'room_id');
     }
 
+    public function roomPhotos() {
+        return $this->hasMany(RoomPhoto::class);
+    }
+
+    public function roomFacilities() {
+        return $this->hasMany(RoomFacility::class);
+    }
+
     /** @use HasFactory<\Database\Factories\RoomFactory> */
     use HasFactory;
 }

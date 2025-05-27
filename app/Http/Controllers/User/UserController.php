@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\BookingDetail;
+use App\Models\Booking;
 
 class UserController extends Controller
 {
@@ -66,8 +68,8 @@ class UserController extends Controller
         // Upload foto jika ada
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
-            if ($user->foto && \Storage::disk('public')->exists($user->foto)) {
-            \Storage::disk('public')->delete($user->foto);
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+            Storage::disk('public')->delete($user->foto);
             }
             // Simpan foto baru
             $user->foto = $request->file('foto')->store('images-profil', 'public');
@@ -105,5 +107,56 @@ class UserController extends Controller
           ->firstOrFail();
 
         return view('users.detailbooking', compact('riwayat'));
+    }
+
+    public function cart()
+    {
+        $user = Auth::user();
+
+        // Ambil booking dengan status 'menunggu' (cart aktif)
+        $booking = Booking::with([
+            'homestay.coverPhoto',
+            'bookingDetails.room.roomPhotos',
+            'bookingDetails.room.roomFacilities.facility'
+        ])
+        ->where('user_id', $user->id)
+        ->where('status', 'menunggu')
+        ->latest()
+        ->first();
+
+        return view('users.cart', compact('booking'));
+    }
+
+    public function removeCartItem(BookingDetail $bookingDetail)
+    {
+        // Optional: cek user pemilik
+        $bookingDetail->delete();
+
+        // Jika booking tidak punya detail lagi, hapus booking-nya
+        if ($bookingDetail->booking->bookingDetails()->count() == 0) {
+            $bookingDetail->booking->delete();
+        }
+
+        return redirect()->route('users.cart')->with('success', 'Kamar dihapus dari keranjang.');
+    }
+
+    public function updateCartItem(Request $request, BookingDetail $bookingDetail)
+    {
+        $action = $request->input('action');
+        if ($action === 'increment') {
+            $bookingDetail->quantity += 1;
+        } elseif ($action === 'decrement' && $bookingDetail->quantity > 1) {
+            $bookingDetail->quantity -= 1;
+        }
+        // Update subtotal
+        $bookingDetail->subtotal_price = $bookingDetail->quantity * $bookingDetail->price_per_night;
+        $bookingDetail->save();
+
+        // Update total booking price
+        $booking = $bookingDetail->booking;
+        $booking->total_price = $booking->bookingDetails()->sum('subtotal_price');
+        $booking->save();
+
+        return redirect()->route('users.cart');
     }
 }
