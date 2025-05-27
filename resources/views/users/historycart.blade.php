@@ -45,10 +45,21 @@
                     
                     <!-- Filter Buttons -->
                     <div class="history-filter">
-                        <button class="filter-button active">Semua</button>
-                        <button class="filter-button">Aktif</button>
-                        <button class="filter-button">Selesai</button>
-                        <button class="filter-button">Dibatalkan</button>
+                        @php
+                            $statuses = [
+                                'semua' => 'Semua',
+                                'aktif' => 'Aktif',
+                                'selesai' => 'Selesai',
+                                'dibatalkan' => 'Dibatalkan',
+                                'menunggu' => 'Menunggu'
+                            ];
+                        @endphp
+                        @foreach($statuses as $key => $label)
+                            <a href="{{ route('users.historycart', ['status' => $key != 'semua' ? $key : null]) }}"
+                               class="filter-button{{ (request('status') == $key || (!request('status') && $key == 'semua')) ? ' active' : '' }}">
+                                {{ $label }}
+                            </a>
+                        @endforeach
                     </div>
                     
                     <!-- History Cards -->
@@ -56,14 +67,17 @@
                         @forelse($riwayats as $riwayat)
                             <div class="history-card">
                                 <div class="card-image">
-                                    <img src="{{ $riwayat->homestay->thumbnail_url ?? asset('images/default-homestay.jpg') }}" alt="{{ $riwayat->homestay->name }}">
+                                    <img src="{{ ($riwayat->homestay && $riwayat->homestay->coverPhoto && $riwayat->homestay->coverPhoto->photo_path)
+                                        ? asset('storage/images-homestay/' . $riwayat->homestay->coverPhoto->photo_path)
+                                        : asset('storage/images-homestay/default-homestay.jpg') }}"
+                                        alt="{{ $riwayat->homestay->name ?? '-' }}">
                                     <div class="card-badge badge-{{ strtolower($riwayat->status) }}">
                                         @php
                                             $statusText = [
-                                                'pending' => 'Menunggu',
-                                                'confirmed' => 'Aktif',
-                                                'completed' => 'Selesai',
-                                                'cancelled' => 'Dibatalkan'
+                                                '1' => 'Menunggu',
+                                                '2' => 'Aktif',
+                                                '3' => 'Selesai',
+                                                '4' => 'Dibatalkan'
                                             ][$riwayat->status] ?? ucfirst($riwayat->status);
                                         @endphp
                                         {{ $statusText }}
@@ -82,7 +96,12 @@
                                     <div class="card-price">Rp {{ number_format($riwayat->total_price, 0, ',', '.') }}</div>
                                 </div>
                                 <div class="card-footer">
-                                    <div class="card-status status-{{ strtolower($riwayat->status) }}">
+                                    <div class="card-status status-{{ strtolower($riwayat->status) }}
+                                        @if($riwayat->status == 'completed') status-success
+                                        @elseif($riwayat->status == 'confirmed') status-active
+                                        @elseif($riwayat->status == 'cancelled') status-cancel
+                                        @elseif($riwayat->status == 'pending') status-wait
+                                        @endif">
                                         @if($riwayat->status == 'completed')
                                             <i class="fas fa-check-circle"></i> Selesai
                                         @elseif($riwayat->status == 'confirmed')
@@ -93,7 +112,7 @@
                                             <i class="fas fa-hourglass-half"></i> Menunggu
                                         @endif
                                     </div>
-                                    <a href="{{ route('riwayat.detail', $riwayat->id) }}" class="btn btn-detail">Detail</a>
+                                    <a href="{{ route('users.detailbooking', $riwayat->id) }}" class="btn btn-detail">Detail</a>
                                 </div>
                             </div>
                         @empty
@@ -102,17 +121,32 @@
                     </div>
                     
                     <!-- Pagination -->
-                    <div class="pagination">
-                        <div class="pagination-item">
-                            <i class="fas fa-chevron-left"></i>
+                    @if ($riwayats->lastPage() > 1)
+                        <div class="pagination">
+                            {{-- Previous --}}
+                            @if ($riwayats->onFirstPage())
+                                <span class="pagination-item disabled"><i class="fas fa-chevron-left"></i></span>
+                            @else
+                                <a href="{{ $riwayats->previousPageUrl() }}{{ request('status') ? '&status='.request('status') : '' }}" class="pagination-item"><i class="fas fa-chevron-left"></i></a>
+                            @endif
+
+                            {{-- Page Numbers --}}
+                            @for ($i = 1; $i <= $riwayats->lastPage(); $i++)
+                                @if ($i == $riwayats->currentPage())
+                                    <span class="pagination-item active">{{ $i }}</span>
+                                @else
+                                    <a href="{{ $riwayats->url($i) }}{{ request('status') ? '&status='.request('status') : '' }}" class="pagination-item">{{ $i }}</a>
+                                @endif
+                            @endfor
+
+                            {{-- Next --}}
+                            @if ($riwayats->hasMorePages())
+                                <a href="{{ $riwayats->nextPageUrl() }}{{ request('status') ? '&status='.request('status') : '' }}" class="pagination-item"><i class="fas fa-chevron-right"></i></a>
+                            @else
+                                <span class="pagination-item disabled"><i class="fas fa-chevron-right"></i></span>
+                            @endif
                         </div>
-                        <div class="pagination-item active">1</div>
-                        <div class="pagination-item">2</div>
-                        <div class="pagination-item">3</div>
-                        <div class="pagination-item">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>

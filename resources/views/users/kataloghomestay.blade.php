@@ -56,7 +56,7 @@
                                             <p class="stock">Kamar tidak tersedia</p>
                                         @endif
                                     </div>
-                                    <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
+                                    <a href="{{ route('homestays.show', $homestay->kodebumdes) }}" class="btn-detail">Detail</a>
                                 </div>
                             </div>
                         </div>

@@ -29,7 +29,7 @@ class Homestay extends Model
 
     public function coverPhoto()
     {
-        return $this->hasOne(HomestayPhoto::class)->where('is_cover', true);
+        return $this->hasOne(HomestayPhoto::class)->where('is_cover', 1);
     }
     
     /** @use HasFactory<\Database\Factories\HomestayFactory> */

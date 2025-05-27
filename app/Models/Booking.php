@@ -30,7 +30,7 @@ class Booking extends Model
 
     public function bookingDetails()
     {
-        return $this->hasMany(BookingDetail::class);
+        return $this->hasMany(\App\Models\BookingDetail::class, 'booking_id');
     }
 
     public function transaction()
