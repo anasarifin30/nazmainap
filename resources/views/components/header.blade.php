@@ -137,7 +137,7 @@
             display: block; padding: 8px 16px; color: #374151;
             text-decoration: none; font-size: 14px; transition: background 0.2s;
         }
-        .dropdown-item:hover { background: #f3f4f6; }
+        .dropdown-item:hover, .logout-btn:hover { background: #f3f4f6 !important; }
         .logout-form { display: inline; }
         .logout-btn {
             background: none; border: none; color: #374151; cursor: pointer;
@@ -333,16 +333,43 @@
                                     <div class="dropdown-email">{{ Auth::user()->email }}</div>
                                 </div>
                                 <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="{{ route('users.profile') }}" class="dropdown-item">Profil</a>
-                                    </li>
-                                    <li>
-                                        <form class="logout-form" method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item logout-btn">Sign out</button>
-                                        </form>
-                                    </li>
-                                </ul>
+    <li>
+        <a href="{{ route('users.profile') }}" class="dropdown-item" style="display:flex;align-items:center;gap:8px;transition:background 0.18s;">
+            <span style="display:inline-block;">
+                <svg width="18" height="18" fill="none" stroke="#2a3990" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 8-4 8-4s8 0 8 4"/>
+                </svg>
+            </span>
+            Profil
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('users.historycart') }}" class="dropdown-item" style="display:flex;align-items:center;gap:8px;transition:background 0.18s;">
+            <span style="display:inline-block;">
+                <svg width="18" height="18" fill="none" stroke="#ff8000" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="6" width="18" height="13" rx="2"/>
+                    <path d="M16 3v3M8 3v3"/>
+                </svg>
+            </span>
+            Riwayat
+        </a>
+    </li>
+    <li>
+        <form class="logout-form" method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="dropdown-item logout-btn" style="display:flex;align-items:center;gap:8px;transition:background 0.18s;">
+                <span style="display:inline-block;">
+                    <svg width="18" height="18" fill="none" stroke="#e53e3e" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+                        <path d="M9 20H5a2 2 0 01-2-2V6a2 2 0 012-2h4"/>
+                    </svg>
+                </span>
+                Keluar
+            </button>
+        </form>
+    </li>
+</ul>
                             </div>
                         </div>
                     @endif
@@ -360,10 +387,48 @@
                     @if (!Auth::check())
                         <a href="/login" class="login-btn sidebar-login-btn">Masuk</a>
                     @else
-                        <div class="user-menu">
-                            <span class="user-name">{{ Auth::user()->name }}</span>
-                            <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '/api/placeholder/36/36' }}" alt="User Avatar" class="user-avatar" onclick="toggleDropdown()">
-                        </div>
+                        <div class="user-menu w-full">
+            <div class="user-menu w-full">
+    <div class="dropdown-header" style="padding-left:0;padding-right:0; text-align:center;">
+        <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '/api/placeholder/60/60' }}"
+             alt="User Avatar"
+             style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid #ff8000;">
+        <div class="dropdown-name" style="font-weight:600;font-size:1.1rem;color:#2a3990;">{{ Auth::user()->name }}</div>
+        <div class="dropdown-email" style="color:#6b7280;font-size:0.95rem;margin-bottom:8px;">{{ Auth::user()->email }}</div>
+        <div class="guest-badge" style="display:inline-block;background:#ff8000;color:#fff;padding:2px 14px;border-radius:12px;font-size:0.85rem;font-weight:500;margin-bottom:18px;">
+            Guest
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+            <a href="{{ route('users.profile') }}" class="dropdown-item"
+               style="width:100%;max-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
+                <span style="display:inline-block;">
+                    <svg width="18" height="18" fill="none" stroke="#2a3990" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
+                </span>
+                Profil
+            </a>
+            <a href="{{ route('users.historycart') }}" class="dropdown-item"
+               style="width:100%;max-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
+                <span style="display:inline-block;">
+                    <svg width="18" height="18" fill="none" stroke="#ff8000" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="3" y="6" width="18" height="13" rx="2"/>
+                        <path d="M16 3v3M8 3v3"/>
+                    </svg>
+                </span>
+                Riwayat
+            </a>
+            <form class="logout-form" method="POST" action="{{ route('logout') }}" style="width:100%;max-width:180px;">
+                @csrf
+                <button type="submit" class="dropdown-item logout-btn"
+                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
+                    <span style="display:inline-block;">
+                        <svg width="18" height="18" fill="none" stroke="#e53e3e" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7"/><path d="M9 20H5a2 2 0 01-2-2V6a2 2 0 012-2h4"/></svg>
+                    </span>
+                    Keluar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
                     @endif
                 </div>
             </div>

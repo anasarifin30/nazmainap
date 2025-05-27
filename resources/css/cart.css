@@ -1,0 +1,346 @@
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8fafc;
+}
+
+/* Cart Content */
+.cart-content {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(44,47,117,0.07);
+    padding: 0;
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+
+/* Homestay Info */
+.homestay-info {
+    background: #f6f8fa;
+    border-radius: 0;
+    padding: 28px 32px 16px 32px;
+    box-shadow: none;
+    border: none;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    margin-bottom: 0;
+}
+
+.homestay-image {
+    flex: 0 0 100px;
+    margin-right: 16px;
+}
+.homestay-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #e0e7ff;
+    background: #fff;
+}
+
+.homestay-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.homestay-details h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2C2F75;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+.homestay-location {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.homestay-location::before {
+    content: "📍";
+    margin-right: 4px;
+}
+.homestay-description,
+.homestay-facilities {
+    display: none;
+}
+
+/* Cart Items */
+.cart-items {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    margin-top: 0;
+}
+.cart-items h3 {
+    display: none;
+}
+
+/* Header grid untuk label kolom */
+.cart-items-header {
+    display: grid;
+    grid-template-columns: 100px 2fr 1.1fr 1fr 110px 80px;
+    gap: 14px;
+    padding: 12px 32px 8px 32px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1.5px solid #e2e8f0;
+    background: #f9fafb;
+}
+.cart-items-header > div {
+    text-align: left;
+}
+
+/* Item kamar */
+.cart-item {
+    display: grid;
+    grid-template-columns: 100px 2fr 1.1fr 1fr 110px 80px;
+    align-items: flex-start; /* rata atas */
+    gap: 14px;
+    padding: 22px 32px;
+    border-bottom: 1px solid #e2e8f0;
+    background: none;
+    border-radius: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+    transition: background 0.18s;
+    text-align: left;
+}
+.cart-item:last-of-type {
+    border-bottom: none;
+}
+.cart-item:hover {
+    background: #f6f8fa;
+}
+
+.item-image img {
+    width: 100px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #fff;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-width: 0;
+    gap: 2px;
+    padding-top: 0;
+}
+.item-details h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #22223b;
+    margin-bottom: 2px;
+    line-height: 1.2;
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-features,
+.item-dates,
+.item-duration {
+    display: none;
+}
+
+.item-quantity label {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 4px;
+    display: block;
+}
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin-top: 2px;
+}
+.qty-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: none;
+    background: #f3f4f6;
+    color: #2C2F75;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.qty-btn:hover {
+    background: #e0e7ff;
+}
+.qty-value {
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 22px;
+    text-align: center;
+}
+
+.item-price {
+    font-size: 15px;
+    color: #22223b;
+    font-weight: 400;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+.price-per-night {
+    font-size: 13px;
+    color: #64748b;
+}
+.total-price {
+    font-size: 15px;
+    color: #e65100;
+    font-weight: 700;
+    align-self: flex-start;
+}
+
+.item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    align-self: flex-start;
+}
+.btn-remove {
+    background: none;
+    color: #e65100;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.18s;
+}
+.btn-remove:hover {
+    color: #b91c1c;
+    background: #fbe9e7;
+}
+.btn-remove svg {
+    width: 15px;
+    height: 15px;
+}
+
+.btn-similar {
+    color: #e65100;
+    font-size: 13px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-top: 2px;
+    text-align: left;
+}
+.btn-similar:hover {
+    text-decoration: underline;
+}
+
+/* Hide summary card */
+.summary-card {
+    display: none !important;
+}
+
+/* Empty cart */
+.empty-cart {
+    text-align: center;
+    padding: 60px 0 40px 0;
+    color: #64748b;
+}
+.empty-cart-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+.empty-cart h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #2C2F75;
+}
+.empty-cart p {
+    font-size: 15px;
+    margin-bottom: 18px;
+}
+.btn-primary {
+    background: #2C2F75;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-primary:hover {
+    background: #1a1d4d;
+}
+
+/* Responsive: Stack columns on mobile */
+@media (max-width: 900px) {
+    .cart-content {
+        border-radius: 0;
+        box-shadow: none;
+        margin-bottom: 0;
+    }
+    .homestay-info {
+        padding: 14px 8px 8px 8px;
+        gap: 8px;
+    }
+    .homestay-image img {
+        width: 60px;
+        height: 60px;
+    }
+    .cart-items-header,
+    .cart-item {
+        grid-template-columns: 60px 1.7fr 1fr 1fr 80px 60px;
+        gap: 7px;
+        padding: 10px 8px;
+    }
+    .item-image img {
+        width: 60px;
+        height: 40px;
+    }
+    .item-details h4 {
+        max-width: 100px;
+        font-size: 13px;
+    }
+    .item-price, .total-price {
+        font-size: 13px;
+    }
+    .btn-remove {
+        font-size: 12px;
+    }
+}
