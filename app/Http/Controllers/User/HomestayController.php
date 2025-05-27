@@ -33,9 +33,9 @@ class HomestayController extends Controller
 
 
     // Show the details of a specific homestay
-    public function show($kodebumdes)
+    public function show($id)
     {
-        $homestay = Homestay::with(['coverPhoto', 'photos', 'rooms.photos', 'rules'])->where('kodebumdes', $kodebumdes)->firstOrFail();
+        $homestay = Homestay::with(['coverPhoto', 'photos', 'rooms.photos', 'rules'])->where('id', $id)->firstOrFail();
         return view('users.detailhomestay', compact('homestay'));
     }
     

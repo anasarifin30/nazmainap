@@ -31,7 +31,7 @@ Route::get('/historycart/{booking}', [\App\Http\Controllers\User\UserController:
 
 
 Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
-Route::get('/homestay/{kodebumdes}', [UserHomestayController::class, 'show'])->name('homestays.show');
+Route::get('/homestay/{id}', [UserHomestayController::class, 'show'])->name('homestays.show');
 
 Route::get('/homestay/{homestay}/photos', [UserHomestayController::class, 'photos'])->name('homestays.photos');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
