@@ -10,19 +10,28 @@ body {
     background-color: #f9f9f9;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 }
 
-/* Main container */
-.container {
+/* Login page wrapper */
+.login-page-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+/* Main container - renamed */
+.register-owner-card {
     display: flex;
     width: 90%;
     max-width: 1200px;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 20px; 
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 40px 0 0 0;
 }
 
 /* Left side with illustration */
@@ -164,10 +173,29 @@ input:focus {
     text-decoration: underline;
 }
 
+/* Footer styles */
+.footer-custom, x-footer, footer, .footer {
+    background: #2D3072 !important;
+    color: #fff;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 32px 0 16px 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.footer-custom .container i {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
-    .container {
+    .register-owner-card {
         flex-direction: column;
+        margin: 1rem;
     }
 
     .left-side {

@@ -10,31 +10,31 @@ body {
     background-color: #f9f9f9;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 }
 
-/* Main container */
-.container {
+/* Main container - renamed */
+.login-owner-card {
     display: flex;
     width: 90%;
     max-width: 1200px;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 20px; 
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 40px 0 0 0;
 }
 
 /* Left side with illustration */
 .left-side {
-    background-color: #2D3072; /* Dark blue background */
+    background-color: #2D3072;
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    border-top-right-radius: 50px; /* Rounded top-right corner */
-    border-bottom-right-radius: 50px; /* Rounded bottom-right corner */
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
 }
 
 .illustration {
@@ -54,6 +54,7 @@ body {
     object-fit: contain;
     max-height: 400px;
 }
+
 /* Right side with form */
 .right-side {
     flex: 1;
@@ -66,11 +67,11 @@ body {
 .form-container {
     width: 100%;
     max-width: 400px;
-    margin: 100px auto; /* Pusatkan form secara vertikal */
-    min-height: 500px; /* Tetapkan tinggi minimum */
+    margin: 100px auto;
+    min-height: 500px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pastikan elemen di dalamnya tetap terdistribusi */
+    justify-content: space-between;
 }
 
 /* Header */
@@ -134,7 +135,7 @@ input:focus {
 /* Submit button */
 .submit-btn {
     width: 100%;
-    background-color: #F97316; /* Orange color */
+    background-color: #F97316;
     color: white;
     border: none;
     padding: 0.85rem;
@@ -146,7 +147,7 @@ input:focus {
 }
 
 .submit-btn:hover {
-    background-color: #EA580C; /* Darker orange for hover */
+    background-color: #EA580C;
 }
 
 /* Register link */
@@ -167,9 +168,36 @@ input:focus {
     text-decoration: underline;
 }
 
+/* Login page specific styles */
+.login-page-center {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+/* Footer styles */
+.footer-custom, x-footer, footer, .footer {
+    background: #2D3072 !important;
+    color: #fff;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 32px 0 16px 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.footer-custom .container i {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
-    .container {
+    .login-owner-card {
         flex-direction: column;
     }
 
