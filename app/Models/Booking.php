@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Booking extends Model
 {
@@ -13,9 +14,16 @@ class Booking extends Model
         'check_in',
         'check_out',
         'base_price',
-        'tax_amount',
-        'grand_total',
+        'service_price',
         'status',
+        'total_price'
+    ];
+
+    // Remove the attributes that don't exist in database
+    protected $attributes = [
+        'base_price' => 0,
+        'service_price' => 0,
+        'total_price' => 0
     ];
 
     public function user()
@@ -40,4 +48,9 @@ class Booking extends Model
     
     /** @use HasFactory<\Database\Factories\BookingFactory> */
     use HasFactory;
+
+    public function getTotalNights()
+    {
+        return Carbon::parse($this->check_in)->diffInDays(Carbon::parse($this->check_out));
+    }
 }

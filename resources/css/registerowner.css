@@ -104,11 +104,18 @@ h1 {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    text-decoration: none; /* Remove underline */
 }
 
 .user-type-btn.active {
     background-color: #2D3072;
     color: white;
+}
+
+.user-type-btn:hover {
+    background-color: #2D3072; /* Subtle hover effect */
+    color: white;
+    text-decoration: none; /* Ensure no underline on hover */
 }
 
 /* Form styles */

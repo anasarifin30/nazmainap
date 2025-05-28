@@ -20,8 +20,15 @@ class UserController extends Controller
             ->with(['rooms', 'coverPhoto'])
             ->paginate(6);
 
+        // Ambil daftar kabupaten unik dari homestay terverifikasi
+        $kabupatens = Homestay::where('status', 'terverifikasi')
+            ->whereNotNull('kabupaten')
+            ->select('kabupaten')
+            ->distinct()
+            ->get();
+
         // Kirim data ke view landing page
-        return view('users.landingpage', compact('homestaysslide'));
+        return view('users.landingpage', compact('homestaysslide', 'kabupatens'));
     }
 
 

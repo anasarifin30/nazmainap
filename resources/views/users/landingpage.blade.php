@@ -110,24 +110,25 @@
 
         <!-- Destinations -->
         <section class="destinations-section">
-            <h2>Desa</h2>
-            <div class="destinations-grid">
-                <div class="destination-item">
-                    <img src="{{ asset('images/pacitan.jpg') }}" alt="Pacitan">
-                    <div class="destination-overlay"><h3>Pacitan</h3></div>
-                </div>
-                <div class="destination-item">
-                    <img src="{{ asset('images/wonosobo.jpg') }}" alt="Wonosobo">
-                    <div class="destination-overlay"><h3>Wonosobo</h3></div>
-                </div>
-                <div class="destination-item">
-                    <img src="{{ asset('images/wonogiri.png') }}" alt="Wonogiri">
-                    <div class="destination-overlay"><h3>Wonogiri</h3></div>
-                </div>
+            <h2>Pilih Lokasi Penginapan</h2>
+            <div class="cities-grid">
+                @foreach ($kabupatens->take(5) as $kabupaten)
+                    <a href="{{ route('users.kataloghomestay', ['search' => $kabupaten->kabupaten]) }}" class="city-item">
+                        <div class="city-content">
+                            <i class="fas fa-building"></i>
+                            <span>Penginapan {{ $kabupaten->kabupaten }}</span>
+                        </div>
+                    </a>
+                @endforeach
+                <a href="{{ route('users.kataloghomestay') }}" class="city-item see-all">
+                    <div class="city-content">
+                        <i class="fas fa-arrow-right"></i>
+                        <span>Lihat Semua</span>
+                    </div>
+                </a>
             </div>
         </section>
 
-        <!-- Contact Section -->
         
     </div>
 

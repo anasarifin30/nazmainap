@@ -67,6 +67,8 @@ Route::middleware(['auth', 'role:guest'])->group(function () {
     Route::get('/pemesanan', [\App\Http\Controllers\User\UserController::class, 'cart'])->name('users.cart');
     Route::delete('/pemesanan/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'removeCartItem'])->name('cart.remove');
     Route::patch('/cart/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'updateCartItem'])->name('cart.update');
+    Route::post('/rooms/{room}/book', [RoomController::class, 'book'])->name('rooms.book');
+    Route::get('/rooms/{room}/check-availability', [RoomController::class, 'checkAvailability'])->name('rooms.checkAvailability');
 });
 
 

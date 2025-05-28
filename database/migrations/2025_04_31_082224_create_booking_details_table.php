@@ -20,6 +20,8 @@ return new class extends Migration
                   ->constrained('rooms')
                   ->onDelete('cascade');
             $table->unsignedInteger('quantity');      // jumlah kamar yang dibooking
+            $table->date('check_in');                // tanggal check-in
+            $table->date('check_out');               // tanggal check-out
             $table->decimal('price_per_night', 10, 2); // harga per malam per kamar
             $table->decimal('subtotal_price', 10, 2);  // harga kamar x quantity x durasi
             $table->timestamps();
