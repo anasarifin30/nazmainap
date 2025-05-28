@@ -10,19 +10,19 @@ body {
     background-color: #f9f9f9;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 }
 
-/* Main container */
-.container {
+/* Main container - renamed */
+.login-card-container {
     display: flex;
     width: 90%;
     max-width: 1200px;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 20px; 
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 40px 0 0 0; /* Hanya margin atas, hilangkan margin bawah */
 }
 
 /* Left side with illustration */
@@ -168,9 +168,36 @@ input:focus {
     text-decoration: underline;
 }
 
+/* Login page specific styles */
+.login-page-center {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px; /* Jika ingin jarak antara card dan footer */
+}
+
+/* Footer styles */
+.footer-custom, x-footer, footer, .footer {
+    background: #2D3072 !important; /* warna biru footer */
+    color: #fff;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 32px 0 16px 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.footer-custom .container i{
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
-    .container {
+    .login-card-container {
         flex-direction: column;
     }
 
