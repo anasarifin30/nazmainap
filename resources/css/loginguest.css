@@ -3,10 +3,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
-body { 
+body {
     background-color: #f9f9f9;
     min-height: 100vh;
     display: flex;
@@ -19,7 +19,7 @@ body {
     width: 90%;
     max-width: 1200px;
     background-color: white;
-    border-radius: 20px; 
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin: 40px 0 0 0; /* Hanya margin atas, hilangkan margin bawah */
@@ -27,7 +27,7 @@ body {
 
 /* Left side with illustration */
 .left-side {
-    background-color: #2D3072; /* Dark blue background */
+    background-color: #2d3072; /* Dark blue background */
     flex: 1;
     display: flex;
     align-items: center;
@@ -92,18 +92,25 @@ h1 {
 
 .user-type-btn {
     background-color: #fff;
-    border: 1px solid #2D3072;
-    color: #2D3072;
+    border: 1px solid #2d3072;
+    color: #2d3072;
     padding: 0.5rem 1.5rem;
     border-radius: 10px;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    text-decoration: none; /* Remove underline */
 }
 
 .user-type-btn.active {
     background-color: #2D3072;
     color: white;
+}
+
+.user-type-btn:hover {
+    background-color: #2D3072; /* Subtle hover effect */
+    color:white;
+    text-decoration: none; /* Ensure no underline on hover */
 }
 
 /* Form styles */
@@ -129,13 +136,13 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #2D3072;
+    border-color: #2d3072;
 }
 
 /* Submit button */
 .submit-btn {
     width: 100%;
-    background-color: #F97316; /* Orange color */
+    background-color: #f97316; /* Orange color */
     color: white;
     border: none;
     padding: 0.85rem;
@@ -147,7 +154,7 @@ input:focus {
 }
 
 .submit-btn:hover {
-    background-color: #EA580C; /* Darker orange for hover */
+    background-color: #ea580c; /* Darker orange for hover */
 }
 
 /* Register link */
@@ -159,7 +166,7 @@ input:focus {
 }
 
 .register-link a {
-    color: #2D3072;
+    color: #2d3072;
     text-decoration: none;
     font-weight: 500;
 }
@@ -178,8 +185,11 @@ input:focus {
 }
 
 /* Footer styles */
-.footer-custom, x-footer, footer, .footer {
-    background: #2D3072 !important; /* warna biru footer */
+.footer-custom,
+x-footer,
+footer,
+.footer {
+    background: #2d3072 !important; /* warna biru footer */
     color: #fff;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -188,7 +198,7 @@ input:focus {
     max-width: 100%;
 }
 
-.footer-custom .container i{
+.footer-custom .container i {
     background: transparent !important;
     box-shadow: none !important;
     border-radius: 0 !important;

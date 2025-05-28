@@ -14,8 +14,11 @@ class BookingDetail extends Model
         'booking_id',
         'room_id',
         'quantity',
+        'guests',
+        'check_in',
+        'check_out',
         'price_per_night',
-        'subtotal_price',
+        'subtotal_price'
     ];
 
     public function booking()

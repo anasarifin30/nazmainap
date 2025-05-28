@@ -13,28 +13,52 @@ body {
     background-color: #f8fafc;
 }
 
+/* Cart Header */
+.cart-header {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.cart-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c2f75;
+    margin-bottom: 0.5rem;
+}
+
+.cart-header p {
+    font-size: 1rem;
+    color: #64748b;
+}
+
 /* Cart Content */
 .cart-content {
-    background: #fff;
-    border-radius: 18px;
+    max-width: 1200px;
+    margin: 0 auto 3rem auto;
+    background: white;
+    border-radius: 1rem;
     box-shadow: 0 4px 24px rgba(44, 47, 117, 0.07);
-    padding: 0;
-    margin-bottom: 40px;
     overflow: hidden;
 }
 
 /* Homestay Info */
 .homestay-info {
-    background: #f6f8fa;
-    border-radius: 0;
-    padding: 28px 32px 16px 32px;
-    box-shadow: none;
-    border: none;
-    border-bottom: 2px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.homestay-link {
     display: flex;
-    align-items: flex-start;
-    gap: 22px;
-    margin-bottom: 0;
+    align-items: center;
+    gap: 1.5rem;
+    text-decoration: none;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .homestay-image {
@@ -42,11 +66,11 @@ body {
     margin-right: 16px;
 }
 .homestay-image img {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid #e0e7ff;
+    border-radius: 0.75rem;
+    border: 2px solid #e2e8f0;
     background: #fff;
 }
 
@@ -57,19 +81,18 @@ body {
     justify-content: center;
 }
 .homestay-details h2 {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 600;
     color: #2c2f75;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
 }
 .homestay-location {
     color: #64748b;
-    font-size: 14px;
-    margin-bottom: 0;
+    font-size: 0.875rem;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 .homestay-location::before {
     content: "📍";
@@ -80,15 +103,45 @@ body {
     display: none;
 }
 
+/* Add check-in/out info */
+.booking-dates {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.booking-dates-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.date-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+
+.date-value {
+    color: #2c2f75;
+    font-weight: 500;
+}
+
 /* Cart Items */
 .cart-items {
-    background: none;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
     padding: 0;
-    margin-top: 0;
+    border-radius: 0;
 }
+
 .cart-items h3 {
     display: none;
 }
@@ -96,14 +149,13 @@ body {
 /* Header grid untuk label kolom */
 .cart-items-header {
     display: grid;
-    grid-template-columns: 100px 2fr 1.1fr 1fr 110px 80px;
-    gap: 14px;
-    padding: 12px 32px 8px 32px;
-    color: #64748b;
-    font-size: 14px;
+    grid-template-columns: 2fr 0.5fr 0.8fr 0.5fr;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
     font-weight: 500;
-    border-bottom: 1.5px solid #e2e8f0;
-    background: #f9fafb;
+    color: #64748b;
 }
 .cart-items-header > div {
     text-align: left;
@@ -112,17 +164,12 @@ body {
 /* Item kamar */
 .cart-item {
     display: grid;
-    grid-template-columns: 100px 2fr 1.1fr 1fr 110px 80px;
-    align-items: flex-start; /* rata atas */
-    gap: 14px;
-    padding: 22px 32px;
+    grid-template-columns: 2fr 0.5fr 0.8fr 0.5fr;
+    gap: 1rem;
+    padding: 1rem 2rem;
     border-bottom: 1px solid #e2e8f0;
-    background: none;
-    border-radius: 0;
-    margin-bottom: 0;
-    box-shadow: none;
-    transition: background 0.18s;
-    text-align: left;
+    align-items: center;
+    background: white;
 }
 .cart-item:last-of-type {
     border-bottom: none;
@@ -131,13 +178,24 @@ body {
     background: #f6f8fa;
 }
 
+.item-link {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s;
+}
+
+.item-link:hover {
+    opacity: 0.9;
+}
+
 .item-image img {
     width: 100px;
     height: 70px;
     object-fit: cover;
-    border-radius: 8px;
-    border: 1.5px solid #e2e8f0;
-    background: #fff;
+    border-radius: 0.5rem;
 }
 
 .item-details {
@@ -150,15 +208,26 @@ body {
     padding-top: 0;
 }
 .item-details h4 {
-    font-size: 16px;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #22223b;
-    margin-bottom: 2px;
-    line-height: 1.2;
-    max-width: 260px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    color: #2c2f75;
+    margin-bottom: 0.5rem;
+}
+
+.room-info {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.room-capacity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.room-capacity i {
+    color: #e65100;
 }
 
 .room-features,
@@ -167,76 +236,85 @@ body {
     display: none;
 }
 
+.item-quantity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .item-quantity label {
-    font-size: 13px;
     color: #64748b;
+    font-size: 0.875rem;
     margin-bottom: 4px;
     display: block;
 }
 .quantity-controls {
+    display: inline-flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}
+.quantity-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.quantity-value {
+    background: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #64748b;
+}
+.quantity-input {
+    width: 3rem;
+    text-align: center;
+    font-weight: 600;
+    color: #2c2f75;
+    border: none;
+    background: transparent;
+    padding: 0.25rem;
+}
+
+/* Update quantity controls styling */
+.qty-btn {
+    width: 2rem;
+    height: 2rem;
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 2px 8px;
-    margin-top: 2px;
-}
-.qty-btn {
-    width: 26px;
-    height: 26px;
-    font-size: 15px;
-    border-radius: 6px;
+    justify-content: center;
     border: none;
-    background: #f3f4f6;
+    background: white;
+    border-radius: 0.375rem;
     color: #2c2f75;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.18s;
-}
-.qty-btn:hover {
-    background: #e0e7ff;
-}
-.qty-value {
-    font-size: 15px;
-    font-weight: 600;
-    min-width: 22px;
-    text-align: center;
-}
-
-/* Tambahan untuk input jumlah */
-.item-quantity input[type="text"] {
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 4px 0;
-    width: 32px;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 600;
-    background: #fff;
+    transition: all 0.2s;
 }
 .qty-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: #f1f5f9;
 }
 
-.item-price {
-    font-size: 15px;
-    color: #22223b;
-    font-weight: 400;
-    margin-bottom: 0;
-    line-height: 1.2;
+.qty-btn:not(:disabled):hover {
+    background: #e2e8f0;
 }
+.item-price {
+    font-size: 1rem;
+    color: #64748b;
+}
+
 .price-per-night {
     font-size: 13px;
     color: #64748b;
 }
 .total-price {
-    font-size: 15px;
-    color: #e65100;
-    font-weight: 700;
-    align-self: flex-start;
+    font-weight: 600;
+    color: #2c2f75;
 }
 
 .item-actions {
@@ -325,6 +403,57 @@ body {
     background: #1a1d4d;
 }
 
+/* Price Breakdown */
+.price-breakdown {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    color: #64748b;
+}
+
+.price-row.total {
+    border-top: 2px solid #e2e8f0;
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    color: #2c2f75;
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+/* Checkout Bar */
+.cart-checkout-bar {
+    padding: 2rem;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2rem;
+}
+
+.btn-checkout {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    background: #e65100;
+    color: white;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-checkout:hover {
+    background: #d84315;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(230, 81, 0, 0.1);
+}
+
 /* Responsive: Stack columns on mobile */
 @media (max-width: 900px) {
     .cart-content {
@@ -337,8 +466,8 @@ body {
         gap: 8px;
     }
     .homestay-image img {
-        width: 60px;
-        height: 60px;
+        width: 100px;
+        height: 100px;
     }
     .cart-items-header,
     .cart-item {
@@ -360,5 +489,96 @@ body {
     }
     .btn-remove {
         font-size: 12px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .cart-item {
+        grid-template-columns: 2fr 0.5fr 0.8fr 0.5fr;
+        padding: 1rem;
+    }
+
+    .item-image img {
+        width: 80px;
+        height: 60px;
+    }
+
+    .price-breakdown {
+        margin: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .item-link {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1rem;
+    }
+
+    .item-quantity {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+    }
+
+    .total-price {
+        text-align: right;
+        padding: 0.5rem 0;
+    }
+
+    .homestay-link {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .homestay-image img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .cart-checkout-bar {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .price-breakdown {
+        width: 100%;
+        margin: 0 0 1rem 0;
+    }
+
+    .btn-checkout {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-item {
+        padding: 0.75rem;
+    }
+
+    .item-image img {
+        width: 60px;
+        height: 45px;
+    }
+
+    .item-details h4 {
+        font-size: 0.9rem;
+    }
+
+    .item-price,
+    .total-price {
+        font-size: 0.875rem;
+    }
+
+    .qty-btn {
+        width: 1.75rem;
+        height: 1.75rem;
     }
 }

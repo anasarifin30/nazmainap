@@ -23,7 +23,7 @@
                 <div class="form-container">
                     <h1>Masuk Akun Anda</h1>
                     <div class="user-type-selector">
-                        <a href="{{ route('login.guest') }}" class="user-type-btn {{ request()->routeIs('login.guest') ? 'active' : '' }}">Pengunjung</a>
+                        <a href="{{ route('login.guest') }}" class="user-type-btn {{ (request()->routeIs('login.guest') || request()->routeIs('login')) ? 'active' : '' }}">Pengunjung</a>
                         <a href="{{ route('login.owner') }}" class="user-type-btn {{ request()->routeIs('login.owner') ? 'active' : '' }}">Pemilik Rumah</a>
                     </div>
                     <form id="loginguest-form" action="{{ route('login') }}" method="POST">

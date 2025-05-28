@@ -6,7 +6,8 @@
     <title>Mandhapa - Penginapan Desa di Pacitan</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=poppins:400,500,600" rel="stylesheet" />
-    @vite(['resources/css/header.css'])
+    @vite(['resources/css/header.css','resources/css/components/alert.css'])
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
     <header class="header">
@@ -36,7 +37,16 @@
                     @else
                         <div class="user-menu">
                             <span class="user-name">{{ Auth::user()->name }}</span>
-                            <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '/api/placeholder/36/36' }}" alt="User Avatar" class="user-avatar" onclick="toggleDropdown()">
+                            @if(Auth::user()->foto)
+                                <img src="{{ asset('storage/' . Auth::user()->foto) }}" 
+                                     alt="User Avatar" 
+                                     class="user-avatar" 
+                                     onclick="toggleDropdown()">
+                            @else
+                                <div class="default-avatar" onclick="toggleDropdown()">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div class="dropdown" id="userDropdown">
                                 <div class="dropdown-header">
                                     <div class="dropdown-name">{{ Auth::user()->name }}</div>
@@ -100,9 +110,15 @@
                         <div class="user-menu w-full">
             <div class="user-menu w-full">
     <div class="dropdown-header" style="padding-left:0;padding-right:0; text-align:center;">
-        <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '/api/placeholder/60/60' }}"
-             alt="User Avatar"
-             style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid #ff8000;">
+        @if(Auth::user()->foto)
+            <img src="{{ asset('storage/' . Auth::user()->foto) }}"
+                 alt="User Avatar"
+                 style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid #ff8000;">
+        @else
+            <div class="default-avatar-large">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </div>
+        @endif
         <div class="dropdown-name" style="font-weight:600;font-size:1.1rem;color:#2a3990;">{{ Auth::user()->name }}</div>
         <div class="dropdown-email" style="color:#6b7280;font-size:0.95rem;margin-bottom:8px;">{{ Auth::user()->email }}</div>
         <div class="guest-badge" style="display:inline-block;background:#ff8000;color:#fff;padding:2px 14px;border-radius:12px;font-size:0.85rem;font-weight:500;margin-bottom:18px;">

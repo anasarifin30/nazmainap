@@ -24,10 +24,10 @@ class DatabaseSeeder extends Seeder
         FacilitySeeder::class,
         RoomFacilitySeeder::class,
         RuleSeeder::class,
-        BookingSeeder::class,
-        BookingDetailSeeder::class,
-        TransactionSeeder::class,
-        CommissionSeeder::class,
+        // BookingSeeder::class,
+        // BookingDetailSeeder::class,
+        // TransactionSeeder::class,
+        // CommissionSeeder::class,
     ]);
 }
 

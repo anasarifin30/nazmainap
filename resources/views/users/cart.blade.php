@@ -13,44 +13,102 @@
 
 
         <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="cart-header" style="text-align:center; margin: 38px 0 18px 0;">
                 <h1 style="font-size:1.2rem; font-weight:600; color:#22223b; margin-bottom:2px;">Keranjang Pemesanan</h1>
-                <p style="font-size:0.98rem; color:#64748b;">Kelola pemesanan kamar homestay Anda</p>
+                <p style="font-size:0.98rem; color:#64748b;">Daftar kamar yang telah Anda masukkan ke dalam keranjang pemesanan.</p>
             </div>
 
             <div class="cart-content" style="max-width:900px; margin:0 auto; background:#fff; border-radius:18px; box-shadow:0 4px 24px rgba(44,47,117,0.07); padding:0; margin-bottom:40px; overflow:hidden;">
                 @if($booking && $booking->bookingDetails->count())
                     <!-- Homestay Info -->
-                    <div class="homestay-info" style="padding:28px 32px 16px 32px;">
-                        <div class="homestay-image">
-                            <img src="{{ $booking->homestay->coverPhoto ? asset('storage/images-homestay/'.$booking->homestay->coverPhoto->photo_path) : asset('storage/images-homestay/default-homestay.jpg') }}" alt="{{ $booking->homestay->name }}">
-                        </div>
-                        <div class="homestay-details">
-                            <h2>{{ $booking->homestay->name }}</h2>
-                            <p class="homestay-location">{{ $booking->homestay->kabupaten }}, {{ $booking->homestay->provinsi }}</p>
-                        </div>
+                    <div class="homestay-info">
+                        <a href="{{ route('homestays.show', $booking->homestay->id) }}" class="homestay-link">
+                            <div class="homestay-image">
+                                <img src="{{ $booking->homestay->coverPhoto ? asset('storage/images-homestay/'.$booking->homestay->coverPhoto->photo_path) : asset('storage/images-homestay/default-homestay.jpg') }}" 
+                                     alt="{{ $booking->homestay->name }}">
+                            </div>
+                            <div class="homestay-details">
+                                <h2>{{ $booking->homestay->name }}</h2>
+                                <p class="homestay-location">
+                                    <i class="bx bx-map"></i>
+                                    {{ $booking->homestay->kabupaten }}, {{ $booking->homestay->provinsi }}
+                                </p>
+                                
+                                <div class="booking-dates">
+                                    <div class="booking-dates-grid">
+                                        <div class="date-info">
+                                            <span class="date-label">Check-in</span>
+                                            <span class="date-value">{{ \Carbon\Carbon::parse($booking->check_in)->format('d M Y') }}</span>
+                                        </div>
+                                        <div class="date-info">
+                                            <span class="date-label">Check-out</span>
+                                            <span class="date-value">{{ \Carbon\Carbon::parse($booking->check_out)->format('d M Y') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
 
                     <!-- Cart Items -->
                     <div class="cart-items">
+                        <div class="cart-items-header">
+                            <div>Detail Kamar</div>
+                            <div>Jumlah</div>
+                            <div>Harga</div>
+                            <div></div>
+                        </div>
                         @foreach($booking->bookingDetails as $detail)
                         <div class="cart-item">
-                            <div class="item-image">
-                                <img src="{{ $detail->room->roomPhotos->where('is_cover',1)->first() ? asset('storage/images-room/'.$detail->room->roomPhotos->where('is_cover',1)->first()->photo_path) : asset('storage/images-room/default-room.jpg') }}" alt="{{ $detail->room->name }}">
-                            </div>
-                            <div class="item-details">
-                                <h4>{{ $detail->room->name }}</h4>
-                                <div class="item-price">Rp {{ number_format($detail->price_per_night,0,',','.') }}/malam</div>
-                            </div>
+                            <a href="{{ route('rooms.show', $detail->room->id) }}" class="item-link">
+                                <div class="item-image">
+                                    <img src="{{ $detail->room->roomPhotos->where('is_cover',1)->first() ? asset('storage/images-room/'.$detail->room->roomPhotos->where('is_cover',1)->first()->photo_path) : asset('storage/images-room/default-room.jpg') }}" 
+                                         alt="{{ $detail->room->name }}">
+                                </div>
+                                <div class="item-details">
+                                    <h4>{{ $detail->room->name }}</h4>
+                                    <div class="item-price">Rp {{ number_format($detail->price_per_night,0,',','.') }}/malam</div>
+                                    <div class="room-info">
+                                        <div class="room-capacity">
+                                            <i class="bx bx-user"></i>
+                                            <span>*Maks {{ $detail->room->max_guests }} tamu/kamar</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                             <div class="item-quantity">
-                                <label>Jumlah:</label>
-                                <form method="POST" action="{{ route('cart.update', $detail->id) }}" style="display:flex;align-items:center;gap:6px;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="action" value="decrement" class="qty-btn" {{ $detail->quantity <= 1 ? 'disabled' : '' }}>-</button>
-                                    <input type="text" name="quantity" value="{{ $detail->quantity }}" readonly style="width:32px;text-align:center;font-weight:600;">
-                                    <button type="submit" name="action" value="increment" class="qty-btn" {{ $detail->quantity >= $detail->room->max_guests ? 'disabled' : '' }}>+</button>
-                                </form>
+                                <label>Jumlah Kamar:</label>
+                                @if($detail->room->total_rooms == 1)
+                                    <div class="quantity-value">
+                                        <span>1</span>
+                                        <p class="text-xs text-gray-500 mt-1">*Hanya tersedia 1 kamar</p>
+                                    </div>
+                                @else
+                                    <div class="quantity-controls">
+                                        <button type="button" 
+                                                class="qty-btn decrease" 
+                                                data-detail-id="{{ $detail->id }}"
+                                                {{ $detail->quantity <= 1 ? 'disabled' : '' }}>
+                                            -
+                                        </button>
+                                        <input type="text" 
+                                               value="{{ $detail->quantity }}" 
+                                               class="quantity-input"
+                                               readonly>
+                                        <button type="button" 
+                                                class="qty-btn increase" 
+                                                data-detail-id="{{ $detail->id }}"
+                                                {{ $detail->quantity >= $detail->room->total_rooms ? 'disabled' : '' }}>
+                                            +
+                                        </button>
+                                    </div>
+                                @endif
                             </div>
                             <div class="total-price">
                                 Rp {{ number_format($detail->subtotal_price,0,',','.') }}
@@ -76,12 +134,20 @@
 
                     <!-- Checkout & Total -->
                     <div class="cart-checkout-bar" style="padding: 24px 32px 32px 32px; background: #fff; border-top: 1.5px solid #e2e8f0; display: flex; justify-content: flex-end; align-items: center; gap: 18px; flex-wrap: wrap;">
-                        <span class="cart-total-label" style="font-size:1.08rem; color:#22223b;">
-                            Total Keranjang:
-                            <span id="cart-grand-total" style="font-weight:600; color:#e65100; margin-left:6px;">
-                                Rp {{ number_format($booking->total_price,0,',','.') }}
-                            </span>
-                        </span>
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span>Subtotal Kamar</span>
+                                <span>Rp {{ number_format($booking->base_price,0,',','.') }}</span>
+                            </div>
+                            <div class="price-row">
+                                <span>Biaya Layanan (5%)</span>
+                                <span>Rp {{ number_format($booking->service_price,0,',','.') }}</span>
+                            </div>
+                            <div class="price-row total">
+                                <span>Total Pembayaran</span>
+                                <span>Rp {{ number_format($booking->total_price,0,',','.') }}</span>
+                            </div>
+                        </div>
                         <a class="btn-primary btn-checkout" style="font-size:1.1rem;padding:12px 38px;" href="#">
                             Checkout
                         </a>
@@ -100,5 +166,62 @@
 
     <!-- Footer -->
     <x-footer></x-footer>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const qtyButtons = document.querySelectorAll('.qty-btn');
+    
+    qtyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const detailId = this.dataset.detailId;
+            const action = this.classList.contains('increase') ? 'increment' : 'decrement';
+            const quantityInput = this.parentElement.querySelector('.quantity-input');
+            const currentQty = parseInt(quantityInput.value);
+            
+            // Disable button during process
+            this.disabled = true;
+            
+            fetch(`/cart/update/${detailId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ action: action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update quantity
+                    quantityInput.value = data.quantity;
+                    
+                    // Update subtotal price
+                    const priceCell = this.closest('.cart-item').querySelector('.total-price');
+                    priceCell.textContent = `Rp ${numberFormat(data.subtotal_price)}`;
+                    
+                    // Update total prices
+                    document.querySelector('.subtotal-amount').textContent = `Rp ${numberFormat(data.total_base_price)}`;
+                    document.querySelector('.service-amount').textContent = `Rp ${numberFormat(data.service_price)}`;
+                    document.querySelector('.total-amount').textContent = `Rp ${numberFormat(data.total_price)}`;
+                    
+                    // Update button states
+                    const decreaseBtn = this.parentElement.querySelector('.decrease');
+                    const increaseBtn = this.parentElement.querySelector('.increase');
+                    decreaseBtn.disabled = data.quantity <= 1;
+                    increaseBtn.disabled = data.quantity >= data.max_rooms;
+                }
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                this.disabled = false;
+            });
+        });
+    });
+});
+
+function numberFormat(number) {
+    return new Intl.NumberFormat('id-ID').format(number);
+}
+</script>
 </body>
 </html>
