@@ -1,87 +1,206 @@
-<x-app-admin></x-app-admin>
-<x-sidebar-owner>
-@section('isi')
-<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Owner - {{ config('app.name') }}</title>
+    @vite(['resources/css/owner/dashboard.css'])
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Component -->
+    <x-sidebar-owner activeMenu="dashboard" />
 
-    <!-- Content -->
-    <div class="flex-1 p-6 overflow-auto">
-        <!-- Profil -->
-        <div class="flex items-center mb-6">
-            @if (Auth::user()->profile_picture)
-                <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" 
-                     alt="Profile Picture" 
-                     class="w-16 h-16 rounded-full mr-4">
-            @else
-                <div class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-500 dark:text-gray-300" viewBox="0 0 24 24">
-                           <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
-                             <path d="M16 9a4 4 0 1 1-8 0a4 4 0 0 1 8 0m-2 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0"/>
-                             <path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11s11-4.925 11-11S18.075 1 12 1M3 12c0 2.09.713 4.014 1.908 5.542A8.99 8.99 0 0 1 12.065 14a8.98 8.98 0 0 1 7.092 3.458A9 9 0 1 0 3 12m9 9a8.96 8.96 0 0 1-5.672-2.012A6.99 6.99 0 0 1 12.065 16a6.99 6.99 0 0 1 5.689 2.92A8.96 8.96 0 0 1 12 21"/>
-                           </g>
-                      </svg>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <h1>Dashboard</h1>
+                <p>Selamat datang kembali! Berikut adalah ringkasan bisnis Anda hari ini.</p>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="date-info">
+                        <span>{{ date('d M Y') }}</span>
+                    </div>
                 </div>
-            @endif
-            <div class="ml-4">
-                <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Selamat Datang, {{ Auth::user()->name }}</h1>
-                <p class="text-gray-600 dark:text-gray-400">{{ Auth::user()->email }}</p>
             </div>
-        </div>
+        </header>
 
-        <!-- Statistik Ringkas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition">
-                <h2 class="text-gray-600 dark:text-gray-400">Jumlah Kamar</h2>
-                <p class="text-2xl font-bold text-blue-500">3</p>
+        <!-- Stats Cards -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card revenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Pendapatan</h3>
+                        <p class="stat-value">Rp 25.450.000</p>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +12.5%
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="stat-card orders">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Pesanan</h3>
+                        <p class="stat-value">1,247</p>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +8.2%
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="stat-card customers">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Pelanggan Aktif</h3>
+                        <p class="stat-value">892</p>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +15.3%
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="stat-card products">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Produk Terjual</h3>
+                        <p class="stat-value">3,456</p>
+                        <span class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> -2.1%
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition">
-                <h2 class="text-gray-600 dark:text-gray-400">Pemesanan Aktif</h2>
-                <p class="text-2xl font-bold text-green-500">5</p>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition">
-                <h2 class="text-gray-600 dark:text-gray-400">Pendapatan Bulan Ini</h2>
-                <p class="text-2xl font-bold text-yellow-500">Rp 2.500.000</p>
-            </div>
-        </div>
+        </section>
 
-        <!-- Tabel Pemesanan Terbaru -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">Pemesanan Terbaru</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Tamu</th>
-                            <th scope="col" class="px-6 py-3">Homestay</th>
-                            <th scope="col" class="px-6 py-3">Tanggal</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-                            <td class="px-6 py-4">Ahmad</td>
-                            <td class="px-6 py-4">Sedan Homestay</td>
-                            <td class="px-6 py-4">10 Mei 2025</td>
-                            <td class="px-6 py-4 text-green-600 dark:text-green-400 font-medium">Disetujui</td>
-                        </tr>
-                        <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-                            <td class="px-6 py-4">Rina</td>
-                            <td class="px-6 py-4">Nazma Inap 2</td>
-                            <td class="px-6 py-4">12 Mei 2025</td>
-                            <td class="px-6 py-4 text-yellow-600 dark:text-yellow-400 font-medium">Menunggu</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="charts-grid">
+                <div class="chart-card main-chart">
+                    <div class="card-header">
+                        <h3>Grafik Penjualan</h3>
+                        <div class="chart-controls">
+                            <select class="chart-period">
+                                <option>7 Hari Terakhir</option>
+                                <option>30 Hari Terakhir</option>
+                                <option>3 Bulan Terakhir</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h3>Kategori Produk</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
+        </section>
 
-<script>
-    document.getElementById('menu-toggle').addEventListener('click', function () {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('hidden');
-    });
-</script>
-@endsection
+        <!-- Recent Activity & Quick Actions -->
+        <section class="dashboard-bottom">
+            <div class="bottom-grid">
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Aktivitas Terbaru</h3>
+                        <a href="#" class="view-all">Lihat Semua</a>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon new-order">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>Pesanan baru #1234</strong></p>
+                                <span>Dari Budi Santoso - Rp 150.000</span>
+                                <time>2 menit yang lalu</time>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon payment">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>Pembayaran diterima</strong></p>
+                                <span>Pesanan #1230 - Rp 275.000</span>
+                                <time>15 menit yang lalu</time>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon new-customer">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>Pelanggan baru terdaftar</strong></p>
+                                <span>Sari Dewi bergabung</span>
+                                <time>1 jam yang lalu</time>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon stock-alert">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>Stok menipis</strong></p>
+                                <span>Produk A tinggal 5 unit</span>
+                                <time>3 jam yang lalu</time>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions-card">
+                    <div class="card-header">
+                        <h3>Aksi Cepat</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn primary">
+                            <i class="fas fa-plus"></i>
+                            <span>Tambah Produk</span>
+                        </button>
+                        <button class="action-btn secondary">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Buat Laporan</span>
+                        </button>
+                        <button class="action-btn success">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Buat Promosi</span>
+                        </button>
+                        <button class="action-btn warning">
+                            <i class="fas fa-cog"></i>
+                            <span>Pengaturan Toko</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-</x-sidebar-owner>
+    <script src="{{ asset('js/dashboard.js') }}"></script>
+</body>
+</html>
