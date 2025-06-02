@@ -48,10 +48,11 @@
                         @php
                             $statuses = [
                                 'semua' => 'Semua',
+                                'belum dibayar' => 'Belum Dibayar',
+                                'menunggu' => 'Menunggu',
                                 'aktif' => 'Aktif',
                                 'selesai' => 'Selesai',
-                                'dibatalkan' => 'Dibatalkan',
-                                'menunggu' => 'Menunggu'
+                                'dibatalkan' => 'Dibatalkan'
                             ];
                         @endphp
                         @foreach($statuses as $key => $label)
@@ -67,7 +68,7 @@
                         @forelse($riwayats as $riwayat)
                             <div class="history-card">
                                 <div class="card-image">
-                                    <div class="card-badge badge-{{ strtolower($riwayat->status) }}">
+                                    <div class="card-badge badge-{{ strtolower(str_replace(' ', '-', $riwayat->status)) }}">
                                         @if($riwayat->status == 'selesai')
                                             <i class="fas fa-check-circle"></i> Selesai
                                         @elseif($riwayat->status == 'aktif')
@@ -76,6 +77,8 @@
                                             <i class="fas fa-times-circle"></i> Dibatalkan
                                         @elseif($riwayat->status == 'menunggu')
                                             <i class="fas fa-hourglass-half"></i> Menunggu
+                                        @elseif($riwayat->status == 'belum dibayar')
+                                            <i class="fas fa-exclamation-circle"></i> Belum Dibayar
                                         @else
                                             {{ ucfirst($riwayat->status) }}
                                         @endif

@@ -6,6 +6,7 @@
     <title>Keranjang - MANDHAPA</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/cart.css'])
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <!-- Header -->
@@ -148,9 +149,12 @@
                                 <span>Rp {{ number_format($booking->total_price,0,',','.') }}</span>
                             </div>
                         </div>
-                        <a class="btn-primary btn-checkout" style="font-size:1.1rem;padding:12px 38px;" href="#">
-                            Checkout
-                        </a>
+                        <form method="POST" action="{{ route('cart.checkout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn-primary btn-checkout" style="font-size:1.1rem;padding:12px 38px;">
+                                Checkout
+                            </button>
+                        </form>
                     </div>
                 @else
                     <div class="empty-cart" id="emptyCart">
@@ -170,9 +174,12 @@
     <script>
 document.addEventListener('DOMContentLoaded', function() {
     const qtyButtons = document.querySelectorAll('.qty-btn');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     
     qtyButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', async function() {
+            if (this.disabled) return;
+            
             const detailId = this.dataset.detailId;
             const action = this.classList.contains('increase') ? 'increment' : 'decrement';
             const quantityInput = this.parentElement.querySelector('.quantity-input');
@@ -181,42 +188,90 @@ document.addEventListener('DOMContentLoaded', function() {
             // Disable button during process
             this.disabled = true;
             
-            fetch(`/cart/update/${detailId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ action: action })
-            })
-            .then(response => response.json())
-            .then(data => {
+            try {
+                const response = await fetch(`/cart/update/${detailId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ action: action })
+                });
+
+                const data = await response.json();
+
                 if (data.success) {
                     // Update quantity
                     quantityInput.value = data.quantity;
                     
-                    // Update subtotal price
-                    const priceCell = this.closest('.cart-item').querySelector('.total-price');
-                    priceCell.textContent = `Rp ${numberFormat(data.subtotal_price)}`;
-                    
-                    // Update total prices
-                    document.querySelector('.subtotal-amount').textContent = `Rp ${numberFormat(data.total_base_price)}`;
-                    document.querySelector('.service-amount').textContent = `Rp ${numberFormat(data.service_price)}`;
-                    document.querySelector('.total-amount').textContent = `Rp ${numberFormat(data.total_price)}`;
+                    // Update prices
+                    updatePrices(this, data);
                     
                     // Update button states
-                    const decreaseBtn = this.parentElement.querySelector('.decrease');
-                    const increaseBtn = this.parentElement.querySelector('.increase');
-                    decreaseBtn.disabled = data.quantity <= 1;
-                    increaseBtn.disabled = data.quantity >= data.max_rooms;
+                    updateButtonStates(this.parentElement, data);
+                } else {
+                    // Show error message
+                    showErrorMessage(data.message);
                 }
-            })
-            .catch(error => console.error('Error:', error))
-            .finally(() => {
+            } catch (error) {
+                console.error('Error:', error);
+                showErrorMessage('Terjadi kesalahan saat memperbarui keranjang');
+            } finally {
+                // Re-enable button
                 this.disabled = false;
-            });
+            }
         });
     });
+
+    function updatePrices(button, data) {
+        const cartItem = button.closest('.cart-item');
+        const priceCell = cartItem.querySelector('.total-price');
+        
+        // Update item subtotal
+        priceCell.textContent = `Rp ${numberFormat(data.subtotal_price)}`;
+        
+        // Update summary prices
+        document.querySelector('.price-row:nth-child(1) span:last-child').textContent = 
+            `Rp ${numberFormat(data.total_base_price)}`;
+        document.querySelector('.price-row:nth-child(2) span:last-child').textContent = 
+            `Rp ${numberFormat(data.service_price)}`;
+        document.querySelector('.price-row.total span:last-child').textContent = 
+            `Rp ${numberFormat(data.total_price)}`;
+    }
+
+    function updateButtonStates(container, data) {
+        const decreaseBtn = container.querySelector('.decrease');
+        const increaseBtn = container.querySelector('.increase');
+        
+        decreaseBtn.disabled = data.quantity <= 1;
+        increaseBtn.disabled = data.quantity >= data.max_rooms;
+    }
+
+    function showErrorMessage(message) {
+        // Create error alert
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-error';
+        alert.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+            padding: 12px 20px;
+            border-radius: 6px;
+            z-index: 1000;
+        `;
+        alert.textContent = message;
+
+        document.body.appendChild(alert);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
+    }
 });
 
 function numberFormat(number) {

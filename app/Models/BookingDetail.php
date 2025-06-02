@@ -14,9 +14,6 @@ class BookingDetail extends Model
         'booking_id',
         'room_id',
         'quantity',
-        'guests',
-        'check_in',
-        'check_out',
         'price_per_night',
         'subtotal_price'
     ];
@@ -29,5 +26,11 @@ class BookingDetail extends Model
     public function room()
     {
         return $this->belongsTo(\App\Models\Room::class, 'room_id');
+    }
+    public function getTotalNights()
+    {
+        return ceil(
+            (strtotime($this->booking->check_out) - strtotime($this->booking->check_in)) / (60 * 60 * 24)
+        );
     }
 }

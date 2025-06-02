@@ -9,100 +9,79 @@ use App\Models\BookingDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
-    public function show($id)
+    public function show(Room $room)
     {
-        $room = Room::with(['photos', 'facilities'])->findOrFail($id);
-        $existingBooking = null;
-        $otherRoomsInCart = null;
-        $existingDetail = null; // Initialize the variable
+        $checkIn = request('check_in', now()->format('Y-m-d'));
+        $checkOut = request('check_out', now()->addDay()->format('Y-m-d'));
+        
+        $availableRooms = $room->getAvailableRoomsCount($checkIn, $checkOut);
 
-        if (Auth::check()) {
-            $existingBooking = Booking::where('user_id', Auth::id())
-                ->where('status', 'menunggu')
+        // Get existing booking from cart if any
+        $existingBooking = Booking::where('user_id', Auth::id())
+            ->where('status', 'cart')
+            ->first();
+
+        $existingDetail = null;
+        if ($existingBooking) {
+            $existingDetail = $existingBooking->bookingDetails()
+                ->where('room_id', $room->id)
                 ->first();
-
-            if ($existingBooking) {
-                // Check if this room is already in cart
-                $existingDetail = BookingDetail::where('booking_id', $existingBooking->id)
-                    ->where('room_id', $id)
-                    ->first();
-
-                // Get other rooms from same homestay that are in cart
-                if ($existingBooking->homestay_id === $room->homestay_id) {
-                    $otherRoomsInCart = $existingBooking->bookingDetails()
-                        ->with('room')
-                        ->whereNotIn('room_id', [$id])
-                        ->get();
-                }
-            }
         }
 
+        $otherRoomsInCart = $existingBooking && $existingBooking->bookingDetails()
+            ->where('room_id', '!=', $room->id)
+            ->exists();
+
+        // Get related rooms from same homestay, excluding current room
         $relatedRooms = Room::where('homestay_id', $room->homestay_id)
             ->where('id', '!=', $room->id)
-            ->with('photos')
+            ->with(['photos', 'facilities'])
             ->take(3)
             ->get();
 
         return view('users.detailrooms', compact(
             'room', 
-            'relatedRooms', 
-            'existingBooking', 
+            'availableRooms',
+            'existingBooking',
+            'existingDetail',
             'otherRoomsInCart',
-            'existingDetail' // Add this to the compact function
+            'relatedRooms' // Add this line
         ));
     }
 
     public function book(Request $request, Room $room)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login')
-                ->with('error', 'Silakan login terlebih dahulu untuk melakukan pemesanan');
+        // Check if user profile is complete
+        $user = Auth::user();
+        if (!$this->isProfileComplete($user)) {
+            return redirect()->route('users.profile')
+                ->with('error', 'Silakan lengkapi profil Anda terlebih dahulu sebelum melakukan pemesanan.');
         }
-
-        // Check existing booking
-        $existingBooking = Booking::where('user_id', Auth::id())
-            ->where('status', 'menunggu')
-            ->first();
-
-        // If there's an existing booking from different homestay
-        if ($existingBooking && $existingBooking->homestay_id !== $room->homestay_id) {
-            return back()
-                ->withInput()
-                ->with('error', 'Anda hanya dapat memesan kamar dari homestay yang sama.');
-        }
-
-        // If there's an existing booking from same homestay, use its dates
-        if ($existingBooking && $existingBooking->homestay_id === $room->homestay_id) {
-            $request->merge([
-                'check_in' => $existingBooking->check_in,
-                'check_out' => $existingBooking->check_out
-            ]);
-        }
-
-        $request->validate([
-            'check_in' => 'required|date|after_or_equal:today',
-            'check_out' => 'required|date|after:check_in',
-            'quantity' => [
-                'required',
-                'integer',
-                'min:1',
-                'max:' . $room->total_rooms
-            ]
-        ]);
 
         try {
-            // Calculate prices
-            $nights = $this->calculateNights($request->check_in, $request->check_out);
-            $basePrice = $room->price * $nights;
+            // Validate check-in and check-out dates
+            $checkIn = strtotime($request->check_in);
+            $checkOut = strtotime($request->check_out);
             
-            // Create or get existing booking
+            if ($checkIn === $checkOut) {
+                return back()->with('error', 'Tanggal check-in dan check-out tidak boleh sama.');
+            }
+
+            // Check room availability
+            $availableRooms = $room->getAvailableRoomsCount($request->check_in, $request->check_out);
+            if ($availableRooms < $request->quantity) {
+                return back()->with('error', "Hanya tersedia {$availableRooms} kamar untuk periode yang dipilih.");
+            }
+
+            // Check existing booking in cart
             $booking = Booking::firstOrCreate(
                 [
                     'user_id' => Auth::id(),
-                    'status' => 'menunggu'
+                    'status' => 'cart'  // Pastikan mencari dengan status cart
                 ],
                 [
                     'homestay_id' => $room->homestay_id,
@@ -110,7 +89,8 @@ class RoomController extends Controller
                     'check_out' => $request->check_out,
                     'base_price' => 0,
                     'service_price' => 0,
-                    'total_price' => 0
+                    'total_price' => 0,
+                    'status' => 'cart'  // Pastikan set status cart saat create
                 ]
             );
 
@@ -120,18 +100,21 @@ class RoomController extends Controller
                 ->first();
 
             if ($existingDetail) {
+                DB::rollBack();
                 return back()
                     ->withInput()
                     ->with('error', 'Kamar ini sudah ada di keranjang Anda');
             }
+
+            // Calculate prices
+            $nights = $this->calculateNights($request->check_in, $request->check_out);
+            $basePrice = $room->price * $nights;
 
             // Add booking detail
             BookingDetail::create([
                 'booking_id' => $booking->id,
                 'room_id' => $room->id,
                 'quantity' => $request->quantity,
-                'check_in' => $request->check_in,
-                'check_out' => $request->check_out,
                 'price_per_night' => $room->price,
                 'subtotal_price' => $basePrice * $request->quantity
             ]);
@@ -139,29 +122,17 @@ class RoomController extends Controller
             // Update total booking price
             $this->updateBookingTotalPrice($booking);
 
+            DB::commit();
+            
+            // Redirect ke route yang benar
             return redirect()->route('users.cart')
                 ->with('success', 'Kamar berhasil ditambahkan ke keranjang');
 
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Booking error: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat menambahkan ke keranjang.');
         }
-    }
-
-    public function checkAvailability(Request $request, Room $room)
-    {
-        $checkIn = $request->check_in;
-        $checkOut = $request->check_out;
-
-        $existingBooking = Booking::where('room_id', $room->id)
-            ->where(function($query) use ($checkIn, $checkOut) {
-                $query->whereBetween('check_in', [$checkIn, $checkOut])
-                    ->orWhereBetween('check_out', [$checkIn, $checkOut]);
-            })->exists();
-
-        return response()->json([
-            'available' => !$existingBooking
-        ]);
     }
 
     private function calculateNights($checkIn, $checkOut)
@@ -172,12 +143,36 @@ class RoomController extends Controller
     private function updateBookingTotalPrice($booking)
     {
         $totalBasePrice = $booking->bookingDetails->sum('subtotal_price');
-        $totalServicePrice = $totalBasePrice * 0.05;
+        $servicePrice = $totalBasePrice * 0.05;
         
         $booking->update([
             'base_price' => $totalBasePrice,
-            'service_price' => $totalServicePrice,
-            'total_price' => $totalBasePrice + $totalServicePrice
+            'service_price' => $servicePrice,
+            'total_price' => $totalBasePrice + $servicePrice
+        ]);
+    }
+
+    private function isProfileComplete($user)
+    {
+        return !empty($user->name) && 
+               !empty($user->email) && 
+               !empty($user->nomorhp) && 
+               !empty($user->address) &&
+               !empty($user->provinsi) &&
+               !empty($user->kabupaten) &&
+               !empty($user->kecamatan) &&
+               !empty($user->kelurahan);
+    }
+
+    public function checkAvailability(Request $request, Room $room)
+    {
+        $checkIn = $request->check_in;
+        $checkOut = $request->check_out;
+        
+        $availableRooms = $room->getAvailableRoomsCount($checkIn, $checkOut);
+
+        return response()->json([
+            'available_rooms' => $availableRooms
         ]);
     }
 }

@@ -180,6 +180,10 @@ body {
     color: #ff9800;
     border-color: #ff9800;
 }
+.filter-belum-dibayar {
+    color: #e65100;
+    border-color: #e65100;
+}
 
 /* Active State */
 .filter-button.active.filter-semua,
@@ -211,6 +215,12 @@ body {
     background: #ff9800;
     color: #fff;
     border-color: #ff9800;
+}
+.filter-button.active.filter-belum-dibayar,
+.filter-button.active.filter-belum-dibayar:hover {
+    background: #e65100;
+    color: #fff;
+    border-color: #e65100;
 }
 
 .history-cards {
@@ -275,6 +285,10 @@ body {
 .badge-menunggu {
     background: #fffbe6;
     color: #ff9800;
+}
+.badge-belum-dibayar {
+    background: #fff3e0;
+    color: #e65100;
 }
 
 .card-content {

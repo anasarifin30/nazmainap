@@ -89,19 +89,18 @@ class UserController extends Controller
 
     public function historycart(Request $request)
     {
-        $user = Auth::user();
-        $status = $request->get('status'); // status: aktif, selesai, dibatalkan, menunggu
+        $query = Booking::where('user_id', Auth::id())
+            ->where('status', '!=', 'cart')  // Exclude cart status
+            ->with(['homestay', 'homestay.coverPhoto']);
 
-        $query = \App\Models\Booking::with(['homestay.coverPhoto'])
-            ->where('user_id', $user->id);
-
-        if ($status && $status != 'semua') {
-            $query->where('status', $status);
+        // Filter by status if provided
+        if ($request->has('status') && $request->status !== 'semua') {
+            $query->where('status', $request->status);
         }
 
-        $riwayats = $query->orderBy('created_at', 'desc')->paginate(6)->withQueryString();
+        $riwayats = $query->latest()->paginate(10);
 
-        return view('users.historycart', compact('riwayats', 'status'));
+        return view('users.historycart', compact('riwayats'));
     }
 
     public function historyDetail($bookingId)

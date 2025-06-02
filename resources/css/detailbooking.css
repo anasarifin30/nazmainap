@@ -242,6 +242,8 @@ h3 {
 .btn-primary:hover {
     background: #e06d00;
     color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Tombol bayar disabled */
@@ -252,6 +254,20 @@ h3 {
     cursor: not-allowed !important;
     border: none;
     opacity: 0.8;
+}
+
+.btn-primary:disabled {
+    background-color: #cbd5e1;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+    color: #64748b;
+    opacity: 0.7;
+}
+
+.btn-primary:disabled:hover {
+    background-color: #cbd5e1;
+    transform: none;
+    box-shadow: none;
 }
 
 .support-contact {
@@ -287,6 +303,15 @@ h3 {
 .status-menunggu {
     color: #ff9800;
 }
+.status-belum-dibayar {
+    background-color: #fff3e0;
+    color: #e65100;
+    border-color: #e65100;
+}
+
+.status-belum-dibayar i {
+    color: #e65100;
+}
 
 .homestay-title-row {
     display: flex;
@@ -317,6 +342,71 @@ h3 {
     font-weight: 600;
     margin: 0;
     line-height: 1.2;
+}
+
+/* Countdown timer styles */
+.countdown-timer {
+    background: linear-gradient(135deg, #0b3b86 0%, #1a56b3 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.timer-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.timer-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-icon i {
+    font-size: 20px;
+    color: white;
+}
+
+.timer-content {
+    flex: 1;
+}
+
+.timer-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.timer-countdown {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: "Monaco", monospace;
+    letter-spacing: 1px;
+}
+
+.timer-warning {
+    color: #ffd700;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Responsive adjustments */

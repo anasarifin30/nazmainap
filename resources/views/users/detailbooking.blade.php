@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Detail Booking</title>
     @vite(['resources/css/detailbooking.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 </head>
 <body>
     <x-header></x-header>
@@ -16,7 +18,20 @@
         </div>
 
         <div class="confirmation-card">
-            
+            <!-- Add Timer at the top -->
+            @if($riwayat->status == 'belum dibayar')
+                <div class="countdown-timer" style="display: none;">
+                    <div class="timer-wrapper">
+                        <div class="timer-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="timer-content">
+                            <div class="timer-label">Selesaikan pembayaran dalam</div>
+                            <div class="timer-countdown" id="countdown">10:00</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Homestay & Gambar -->
             <div class="room-details">
@@ -27,7 +42,7 @@
                         alt="{{ $riwayat->homestay->name ?? '-' }}">
                 </div>
                 <div class="room-info">
-                    <div class="booking-status status-{{ strtolower($riwayat->status) }}">
+                    <div class="booking-status status-{{ strtolower(str_replace(' ', '-', $riwayat->status)) }}">
                         @if($riwayat->status == 'selesai')
                             <i class="fas fa-check-circle"></i> Selesai
                         @elseif($riwayat->status == 'aktif')
@@ -36,6 +51,8 @@
                             <i class="fas fa-times-circle"></i> Dibatalkan
                         @elseif($riwayat->status == 'menunggu')
                             <i class="fas fa-hourglass-half"></i> Menunggu
+                        @elseif($riwayat->status == 'belum dibayar')
+                            <i class="fas fa-exclamation-circle"></i> Belum Dibayar
                         @else
                             {{ ucfirst($riwayat->status) }}
                         @endif
@@ -114,7 +131,7 @@
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Nomor Telepon</div>
-                    <div class="detail-value">{{ $riwayat->user->phone ?? '-' }}</div>
+                    <div class="detail-value">{{ $riwayat->user->nomorhp ?? '-' }}</div>
                 </div>
             </div>
 
@@ -123,58 +140,263 @@
                 <h3>Tanggal Menginap</h3>
                 <div class="detail-row">
                     <div class="detail-label">Check-in</div>
-                    <div class="detail-value">{{ \Carbon\Carbon::parse($riwayat->check_in)->format('d M Y') }}</div>
+                    <div class="detail-value">
+                        {{ \Carbon\Carbon::parse($riwayat->check_in)->format('d M Y') }} <span style="color:#888;font-size:13px;">(14:00 WIB)</span>
+                    </div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Check-out</div>
-                    <div class="detail-value">{{ \Carbon\Carbon::parse($riwayat->check_out)->format('d M Y') }}</div>
+                    <div class="detail-value">{{ \Carbon\Carbon::parse($riwayat->check_out)->format('d M Y') }} <span style="color:#888;font-size:13px;">(12:00 WIB)</span></div>
                 </div>
             </div>
 
             <!-- Syarat & Tombol -->
-            @if($riwayat->status == 'menunggu')
-            <div class="terms-conditions">
-                <input type="checkbox" id="terms" required>
-                <label for="terms">Saya setuju dengan <a href="{{ route('users.syaratketentuan') }}">Syarat dan Ketentuan</a> pemesanan</label>
-                <div id="terms-warning" style="display:none;color:#e53935;font-size:0.97rem;margin-top:6px;">
-                    Silakan centang persetujuan syarat dan ketentuan terlebih dahulu.
+            @if($riwayat->status == 'belum dibayar')
+                <div class="terms-conditions">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">Saya setuju dengan <a href="{{ route('users.syaratketentuan') }}">Syarat dan Ketentuan</a> pemesanan</label>
+                    <div id="terms-warning" style="display:none;color:#e53935;font-size:0.97rem;margin-top:6px;">
+                        Silakan centang persetujuan syarat dan ketentuan terlebih dahulu.
+                    </div>
                 </div>
-            </div>
             @endif
+
             <div class="action-buttons">
                 <a href="{{ route('users.historycart') }}" class="btn-secondary">Kembali</a>
-                @if($riwayat->status == 'menunggu')
-                <form action="#" method="POST" id="form-bayar">
-                    @csrf
-                    <button type="submit" class="btn-primary" id="btn-bayar" disabled>Konfirmasi dan Bayar</button>
-                </form>
+                @if($riwayat->status == 'belum dibayar')
+                    <form action="{{ route('bookings.pay', $riwayat->id) }}" method="POST" id="form-bayar">
+                        @csrf
+                        <button type="submit" class="btn-primary" id="btn-bayar">
+                            Konfirmasi dan Bayar
+                        </button>
+                    </form>
+                @elseif(in_array($riwayat->status, ['menunggu', 'aktif', 'selesai', 'dibatalkan']))
+                    <a href="{{ route('bookings.invoice', $riwayat->id) }}" class="btn-primary" target="_blank">
+                        <i class="fas fa-download"></i> Unduh Invoice
+                    </a>
                 @endif
             </div>
-
-            @if($riwayat->status == 'menunggu')
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const checkbox = document.getElementById('terms');
-                const btnBayar = document.getElementById('btn-bayar');
-                const warning = document.getElementById('terms-warning');
-                const form = document.getElementById('form-bayar');
-
-                checkbox.addEventListener('change', function() {
-                    btnBayar.disabled = !this.checked;
-                    if(this.checked) warning.style.display = 'none';
-                });
-
-                form.addEventListener('submit', function(e) {
-                    if (!checkbox.checked) {
-                        e.preventDefault();
-                        warning.style.display = 'block';
-                    }
-                });
-            });
-            </script>
-            @endif
         </div>
     </div>
-    <x-footer></x-footer>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnBayar = document.getElementById("btn-bayar");
+    const checkbox = document.getElementById("terms");
+    const warning = document.getElementById("terms-warning");
+    const form = document.getElementById("form-bayar");
+
+    // Initial checkbox state
+    if (btnBayar) {
+        btnBayar.disabled = !checkbox?.checked;
+    }
+
+    // Checkbox event listener
+    checkbox?.addEventListener('change', function() {
+        if (btnBayar) {
+            btnBayar.disabled = !this.checked;
+            warning.style.display = 'none';
+        }
+    });
+
+    // Form submit handler
+    form?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!checkbox.checked) {
+            warning.style.display = 'block';
+            return false;
+        }
+
+        try {
+            btnBayar.disabled = true;
+            btnBayar.textContent = 'Memproses...';
+
+            const formData = new FormData();
+            formData.append('_token', '{{ csrf_token() }}');
+
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            console.log('Payment response:', data);
+
+            if (data.status === 'success' && data.snap_token) {
+                const countdownDiv = document.querySelector('.countdown-timer');
+                const countdownDisplay = document.getElementById('countdown');
+                
+                if (data.remaining_seconds) {
+                    countdownDiv.style.display = 'block';
+                    startCountdown(data.remaining_seconds, countdownDisplay);
+                }
+
+                window.snap.pay(data.snap_token, {
+                    onSuccess: async function(result) {
+                        localStorage.removeItem('paymentEndTime');
+                        if (window.countdownInterval) {
+                            clearInterval(window.countdownInterval);
+                        }
+                        console.log('Payment success:', result);
+                        try {
+                            const updateResponse = await fetch("{{ route('bookings.update-status', $riwayat->id) }}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                },
+                                body: JSON.stringify({
+                                    status: 'menunggu',
+                                    payment_result: result
+                                })
+                            });
+
+                            if (updateResponse.ok) {
+                                window.location.href = "{{ route('users.historycart') }}";
+                            } else {
+                                console.error('Status update failed');
+                                alert('Pembayaran berhasil tetapi status gagal diperbarui');
+                            }
+                        } catch (error) {
+                            console.error('Status update error:', error);
+                            alert('Pembayaran berhasil tetapi status gagal diperbarui');
+                        }
+                    },
+                    onPending: function(result) {
+                        console.log('Payment pending:', result);
+                        window.location.href = "{{ route('users.historycart') }}";
+                    },
+                    onError: function(result) {
+                        if (result.status_code === "407") {
+                            localStorage.removeItem('paymentEndTime');
+                        }
+                        if (window.countdownInterval) {
+                            clearInterval(window.countdownInterval);
+                        }
+                        console.error('Payment error:', result);
+                        if (result.status_code === "407") {
+                            window.location.href = "{{ route('users.historycart') }}";
+                        } else {
+                            alert('Pembayaran gagal: ' + (result.status_message || 'Terjadi kesalahan'));
+                            btnBayar.disabled = false;
+                            btnBayar.textContent = 'Konfirmasi dan Bayar';
+                        }
+                    },
+                    onClose: function() {
+                        btnBayar.disabled = false;
+                        btnBayar.textContent = 'Konfirmasi dan Bayar';
+                    }
+                });
+            } else {
+                console.error('Payment setup error:', data);
+                alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                btnBayar.disabled = false;
+                btnBayar.textContent = 'Konfirmasi dan Bayar';
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            alert('Terjadi kesalahan pada sistem pembayaran');
+            btnBayar.disabled = false;
+            btnBayar.textContent = 'Konfirmasi dan Bayar';
+        }
+    });
+
+    let globalCountdown = null;
+
+    function startCountdown(initialSeconds, display) {
+        if (globalCountdown) {
+            clearInterval(globalCountdown);
+        }
+
+        let endTime = Date.now() + (initialSeconds * 1000);
+        localStorage.setItem('paymentEndTime', endTime);
+
+        function updateDisplay() {
+            let now = Date.now();
+            let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
+
+            if (timeLeft <= 0) {
+                clearInterval(globalCountdown);
+                localStorage.removeItem('paymentEndTime');
+                window.location.href = "{{ route('users.historycart') }}";
+                return;
+            }
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            display.textContent = formattedTime;
+
+            if (timeLeft <= 120) {
+                display.classList.add('timer-warning');
+            }
+        }
+
+        updateDisplay();
+        globalCountdown = setInterval(updateDisplay, 1000);
+        return globalCountdown;
+    }
+
+    // --- TIMER LOGIC AGAR TIDAK RESET SAAT REFRESH ---
+
+    const countdownDiv = document.querySelector('.countdown-timer');
+    const countdownDisplay = document.getElementById('countdown');
+
+    @if($riwayat->status == 'belum dibayar')
+        // Ambil waktu kadaluarsa dari backend (waktu kadaluarsa invoice midtrans)
+        // Pastikan backend mengirimkan $riwayat->midtrans_expiry (timestamp detik)
+        @php
+            $expiryTimestamp = isset($riwayat->midtrans_expiry) ? $riwayat->midtrans_expiry : null;
+        @endphp
+
+        @if($expiryTimestamp)
+            // Jika ada expiry dari backend, gunakan itu
+            const expiryTimestamp = {{ $expiryTimestamp }};
+            const nowTimestamp = Math.floor(Date.now() / 1000);
+            let remainingSeconds = expiryTimestamp - nowTimestamp;
+
+            // Cek localStorage, jika ada dan lebih kecil dari expiry, gunakan yang lebih kecil
+            const savedEndTime = localStorage.getItem('paymentEndTime');
+            if (savedEndTime) {
+                const savedRemaining = Math.ceil((savedEndTime - Date.now()) / 1000);
+                if (savedRemaining > 0 && savedRemaining < remainingSeconds) {
+                    remainingSeconds = savedRemaining;
+                }
+            }
+
+            if (remainingSeconds > 0 && countdownDiv && countdownDisplay) {
+                countdownDiv.style.display = 'flex';
+                startCountdown(remainingSeconds, countdownDisplay);
+            } else {
+                localStorage.removeItem('paymentEndTime');
+                if (countdownDiv) countdownDiv.style.display = 'none';
+            }
+        @else
+            // Fallback: jika tidak ada expiry dari backend, pakai default 10 menit
+            const totalTime = 10 * 60;
+            const savedEndTime = localStorage.getItem('paymentEndTime');
+            let remainingSeconds = totalTime;
+            if (savedEndTime) {
+                const savedRemaining = Math.ceil((savedEndTime - Date.now()) / 1000);
+                if (savedRemaining > 0) {
+                    remainingSeconds = savedRemaining;
+                }
+            }
+            if (remainingSeconds > 0 && countdownDiv && countdownDisplay) {
+                countdownDiv.style.display = 'flex';
+                startCountdown(remainingSeconds, countdownDisplay);
+            } else {
+                localStorage.removeItem('paymentEndTime');
+                if (countdownDiv) countdownDiv.style.display = 'none';
+            }
+        @endif
+    @endif
+});
+
+</script>
 </body>
 </html>

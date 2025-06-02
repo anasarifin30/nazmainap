@@ -1,18 +1,18 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\UserController;
 
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomestayController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\RoomController as RoomController;
 use App\Http\Controllers\User\UserController as UsersController;
-
 use App\Http\Controllers\User\HomestayController as UserHomestayController;
-use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
 
-use App\Http\Controllers\User\WilayahController;
+use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
+use App\Http\Controllers\User\InvoiceController;
 
 
 /*
@@ -25,8 +25,7 @@ Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpag
 
 Route::view('/syarat-ketentuan', 'users.syaratketentuan')->name('users.syaratketentuan');
 
-Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile')->middleware('auth');
-Route::post('/profile/update', [UsersController::class, 'updateProfile'])->name('users.profile.update')->middleware('auth');
+
 
 
 
@@ -64,11 +63,26 @@ Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])-
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:guest'])->group(function () {
-    Route::get('/pemesanan', [\App\Http\Controllers\User\UserController::class, 'cart'])->name('users.cart');
+    Route::get('/pemesanan', [\App\Http\Controllers\User\CartController::class, 'index'])->name('users.cart');
     Route::delete('/pemesanan/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'removeCartItem'])->name('cart.remove');
-    Route::patch('/cart/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'updateCartItem'])->name('cart.update');
+    Route::post('/cart/update/{bookingDetail}', [\App\Http\Controllers\User\CartController::class, 'update'])
+        ->name('cart.update');
+    Route::post('/cart/checkout', [\App\Http\Controllers\User\CartController::class, 'checkout'])
+        ->name('cart.checkout');
     Route::post('/rooms/{room}/book', [RoomController::class, 'book'])->name('rooms.book');
-    Route::get('/rooms/{room}/check-availability', [RoomController::class, 'checkAvailability'])->name('rooms.checkAvailability');
+    Route::get('/api/rooms/{room}/available', [RoomController::class, 'checkAvailability'])
+    ->name('rooms.checkAvailability');
+    Route::post('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])
+        ->name('bookings.cancel');
+    Route::post('/bookings/midtrans-callback', [BookingController::class, 'callback'])
+    ->name('bookings.midtrans-callback');
+    Route::post('/bookings/{booking}/update-status', [BookingController::class, 'updateStatus'])
+        ->name('bookings.update-status');
+    Route::get('/bookings/{booking}/invoice', [InvoiceController::class, 'generateInvoice'])
+        ->name('bookings.invoice');
+    Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile');
+    Route::post('/profile/update', [UsersController::class, 'updateProfile'])->name('users.profile.update');    
 });
 
 
@@ -120,3 +134,7 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->group(function
 });
 
 require __DIR__.'/auth.php';
+
+
+
+
