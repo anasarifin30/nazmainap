@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')
-                  ->constrained('bookings')
-                  ->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->enum('payment_status', ['pending', 'paid', 'failed'])
-                  ->default('pending');
+            $table->unsignedBigInteger('booking_id');
+            $table->decimal('amount', 10, 2); // Change this line
+            $table->enum('payment_status', ['pending', 'settlement', 'deny', 'cancel', 'expire', 'failure']);
             $table->string('payment_method')->nullable();
             $table->string('midtrans_order_id')->nullable();
+            $table->string('snap_token')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
+            
+            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
         });
     }
 
@@ -30,6 +31,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropColumn('expires_at');
+        });
     }
 };

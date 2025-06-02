@@ -15,15 +15,23 @@ class Booking extends Model
         'check_out',
         'base_price',
         'service_price',
-        'status',
-        'total_price'
+        'total_price',
+        'status'
     ];
 
     // Remove the attributes that don't exist in database
     protected $attributes = [
         'base_price' => 0,
         'service_price' => 0,
-        'total_price' => 0
+        'total_price' => 0,
+        'status' => 'cart'  // Tambahkan default status
+    ];
+
+    protected $dates = [
+        'check_in',
+        'check_out',
+        'created_at',
+        'updated_at'
     ];
 
     public function user()

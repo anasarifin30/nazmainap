@@ -47,4 +47,23 @@ class Room extends Model
 
     /** @use HasFactory<\Database\Factories\RoomFactory> */
     use HasFactory;
+
+    public function getAvailableRoomsCount($checkIn, $checkOut)
+    {
+        // Get total booked rooms for the given date range
+        $bookedRooms = BookingDetail::whereHas('booking', function ($query) use ($checkIn, $checkOut) {
+            $query->where(function ($q) use ($checkIn, $checkOut) {
+                // Check for overlapping dates
+                $q->where(function ($inner) use ($checkIn, $checkOut) {
+                    $inner->where('check_in', '<=', $checkOut)
+                          ->where('check_out', '>=', $checkIn);
+                });
+            })->whereIn('status', ['menunggu', 'aktif', 'belum dibayar']);
+        })
+        ->where('room_id', $this->id)
+        ->sum('quantity');
+
+        // Return available rooms
+        return max(0, $this->total_rooms - $bookedRooms);
+    }
 }

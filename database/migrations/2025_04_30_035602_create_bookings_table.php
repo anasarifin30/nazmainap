@@ -22,11 +22,12 @@ return new class extends Migration
             $table->date('check_in');
             $table->date('check_out');
             $table->decimal('base_price', 10, 2);    // total harga kamar
-            $table->decimal('service_price', 10, 2);    // nilai layanan
-            $table->decimal('total_price', 10, 2);   // total bayar
-            $table->enum('status', ['menunggu', 'aktif', 'dibatalkan', 'selesai'])
-                  ->default('menunggu'); // status booking
+            $table->decimal('service_price', 10, 2);  // nilai layanan
+            $table->decimal('total_price', 10, 2);    // total bayar
+            $table->enum('status', ['cart', 'belum dibayar', 'menunggu', 'aktif', 'dibatalkan', 'selesai'])
+                  ->default('cart');
             $table->timestamps();
+            $table->timestamp('payment_deadline')->nullable();
         });
     }
 
