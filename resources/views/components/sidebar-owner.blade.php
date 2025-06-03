@@ -21,26 +21,26 @@
         
         <nav class="sidebar-nav">
             <ul>
-                <li class="nav-item active">
-                    <a href="#" class="nav-link">
+                <li class="nav-item">
+                    <a href="/owner" class="nav-link">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="/owner/homestay" class="nav-link">
                         <i class="fas fa-building"></i>
                         <span>Homestay</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="/owner/pemesanan" class="nav-link">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Pemesanan</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="/owner/profilowner" class="nav-link">
                         <i class="fas fa-user"></i>
                         <span>Profil</span>
                     </a>
@@ -51,14 +51,10 @@
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">
-                    @if(auth()->user()->profile_picture)
-                        <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" alt="Profile Picture">
-                    @else
-                        <img src="{{ asset('images/default-avatar.png') }}" alt="Default Avatar">
-                    @endif
+                    <img src="{{ asset('images/default-avatar.png') }}" alt="Default Avatar">
                 </div>
                 <div class="user-details">
-                    <span class="user-name">{{ auth()->user()->name ?? 'Owner' }}</span>
+                    <span class="user-name">Owner</span>
                     <span class="user-role">Pemilik Homestay</span>
                 </div>
             </div>
