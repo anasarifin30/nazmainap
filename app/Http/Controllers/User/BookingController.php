@@ -38,7 +38,7 @@ class BookingController extends Controller
             // Generate unique order ID
             $orderId = 'BOOK-'.$booking->id.'-'.time();
             
-            // Calculate expiry time
+            // Calculate expiry time - change to 10 minutes
             $expiryTime = now()->addMinutes(10);
 
             // Set Midtrans configuration
@@ -58,8 +58,8 @@ class BookingController extends Controller
                     'phone' => $booking->user->nomorhp,
                 ],
                 'expiry' => [
-                    'unit' => 'minutes',
-                    'duration' => 10,
+                    'unit' => 'minutes',  // change to minutes
+                    'duration' => 10,     // change to 10
                 ],
                 'enabled_payments' => [
                     'credit_card', 'bca_va', 'bni_va', 'bri_va', 
@@ -93,7 +93,7 @@ class BookingController extends Controller
                 'status' => 'success',
                 'snap_token' => $snapToken,
                 'order_id' => $orderId,
-                'remaining_seconds' => 600 // 10 minutes in seconds
+                'remaining_seconds' => 600  // change to 600 seconds (10 minutes)
             ]);
 
         } catch (\Exception $e) {
@@ -134,44 +134,55 @@ class BookingController extends Controller
         }
     }
 
-    public function cancel(Booking $booking)
+    public function cancel(Request $request, Booking $booking)
     {
         try {
-            if ($booking->user_id !== Auth::id()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized action'
-                ], 403);
-            }
-
             DB::beginTransaction();
 
-            // Check if booking is still in 'belum dibayar' status
-            if ($booking->status === 'belum dibayar') {
-                $booking->status = 'dibatalkan';
-                $booking->save();
-
-                DB::commit();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Booking cancelled successfully'
-                ]);
+            // Check if booking belongs to user
+            if (!$booking || $booking->user_id !== Auth::id()) {
+                throw new \Exception('Pemesanan tidak ditemukan atau tidak valid');
             }
 
-            DB::rollBack();
+            // Find the pending transaction
+            $transaction = Transaction::where('booking_id', $booking->id)
+                ->whereIn('payment_status', ['pending'])
+                ->first();
+
+            if (!$transaction) {
+                throw new \Exception('Transaksi tidak ditemukan');
+            }
+
+            // Update booking status
+            $booking->update([
+                'status' => 'dibatalkan',
+                'payment_deadline' => null
+            ]);
+
+            // Update transaction status
+            $transaction->update([
+                'payment_status' => 'expire',
+                'expires_at' => now()
+            ]);
+
+            DB::commit();
+
             return response()->json([
-                'success' => false,
-                'message' => 'Invalid booking status'
+                'success' => true,
+                'message' => 'Pemesanan berhasil dibatalkan',
+                'redirect' => route('users.historycart')
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Booking cancellation error: ' . $e->getMessage());
+            Log::error('Cancel booking error: ' . $e->getMessage(), [
+                'booking_id' => $booking->id,
+                'user_id' => Auth::id()
+            ]);
             
             return response()->json([
                 'success' => false,
-                'message' => 'Error cancelling booking'
+                'message' => 'Terjadi kesalahan saat membatalkan pemesanan'
             ], 500);
         }
     }
@@ -187,18 +198,38 @@ class BookingController extends Controller
 
             DB::beginTransaction();
 
-            // Update booking status
-            $booking->status = 'menunggu';
-            $booking->save();
-
-            // Update transaction record
+            // Check if payment has expired
             $transaction = Transaction::where('booking_id', $booking->id)
                 ->latest()
                 ->first();
 
-            if ($transaction) {
+            if ($transaction && $transaction->expires_at < now()) {
+                // Update booking status
+                $booking->status = 'dibatalkan';
+                $booking->save();
+
+                // Update transaction status
+                $transaction->payment_status = 'expired';
+                $transaction->save();
+
+                DB::commit();
+
+                // Return expired status
+                return response()->json([
+                    'success' => false,
+                    'expired' => true,
+                    'message' => 'Waktu pembayaran telah habis',
+                    'redirect' => route('users.historycart')
+                ]);
+            }
+
+            // If payment is successful
+            if ($request->payment_status === 'settlement') {
+                $booking->status = 'menunggu';
+                $booking->save();
+
                 $transaction->payment_status = 'settlement';
-                $transaction->payment_method = $request->payment_method; // Add this line
+                $transaction->payment_method = $request->payment_method;
                 $transaction->save();
             }
 
@@ -206,16 +237,21 @@ class BookingController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Status updated successfully'
+                'message' => 'Status berhasil diperbarui',
+                'redirect' => route('users.historycart')
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Status update error: ' . $e->getMessage());
+            Log::error('Status update error: ' . $e->getMessage(), [
+                'booking_id' => $booking->id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
             
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating status'
+                'message' => 'Terjadi kesalahan saat memperbarui status'
             ], 500);
         }
     }

@@ -8,6 +8,7 @@
     @vite(['resources/css/detailbooking.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <x-header></x-header>
@@ -256,10 +257,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
 
                             if (updateResponse.ok) {
+                                await Swal.fire({
+                                    icon: 'success',
+                                    title: 'Pembayaran Berhasil',
+                                    text: 'Terima kasih atas pembayaran Anda.',
+                                    confirmButtonColor: '#0B3B86'
+                                });
                                 window.location.href = "{{ route('users.historycart') }}";
                             } else {
-                                console.error('Status update failed');
-                                alert('Pembayaran berhasil tetapi status gagal diperbarui');
+                                await Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Perhatian',
+                                    text: 'Pembayaran berhasil tetapi status gagal diperbarui',
+                                    confirmButtonColor: '#0B3B86'
+                                });
                             }
                         } catch (error) {
                             console.error('Status update error:', error);
@@ -270,18 +281,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.log('Payment pending:', result);
                         window.location.href = "{{ route('users.historycart') }}";
                     },
-                    onError: function(result) {
+                    onError: async function(result) {
                         if (result.status_code === "407") {
-                            localStorage.removeItem('paymentEndTime');
-                        }
-                        if (window.countdownInterval) {
-                            clearInterval(window.countdownInterval);
-                        }
-                        console.error('Payment error:', result);
-                        if (result.status_code === "407") {
+                            await Swal.fire({
+                                icon: 'error',
+                                title: 'Pembayaran Gagal',
+                                text: 'Waktu pembayaran telah habis.',
+                                confirmButtonColor: '#0B3B86'
+                            });
                             window.location.href = "{{ route('users.historycart') }}";
                         } else {
-                            alert('Pembayaran gagal: ' + (result.status_message || 'Terjadi kesalahan'));
+                            await Swal.fire({
+                                icon: 'error',
+                                title: 'Pembayaran Gagal',
+                                text: result.status_message || 'Terjadi kesalahan saat memproses pembayaran',
+                                confirmButtonColor: '#0B3B86'
+                            });
                             btnBayar.disabled = false;
                             btnBayar.textContent = 'Konfirmasi dan Bayar';
                         }
@@ -322,7 +337,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (timeLeft <= 0) {
                 clearInterval(globalCountdown);
                 localStorage.removeItem('paymentEndTime');
-                window.location.href = "{{ route('users.historycart') }}";
+                
+                // Automatically cancel booking when timer expires
+                cancelExpiredBooking();
                 return;
             }
 
@@ -340,6 +357,103 @@ document.addEventListener('DOMContentLoaded', function() {
         globalCountdown = setInterval(updateDisplay, 1000);
         return globalCountdown;
     }
+
+    async function cancelExpiredBooking() {
+        try {
+            // Show loading state using SweetAlert2
+            Swal.fire({
+                title: 'Memproses Pembatalan',
+                html: 'Mohon tunggu sebentar...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const response = await fetch("{{ route('bookings.cancel', $riwayat->id) }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Clear timer data
+                localStorage.removeItem('paymentEndTime');
+                
+                // Update UI elements
+                const paymentForm = document.getElementById('form-bayar');
+                const countdownTimer = document.querySelector('.countdown-timer');
+                const termsConditions = document.querySelector('.terms-conditions');
+                
+                if (paymentForm) paymentForm.style.display = 'none';
+                if (countdownTimer) countdownTimer.style.display = 'none';
+                if (termsConditions) termsConditions.style.display = 'none';
+
+                // Update status display
+                const statusElement = document.querySelector('.booking-status');
+                if (statusElement) {
+                    statusElement.className = 'booking-status status-dibatalkan';
+                    statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Dibatalkan';
+                }
+
+                // Show success message and redirect
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Pemesanan Dibatalkan',
+                    text: 'Waktu pembayaran telah habis. Pemesanan otomatis dibatalkan.',
+                    confirmButtonColor: '#0B3B86',
+                    allowOutsideClick: false
+                });
+
+                window.location.href = data.redirect;
+            } else {
+                throw new Error(data.message || 'Gagal membatalkan pemesanan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan',
+                text: 'Gagal membatalkan pemesanan. Sistem akan memuat ulang halaman.',
+                confirmButtonColor: '#0B3B86'
+            });
+            window.location.reload();
+        }
+    }
+
+    function updateDisplay() {
+        let now = Date.now();
+        let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
+
+        if (timeLeft <= 0) {
+            clearInterval(globalCountdown);
+            localStorage.removeItem('paymentEndTime');
+            cancelExpiredBooking();
+            return;
+        }
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        display.textContent = formattedTime;
+
+        if (timeLeft <= 120) {
+            display.classList.add('timer-warning');
+        }
+    }
+
+    // Add check on page load
+    window.addEventListener('load', function() {
+        const savedEndTime = localStorage.getItem('paymentEndTime');
+        if (savedEndTime && Date.now() >= parseInt(savedEndTime)) {
+            cancelExpiredBooking();
+        }
+    });
 
     // --- TIMER LOGIC AGAR TIDAK RESET SAAT REFRESH ---
 

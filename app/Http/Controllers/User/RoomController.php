@@ -18,12 +18,15 @@ class RoomController extends Controller
         $checkIn = request('check_in', now()->format('Y-m-d'));
         $checkOut = request('check_out', now()->addDay()->format('Y-m-d'));
         
-        $availableRooms = $room->getAvailableRoomsCount($checkIn, $checkOut);
-
         // Get existing booking from cart if any
         $existingBooking = Booking::where('user_id', Auth::id())
             ->where('status', 'cart')
             ->first();
+
+        $availableRooms = $room->getAvailableRoomsCount(
+            $existingBooking ? $existingBooking->check_in : $checkIn,
+            $existingBooking ? $existingBooking->check_out : $checkOut
+        );
 
         $existingDetail = null;
         if ($existingBooking) {
@@ -53,13 +56,43 @@ class RoomController extends Controller
         ));
     }
 
+    private function isProfileComplete($user)
+    {
+        $missingFields = [];
+
+        // Check basic info
+        if (empty($user->name)) $missingFields[] = 'Nama Lengkap';
+        if (empty($user->email)) $missingFields[] = 'Email';
+        if (empty($user->nomorhp)) $missingFields[] = 'Nomor HP';
+        
+        // Check profile photo
+        if (empty($user->foto)) $missingFields[] = 'Foto Profil';
+        
+        // Check address fields
+        if (empty($user->address)) $missingFields[] = 'Alamat';
+        if (empty($user->provinsi)) $missingFields[] = 'Provinsi';
+        if (empty($user->kabupaten)) $missingFields[] = 'Kabupaten';
+        if (empty($user->kecamatan)) $missingFields[] = 'Kecamatan';
+        if (empty($user->kelurahan)) $missingFields[] = 'Kelurahan';
+
+        if (!empty($missingFields)) {
+            session()->flash('missing_fields', $missingFields);
+            return false;
+        }
+
+        return true;
+    }
+
     public function book(Request $request, Room $room)
     {
-        // Check if user profile is complete
         $user = Auth::user();
         if (!$this->isProfileComplete($user)) {
+            $missingFields = session('missing_fields', []);
+            $message = 'Silakan lengkapi data berikut sebelum melakukan pemesanan: ' . implode(', ', $missingFields);
+            
             return redirect()->route('users.profile')
-                ->with('error', 'Silakan lengkapi profil Anda terlebih dahulu sebelum melakukan pemesanan.');
+                ->with('error', $message)
+                ->with('show_required_fields', true);
         }
 
         try {
@@ -150,18 +183,6 @@ class RoomController extends Controller
             'service_price' => $servicePrice,
             'total_price' => $totalBasePrice + $servicePrice
         ]);
-    }
-
-    private function isProfileComplete($user)
-    {
-        return !empty($user->name) && 
-               !empty($user->email) && 
-               !empty($user->nomorhp) && 
-               !empty($user->address) &&
-               !empty($user->provinsi) &&
-               !empty($user->kabupaten) &&
-               !empty($user->kecamatan) &&
-               !empty($user->kelurahan);
     }
 
     public function checkAvailability(Request $request, Room $room)

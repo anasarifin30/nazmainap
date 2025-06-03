@@ -12,10 +12,7 @@
     <x-header></x-header>
 
     <div class="profile-container">
-        <div class="breadcrumb">
-            Beranda <span class="mx-2">></span> Pengguna
-        </div>
-        
+
         <div class="profile-content">
             <!-- Sidebar -->
             <div class="sidebar">
@@ -52,14 +49,36 @@
                         </ul>
                     </div>
                 @endif
+                @if(session('show_required_fields'))
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    {{ session('error') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <form action="{{ route('users.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Left Column -->
                         <div>
                             <div class="form-group">
-                                <label for="nama">Nama Lengkap</label>
-                                <input type="text" id="nama" name="nama" class="form-control" value="{{ old('nama', $user->name) }}">
+                                <label for="nama">
+                                    Nama Lengkap
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" 
+                                       id="nama" 
+                                       name="nama" 
+                                       class="form-control {{ empty($user->name) ? 'border-red-300 bg-red-50' : '' }}" 
+                                       value="{{ old('nama', $user->name) }}"
+                                       required>
                             </div>
                             <div class="form-group">
                                 <label for="nohp">No HP</label>
@@ -78,17 +97,33 @@
                                 <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Ulangi kata sandi baru">
                             </div>
                             <div class="form-group">
-                                <label for="foto">Foto</label>
+                                <label for="foto">
+                                    Foto Profil
+                                    <span class="text-red-500">*</span>
+                                    <span class="text-sm text-gray-500">(Wajib untuk pemesanan)</span>
+                                </label>
                                 <div class="avatar-upload">
-                                    <div class="avatar-preview cursor-pointer w-24 h-24 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-gray-100" id="avatarPreview">
+                                    <div class="avatar-preview cursor-pointer w-24 h-24 rounded-full border-2 {{ empty($user->foto) ? 'border-red-300' : 'border-green-300' }} flex items-center justify-center overflow-hidden bg-gray-100" id="avatarPreview">
                                         @if ($user->foto)
                                             <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto Profil" id="fotoPreviewImg" class="w-full h-full object-cover">
+                                            <div class="absolute top-0 right-0 bg-green-500 text-white rounded-full p-1 transform translate-x-1/4 -translate-y-1/4">
+                                                <i class="fas fa-check text-xs"></i>
+                                            </div>
                                         @else
-                                            <i class="fas fa-camera text-4xl text-gray-400" id="cameraIcon"></i>
+                                            <div class="text-center">
+                                                <i class="fas fa-camera text-4xl text-gray-400" id="cameraIcon"></i>
+                                                <p class="text-xs text-red-500 mt-2">Wajib upload foto</p>
+                                            </div>
                                         @endif
                                     </div>
                                     <input type="file" id="foto" name="foto" accept="image/*" class="hidden" onchange="previewFoto(event)">
                                 </div>
+                                @if(empty($user->foto))
+                                    <p class="text-sm text-red-500 mt-2">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Foto profil diperlukan untuk melakukan pemesanan
+                                    </p>
+                                @endif
                             </div>
                             
                         </div>
@@ -103,8 +138,14 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="provinsi">Provinsi</label>
-                                <select id="provinsi" name="provinsi" class="form-control select">
+                                <label for="provinsi">
+                                    Provinsi
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <select id="provinsi" 
+                                        name="provinsi" 
+                                        class="form-control select {{ empty($user->provinsi) ? 'border-red-300 bg-red-50' : '' }}"
+                                        required>
                                     <option value="">-- Pilih Provinsi --</option>
                                 </select>
                             </div>
@@ -162,15 +203,53 @@
         function previewFoto(event) {
             const file = event.target.files[0];
             const previewContainer = document.getElementById('avatarPreview');
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'photo-upload-message';
 
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Foto Profil" id="fotoPreviewImg" class="w-full h-full object-cover rounded-full">`;
+                    previewContainer.innerHTML = `
+                        <img src="${e.target.result}" alt="Foto Profil" class="w-full h-full object-cover">
+                        <div class="absolute top-0 right-0 bg-green-500 text-white rounded-full p-1 transform translate-x-1/4 -translate-y-1/4">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                    `;
+                    previewContainer.classList.remove('border-red-300');
+                    previewContainer.classList.add('border-green-300');
+                    
+                    // Update message
+                    messageContainer.innerHTML = `
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="text-green-500">Foto profil telah dipilih</span>
+                    `;
+                    messageContainer.className = 'photo-upload-message success';
                 };
                 reader.readAsDataURL(file);
             } else {
-                previewContainer.innerHTML = `<i class="fas fa-camera text-4xl text-gray-400"></i>`;
+                previewContainer.innerHTML = `
+                    <div class="text-center">
+                        <i class="fas fa-camera text-4xl text-gray-400"></i>
+                        <p class="text-xs text-red-500 mt-2">Wajib upload foto</p>
+                    </div>
+                `;
+                previewContainer.classList.remove('border-green-300');
+                previewContainer.classList.add('border-red-300');
+                
+                // Update message
+                messageContainer.innerHTML = `
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                    <span>Silakan pilih file gambar yang valid</span>
+                `;
+                messageContainer.className = 'photo-upload-message required';
+            }
+
+            // Update or add message
+            const existingMessage = previewContainer.nextElementSibling;
+            if (existingMessage && existingMessage.classList.contains('photo-upload-message')) {
+                existingMessage.replaceWith(messageContainer);
+            } else {
+                previewContainer.parentNode.insertBefore(messageContainer, previewContainer.nextSibling);
             }
         }
   
@@ -277,10 +356,19 @@
     let kab = document.getElementById('kabupaten');
     let kec = document.getElementById('kecamatan');
     let kel = document.getElementById('kelurahan');
-    document.getElementById('provinsi_nama').value = prov.options[prov.selectedIndex]?.text || '';
-    document.getElementById('kabupaten_nama').value = kab.options[kab.selectedIndex]?.text || '';
-    document.getElementById('kecamatan_nama').value = kec.options[kec.selectedIndex]?.text || '';
-    document.getElementById('kelurahan_nama').value = kel.options[kel.selectedIndex]?.text || '';
+
+    // Only set the value if an actual option (not the placeholder) is selected
+    document.getElementById('provinsi_nama').value = 
+        prov.selectedIndex > 0 ? prov.options[prov.selectedIndex].text : '';
+    
+    document.getElementById('kabupaten_nama').value = 
+        kab.selectedIndex > 0 ? kab.options[kab.selectedIndex].text : '';
+    
+    document.getElementById('kecamatan_nama').value = 
+        kec.selectedIndex > 0 ? kec.options[kec.selectedIndex].text : '';
+    
+    document.getElementById('kelurahan_nama').value = 
+        kel.selectedIndex > 0 ? kel.options[kel.selectedIndex].text : '';
 }
 
 // Update setiap kali dropdown berubah
@@ -289,7 +377,45 @@
 });
 
 // Set saat submit form
-document.querySelector('form').addEventListener('submit', setWilayahNama);
+document.querySelector('form').addEventListener('submit', function(e) {
+    const requiredFields = [
+        'nama',
+        'email',
+        'nohp',
+        'provinsi',
+        'kabupaten',
+        'kecamatan',
+        'kelurahan',
+        'alamat'
+    ];
+
+    const missingFields = [];
+    requiredFields.forEach(field => {
+        const input = document.getElementById(field);
+        if (!input.value.trim()) {
+            input.classList.add('is-invalid');
+            missingFields.push(input.previousElementSibling.textContent.trim().replace('*', ''));
+        } else {
+            input.classList.remove('is-invalid');
+        }
+    });
+
+    if (missingFields.length > 0) {
+        e.preventDefault();
+        const message = 'Silakan lengkapi field berikut: ' + missingFields.join(', ');
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'bg-red-100 text-red-700 px-4 py-2 rounded mb-4';
+        errorDiv.textContent = message;
+        
+        const form = document.querySelector('form');
+        form.insertBefore(errorDiv, form.firstChild);
+        
+        // Scroll to top
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+});
 });   
     </script>
 </body>
