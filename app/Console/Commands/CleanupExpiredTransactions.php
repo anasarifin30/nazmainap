@@ -13,7 +13,7 @@ class CleanupExpiredTransactions extends Command
     public function handle()
     {
         Transaction::where('payment_status', 'pending')
-            ->whereRaw('created_at < NOW() - INTERVAL 10 MINUTE')
+            ->whereRaw('created_at < NOW() - INTERVAL 10 MINUTE') 
             ->delete();
 
         $this->info('Expired transactions cleaned up successfully');

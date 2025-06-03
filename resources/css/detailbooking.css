@@ -409,6 +409,64 @@ h3 {
     }
 }
 
+/* Loading overlay styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.loading-content i {
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+.loading-content span {
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+/* SweetAlert2 Custom Styles */
+.swal2-popup {
+    font-family: "Poppins", sans-serif;
+    border-radius: 12px;
+}
+
+.swal2-title {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.swal2-html-container {
+    color: #4a5568;
+}
+
+.swal2-confirm {
+    padding: 10px 24px !important;
+    font-weight: 500 !important;
+}
+
+.swal2-icon {
+    border-width: 3px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .room-details {

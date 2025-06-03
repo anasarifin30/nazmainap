@@ -47,24 +47,30 @@ class UserController extends Controller
             'nohp'        => 'required|string|max:20',
             'email'       => 'required|email|max:255|unique:users,email,' . $user->id,
             'alamat'      => 'nullable|string|max:255',
-            'provinsi'    => 'nullable|string|max:100',
-            'kabupaten'   => 'nullable|string|max:100',
-            'kecamatan'   => 'nullable|string|max:100',
-            'kelurahan'   => 'nullable|string|max:100',
+            'provinsi_nama'    => 'nullable|string|max:100',
+            'kabupaten_nama'   => 'nullable|string|max:100',
+            'kecamatan_nama'   => 'nullable|string|max:100',
+            'kelurahan_nama'   => 'nullable|string|max:100',
             'jenis_kelamin' => 'nullable|in:L,P',
             'password'    => 'nullable|string|min:8|confirmed',
             'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        // Filter out "-- Pilih X --" values
+        $provinsi = $request->provinsi_nama !== '-- Pilih Provinsi --' ? $request->provinsi_nama : null;
+        $kabupaten = $request->kabupaten_nama !== '-- Pilih Kabupaten --' ? $request->kabupaten_nama : null;
+        $kecamatan = $request->kecamatan_nama !== '-- Pilih Kecamatan --' ? $request->kecamatan_nama : null;
+        $kelurahan = $request->kelurahan_nama !== '-- Pilih Kelurahan --' ? $request->kelurahan_nama : null;
 
         // Update data
         $user->name      = $request->nama;
         $user->nomorhp   = $request->nohp;
         $user->email     = $request->email;
         $user->address   = $request->alamat;
-        $user->provinsi  = $request->provinsi_nama;
-        $user->kabupaten = $request->kabupaten_nama;
-        $user->kecamatan = $request->kecamatan_nama;
-        $user->kelurahan = $request->kelurahan_nama;
+        $user->provinsi  = $provinsi;
+        $user->kabupaten = $kabupaten;
+        $user->kecamatan = $kecamatan;
+        $user->kelurahan = $kelurahan;
         $user->gender    = $request->jenis_kelamin;
 
         // Update password jika diisi

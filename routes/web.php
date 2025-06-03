@@ -1,18 +1,19 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\BookingController;
+use App\Http\Controllers\User\InvoiceController;
+use App\Http\Controllers\User\RoomController as RoomController;
+use App\Http\Controllers\User\UserController as UsersController;
+use App\Http\Controllers\User\HomestayController as UserHomestayController;
+
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomestayController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-use App\Http\Controllers\User\BookingController;
-use App\Http\Controllers\User\RoomController as RoomController;
-use App\Http\Controllers\User\UserController as UsersController;
-use App\Http\Controllers\User\HomestayController as UserHomestayController;
-
 use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
-use App\Http\Controllers\User\InvoiceController;
 
 
 /*
@@ -24,14 +25,6 @@ use App\Http\Controllers\User\InvoiceController;
 Route::get('/', [UsersController::class, 'landingPage'])->name('users.landingpage');
 
 Route::view('/syarat-ketentuan', 'users.syaratketentuan')->name('users.syaratketentuan');
-
-
-
-
-
-Route::get('/historycart', [UsersController::class, 'historycart'])->name('users.historycart')->middleware('auth');
-Route::get('/historycart/{booking}', [\App\Http\Controllers\User\UserController::class, 'historyDetail'])->name('users.detailbooking')->middleware('auth');
-
 
 Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
 Route::get('/homestay/{id}', [UserHomestayController::class, 'show'])->name('homestays.show');
@@ -63,24 +56,19 @@ Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])-
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:guest'])->group(function () {
-    Route::get('/pemesanan', [\App\Http\Controllers\User\CartController::class, 'index'])->name('users.cart');
-    Route::delete('/pemesanan/{bookingDetail}', [\App\Http\Controllers\User\UserController::class, 'removeCartItem'])->name('cart.remove');
-    Route::post('/cart/update/{bookingDetail}', [\App\Http\Controllers\User\CartController::class, 'update'])
-        ->name('cart.update');
-    Route::post('/cart/checkout', [\App\Http\Controllers\User\CartController::class, 'checkout'])
-        ->name('cart.checkout');
+    Route::get('/pemesanan', [CartController::class, 'index'])->name('users.cart');
+    Route::delete('/pemesanan/{bookingDetail}', [UsersController::class, 'removeCartItem'])->name('cart.remove');
+    Route::post('/cart/update/{bookingDetail}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/rooms/{room}/book', [RoomController::class, 'book'])->name('rooms.book');
-    Route::get('/api/rooms/{room}/available', [RoomController::class, 'checkAvailability'])
-    ->name('rooms.checkAvailability');
+    Route::get('/api/rooms/{room}/available', [RoomController::class, 'checkAvailability'])->name('rooms.checkAvailability');
     Route::post('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
-    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])
-        ->name('bookings.cancel');
-    Route::post('/bookings/midtrans-callback', [BookingController::class, 'callback'])
-    ->name('bookings.midtrans-callback');
-    Route::post('/bookings/{booking}/update-status', [BookingController::class, 'updateStatus'])
-        ->name('bookings.update-status');
-    Route::get('/bookings/{booking}/invoice', [InvoiceController::class, 'generateInvoice'])
-        ->name('bookings.invoice');
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel')->middleware('web');
+    Route::post('/bookings/midtrans-callback', [BookingController::class, 'callback'])->name('bookings.midtrans-callback');
+    Route::post('/bookings/{booking}/update-status', [BookingController::class, 'updateStatus'])->name('bookings.update-status');
+    Route::get('/bookings/{booking}/invoice', [InvoiceController::class, 'generateInvoice'])->name('bookings.invoice');
+    Route::get('/historycart', [UsersController::class, 'historycart'])->name('users.historycart');
+    Route::get('/historycart/{booking}', [UsersController::class, 'historyDetail'])->name('users.detailbooking');
     Route::get('/profile', [UsersController::class, 'profile'])->name('users.profile');
     Route::post('/profile/update', [UsersController::class, 'updateProfile'])->name('users.profile.update');    
 });
@@ -121,6 +109,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
     Route::view('/', 'owner.dashboard')->name('dashboard');
     Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestays.index');
+});
+Route::get('/profilowner', function() {
+        return view('owner.profilowner');
 });
 
 

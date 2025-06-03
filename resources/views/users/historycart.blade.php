@@ -15,9 +15,7 @@
     <!-- Main Content -->
     <div class="page-wrapper">
         <div class="history-container">
-            <div class="breadcrumb">
-                Beranda <span class="mx-2">></span> Riwayat
-            </div>
+            
             
             <div class="history-content">
                 <!-- Sidebar -->
