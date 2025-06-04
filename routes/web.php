@@ -108,6 +108,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 */
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
     Route::view('/', 'owner.dashboard')->name('dashboard');
+    Route::view('/homestayowner', 'owner.homestayowner')->name('homestayowner');
+    Route::view('/profilowner', 'owner.profilowner')->name('profilowner');
+    Route::view('/1', 'owner.homestay.addhomestay')->name('addhomestay');
     Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestays.index');
 });
 Route::get('/profilowner', function() {

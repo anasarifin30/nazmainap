@@ -12,7 +12,7 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <img src="{{ asset('storage/logo/mandhapa.png') }}" alt="Mandhapa" class="logo-img">
+                <img src="{{ asset('storage/logo/mandhapaputih.png') }}" alt="Mandhapa" class="logo-img">
             </div>
             <button class="sidebar-toggle" id="sidebarToggle">
                 <i class="fas fa-bars"></i>
@@ -28,7 +28,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/owner/homestay" class="nav-link">
+                    <a href="/owner/homestayowner" class="nav-link">
                         <i class="fas fa-building"></i>
                         <span>Homestay</span>
                     </a>
