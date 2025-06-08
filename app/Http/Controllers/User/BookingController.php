@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Midtrans\Snap;
+use App\Models\Commission;
 
 class BookingController extends Controller
 {
@@ -65,6 +66,9 @@ class BookingController extends Controller
                     'credit_card', 'bca_va', 'bni_va', 'bri_va', 
                     'mandiri_clickpay', 'gopay', 'shopeepay'
                 ],
+                'finish_redirect_url' => [
+                    'finish' => route('users.detailbooking', $booking->id),
+                ],
             ];
 
             // Get Snap Token
@@ -80,6 +84,9 @@ class BookingController extends Controller
                 'expires_at' => $expiryTime
             ]);
 
+            // Calculate remaining seconds for the new transaction
+            $remainingSeconds = now()->diffInSeconds($expiryTime);
+
             Log::info('Transaction created', [
                 'transaction_id' => $transaction->id,
                 'expires_at' => $transaction->expires_at,
@@ -92,8 +99,7 @@ class BookingController extends Controller
             return response()->json([
                 'status' => 'success',
                 'snap_token' => $snapToken,
-                'order_id' => $orderId,
-                'remaining_seconds' => 600  // change to 600 seconds (10 minutes)
+                // ...tambahan lain jika perlu
             ]);
 
         } catch (\Exception $e) {
@@ -122,6 +128,9 @@ class BookingController extends Controller
                 // Update booking status
                 if (in_array($notification->transaction_status, ['capture', 'settlement'])) {
                     $transaction->booking->update(['status' => 'menunggu']);
+
+                    // === Tambahkan di sini ===
+                    $this->createCommission($transaction);
                 } elseif (in_array($notification->transaction_status, ['deny', 'cancel', 'expire'])) {
                     $transaction->booking->update(['status' => 'dibatalkan']);
                 }
@@ -231,6 +240,8 @@ class BookingController extends Controller
                 $transaction->payment_status = 'settlement';
                 $transaction->payment_method = $request->payment_method;
                 $transaction->save();
+
+                $this->createCommission($transaction);
             }
 
             DB::commit();
@@ -254,5 +265,22 @@ class BookingController extends Controller
                 'message' => 'Terjadi kesalahan saat memperbarui status'
             ], 500);
         }
+    }
+    
+    public function createCommission(Transaction $transaction)
+    {
+        $total = $transaction->amount;
+
+        $ownerFee = round($total * 0.75, 2);
+        $subadminFee = round($total * 0.10, 2);
+        $adminFee = round($total * 0.15, 2);
+
+        Commission::create([
+            'transaction_id' => $transaction->id,
+            'admin_fee' => $adminFee,
+            'subadmin_fee' => $subadminFee,
+            'owner_fee' => $ownerFee,
+            'status' => 'unpaid'
+        ]);
     }
 }

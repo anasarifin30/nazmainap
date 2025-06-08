@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
+use App\Http\Controllers\Auth\GoogleController;
 
 
 /*
@@ -37,18 +38,18 @@ Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show')
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
-// Login Routes
-Route::get('/login/admin', [AuthenticatedSessionController::class, 'showAdminLogin'])->name('login.admin');
-Route::get('/login/subadmin', [AuthenticatedSessionController::class, 'showSubadminLogin'])->name('login.subadmin');
-Route::get('/login/owner', [AuthenticatedSessionController::class, 'showOwnerLogin'])->name('login.owner');
-Route::get('/login/guest', [AuthenticatedSessionController::class, 'showGuestLogin'])->name('login.guest');
+// // Login Routes
+// Route::get('/login/admin', [AuthenticatedSessionController::class, 'showAdminLogin'])->name('login.admin');
+// Route::get('/login/subadmin', [AuthenticatedSessionController::class, 'showSubadminLogin'])->name('login.subadmin');
+// Route::get('/login/owner', [AuthenticatedSessionController::class, 'showOwnerLogin'])->name('login.owner');
+// Route::get('/login/guest', [AuthenticatedSessionController::class, 'showGuestLogin'])->name('login.guest');
 
-// Register Routes
-Route::view('/admin/register', 'auth.registeradmin')->name('register.admin');
-Route::view('/subadmin/register', 'auth.registersubadmin')->name('register.subadmin');
-Route::view('/owner/register', 'auth.registerowner')->name('register.owner');
-Route::get('/register/guest', [RegisteredUserController::class, 'showGuestRegister'])->name('register.guest');
-Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])->name('register.guest.store');
+// // Register Routes
+// Route::view('/admin/register', 'auth.registeradmin')->name('register.admin');
+// Route::view('/subadmin/register', 'auth.registersubadmin')->name('register.subadmin');
+// Route::view('/owner/register', 'auth.registerowner')->name('register.owner');
+// Route::get('/register/guest', [RegisteredUserController::class, 'showGuestRegister'])->name('register.guest');
+// Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])->name('register.guest.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -129,6 +130,19 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->group(function
 
 require __DIR__.'/auth.php';
 
+Route::get('/auth', [AuthenticatedSessionController::class, 'create'])->name('auth');
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+// Redirect route lama ke /auth (opsional)
+Route::get('/loginowner', fn() => redirect()->route('auth'));
+Route::get('/loginguest', fn() => redirect()->route('auth'));
+Route::get('/registerowner', fn() => redirect()->route('auth'));
+Route::get('/registerguest', fn() => redirect()->route('auth'));
 
+Route::post('/register/guest', [RegisteredUserController::class, 'storeGuest'])->name('register.guest.store');
+Route::post('/register/owner', [RegisteredUserController::class, 'storeOwner'])->name('register.owner.store');
+
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 

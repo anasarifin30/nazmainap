@@ -58,14 +58,12 @@ class RegisteredUserController extends Controller
         $request->validate([
             'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'whatsapp' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
         $user = \App\Models\User::create([
             'name' => $request->nama,
             'email' => $request->email,
-            'nomorhp' => $request->whatsapp,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'role' => 'guest',
         ]);
@@ -73,5 +71,25 @@ class RegisteredUserController extends Controller
         \Illuminate\Support\Facades\Auth::login($user);
 
         return redirect()->route('users.landingpage')->with('success', 'Registrasi berhasil!');
+    }
+
+    public function storeOwner(Request $request)
+    {
+        $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $request->nama,
+            'email' => $request->email,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'role' => 'owner',
+        ]);
+
+        \Illuminate\Support\Facades\Auth::login($user);
+
+        return redirect()->route('owner.dashboard')->with('success', 'Registrasi pemilik berhasil!');
     }
 }

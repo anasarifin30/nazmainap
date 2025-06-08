@@ -180,6 +180,20 @@ body {
     color: #ff9800;
     border-color: #ff9800;
 }
+
+.history-card .card-image {
+    width: 100%; /* Pastikan lebar container gambar penuh */
+    height: 200px; /* Atur tinggi tetap untuk semua container gambar */
+    overflow: hidden; /* Sembunyikan bagian gambar yang melebihi container */
+}
+
+.history-card .card-image img {
+    width: 100%; /* Gambar mengisi lebar container */
+    height: 100%; /* Gambar mengisi tinggi container */
+    object-fit: cover; /* Pangkas gambar agar sesuai dengan dimensi container tanpa merusak aspek rasio */
+    display: block; /* Hilangkan spasi tambahan di bawah gambar */
+}
+
 .filter-belum-dibayar {
     color: #e65100;
     border-color: #e65100;

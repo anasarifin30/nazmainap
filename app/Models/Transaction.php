@@ -14,20 +14,26 @@ class Transaction extends Model
         'booking_id',
         'amount',
         'payment_status',
-        'payment_method', // Make sure this is included
         'midtrans_order_id',
         'snap_token',
-        'expires_at'
+        'expires_at', // Pastikan ini ada di fillable jika menggunakan mass assignment
+        'payment_method', // Tambahkan jika ada
     ];
 
-    protected $dates = [
-        'expires_at'  // Add this line to cast the field to datetime
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'expires_at' => 'datetime', // Tambahkan baris ini
     ];
 
     public function booking()
     {
         return $this->belongsTo(Booking::class);
     }
+
 
     public function commission()
     {

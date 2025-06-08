@@ -32,6 +32,10 @@ class RoomController extends Controller
         if ($existingBooking) {
             $existingDetail = $existingBooking->bookingDetails()
                 ->where('room_id', $room->id)
+                ->whereHas('booking', function($q) use ($existingBooking) {
+                    $q->where('check_in', $existingBooking->check_in)
+                      ->where('check_out', $existingBooking->check_out);
+                })
                 ->first();
         }
 
@@ -111,25 +115,18 @@ class RoomController extends Controller
             }
 
             // Check existing booking in cart
-            $booking = Booking::firstOrCreate(
-                [
-                    'user_id' => Auth::id(),
-                    'status' => 'cart'  // Pastikan mencari dengan status cart
-                ],
-                [
-                    'homestay_id' => $room->homestay_id,
-                    'check_in' => $request->check_in,
-                    'check_out' => $request->check_out,
-                    'base_price' => 0,
-                    'service_price' => 0,
-                    'total_price' => 0,
-                    'status' => 'cart'  // Pastikan set status cart saat create
-                ]
-            );
+            $booking = Booking::where('user_id', Auth::id())
+                ->where('status', 'cart')
+                ->where('check_in', $request->check_in)
+                ->where('check_out', $request->check_out)
+                ->first();
 
-            // Check if room is already in cart
             $existingDetail = BookingDetail::where('booking_id', $booking->id)
                 ->where('room_id', $room->id)
+                ->whereHas('booking', function($q) use ($request) {
+                    $q->where('check_in', $request->check_in)
+                      ->where('check_out', $request->check_out);
+                })
                 ->first();
 
             if ($existingDetail) {

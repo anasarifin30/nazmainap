@@ -38,7 +38,13 @@
                         <div class="user-menu">
                             <span class="user-name">{{ Auth::user()->name }}</span>
                             @if(Auth::user()->foto)
-                                <img src="{{ asset('storage/' . Auth::user()->foto) }}" 
+                                @php
+                                    // Cek apakah foto adalah URL (Google) atau file di storage lokal
+                                    $foto = filter_var(Auth::user()->foto, FILTER_VALIDATE_URL)
+                                        ? Auth::user()->foto
+                                        : asset('storage/' . Auth::user()->foto);
+                                @endphp
+                                <img src="{{ $foto }}" 
                                      alt="User Avatar" 
                                      class="user-avatar" 
                                      onclick="toggleDropdown()">
@@ -111,7 +117,12 @@
             <div class="user-menu w-full">
     <div class="dropdown-header" style="padding-left:0;padding-right:0; text-align:center;">
         @if(Auth::user()->foto)
-            <img src="{{ asset('storage/' . Auth::user()->foto) }}"
+            @php
+                $foto = filter_var(Auth::user()->foto, FILTER_VALIDATE_URL)
+                    ? Auth::user()->foto
+                    : asset('storage/' . Auth::user()->foto);
+            @endphp
+            <img src="{{ $foto }}"
                  alt="User Avatar"
                  style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid #ff8000;">
         @else

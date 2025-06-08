@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Commission extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'transaction_id', 'admin_fee', 'subadmin_fee', 'owner_fee', 'status'
+    ];
+
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
     }
-    
-    /** @use HasFactory<\Database\Factories\CommissionFactory> */
-    use HasFactory;
 }

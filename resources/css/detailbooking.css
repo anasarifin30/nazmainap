@@ -345,68 +345,30 @@ h3 {
 }
 
 /* Countdown timer styles */
+.countdown-wrapper {
+    background: #fff3e0;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    text-align: center;
+}
+
 .countdown-timer {
-    background: linear-gradient(135deg, #0b3b86 0%, #1a56b3 100%);
-    color: white;
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.timer-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.timer-icon {
-    background: rgba(255, 255, 255, 0.2);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    color: #e65100;
 }
 
-.timer-icon i {
-    font-size: 20px;
-    color: white;
+.countdown-timer i {
+    font-size: 1.25rem;
 }
 
-.timer-content {
-    flex: 1;
-}
-
-.timer-label {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-bottom: 4px;
-}
-
-.timer-countdown {
-    font-size: 24px;
-    font-weight: bold;
-    font-family: "Monaco", monospace;
-    letter-spacing: 1px;
-}
-
-.timer-warning {
-    color: #ffd700;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-    100% {
-        opacity: 1;
-    }
+#countdown {
+    font-weight: 600;
+    font-size: 1.25rem;
+    min-width: 70px;
 }
 
 /* Loading overlay styles */

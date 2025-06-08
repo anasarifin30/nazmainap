@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - NAZMAINAP</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    @vite(['resources/css/userprofile.css'])
+    @vite(['resources/css/profile.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet"/>
 </head>
 <body>
     <x-header></x-header>
@@ -63,7 +64,7 @@
                         </div>
                     </div>
                 @endif
-                <form action="{{ route('users.profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="profileForm" action="{{ route('users.profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Left Column -->
@@ -71,7 +72,6 @@
                             <div class="form-group">
                                 <label for="nama">
                                     Nama Lengkap
-                                    <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" 
                                        id="nama" 
@@ -97,33 +97,42 @@
                                 <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Ulangi kata sandi baru">
                             </div>
                             <div class="form-group">
-                                <label for="foto">
-                                    Foto Profil
-                                    <span class="text-red-500">*</span>
-                                    <span class="text-sm text-gray-500">(Wajib untuk pemesanan)</span>
+                                <label for="foto" class="block text-sm font-semibold text-gray-700 mb-1">
+                                    Foto Profil <span class="required-field"></span>
                                 </label>
-                                <div class="avatar-upload">
-                                    <div class="avatar-preview cursor-pointer w-24 h-24 rounded-full border-2 {{ empty($user->foto) ? 'border-red-300' : 'border-green-300' }} flex items-center justify-center overflow-hidden bg-gray-100" id="avatarPreview">
+                                <div class="avatar-upload flex flex-col items-center gap-2">
+                                    <div
+                                        id="avatarPreview"
+                                        class="avatar-preview cursor-pointer rounded-full border-2 shadow-sm bg-gray-100 flex items-center justify-center overflow-hidden relative
+                                            {{ empty($user->foto) ? 'border-red-300' : 'border-green-300' }}"
+                                        style="width: 110px; height: 110px;"
+                                        title="Klik untuk ganti foto"
+                                    >
                                         @if ($user->foto)
-                                            <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto Profil" id="fotoPreviewImg" class="w-full h-full object-cover">
-                                            <div class="absolute top-0 right-0 bg-green-500 text-white rounded-full p-1 transform translate-x-1/4 -translate-y-1/4">
-                                                <i class="fas fa-check text-xs"></i>
-                                            </div>
+                                            @php
+                                                // Cek apakah foto adalah URL (Google) atau file di storage lokal
+                                                $foto = filter_var($user->foto, FILTER_VALIDATE_URL)
+                                                    ? $user->foto
+                                                    : asset('storage/' . $user->foto);
+                                            @endphp
+                                            <img src="{{ $foto }}" alt="Foto Profil" id="fotoPreviewImg" class="w-full h-full object-cover">
                                         @else
-                                            <div class="text-center">
-                                                <i class="fas fa-camera text-4xl text-gray-400" id="cameraIcon"></i>
-                                                <p class="text-xs text-red-500 mt-2">Wajib upload foto</p>
+                                            <div class="flex flex-col items-center justify-center h-full">
+                                                <i class="fas fa-camera text-4xl text-gray-400"></i>
                                             </div>
                                         @endif
+                                        <span class="absolute bottom-2 right-2 bg-white rounded-full shadow p-1 border border-gray-200">
+                                            <i class="fas fa-pen text-primary-500 text-xs"></i>
+                                        </span>
                                     </div>
-                                    <input type="file" id="foto" name="foto" accept="image/*" class="hidden" onchange="previewFoto(event)">
+                                    <input type="file" id="foto" name="foto" accept="image/*" class="hidden" />
+                                    @if(empty($user->foto))
+                                        <p class="text-sm text-red-500 mt-2">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            Wajib Upload Foto Profil
+                                        </p>
+                                    @endif
                                 </div>
-                                @if(empty($user->foto))
-                                    <p class="text-sm text-red-500 mt-2">
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        Foto profil diperlukan untuk melakukan pemesanan
-                                    </p>
-                                @endif
                             </div>
                             
                         </div>
@@ -140,7 +149,6 @@
                             <div class="form-group">
                                 <label for="provinsi">
                                     Provinsi
-                                    <span class="text-red-500">*</span>
                                 </label>
                                 <select id="provinsi" 
                                         name="provinsi" 
@@ -190,6 +198,20 @@
 
     <x-footer></x-footer>
     
+    <!-- Modal Cropper -->
+<div id="cropperModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-4 rounded shadow-lg max-w-md w-full">
+        <div class="mb-2 font-semibold">Crop Foto Profil</div>
+        <div>
+            <img id="cropperImage" style="max-width:100%; max-height:300px;">
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+            <button id="cropCancel" class="btn btn-reset">Batal</button>
+            <button id="cropSave" class="btn btn-primary">Simpan</button>
+        </div>
+    </div>
+</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const avatarPreview = document.getElementById('avatarPreview');
@@ -211,9 +233,7 @@
                 reader.onload = function (e) {
                     previewContainer.innerHTML = `
                         <img src="${e.target.result}" alt="Foto Profil" class="w-full h-full object-cover">
-                        <div class="absolute top-0 right-0 bg-green-500 text-white rounded-full p-1 transform translate-x-1/4 -translate-y-1/4">
-                            <i class="fas fa-check text-xs"></i>
-                        </div>
+                        
                     `;
                     previewContainer.classList.remove('border-red-300');
                     previewContainer.classList.add('border-green-300');
@@ -377,46 +397,106 @@
 });
 
 // Set saat submit form
-document.querySelector('form').addEventListener('submit', function(e) {
-    const requiredFields = [
-        'nama',
-        'email',
-        'nohp',
-        'provinsi',
-        'kabupaten',
-        'kecamatan',
-        'kelurahan',
-        'alamat'
-    ];
+const profileForm = document.getElementById('profileForm');
+if (profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+        const requiredFields = [
+            'nama',
+            'email',
+            'nohp',
+            'provinsi',
+            'kabupaten',
+            'kecamatan',
+            'kelurahan',
+            'alamat'
+        ];
 
-    const missingFields = [];
-    requiredFields.forEach(field => {
-        const input = document.getElementById(field);
-        if (!input.value.trim()) {
-            input.classList.add('is-invalid');
-            missingFields.push(input.previousElementSibling.textContent.trim().replace('*', ''));
-        } else {
-            input.classList.remove('is-invalid');
+        const missingFields = [];
+        requiredFields.forEach(field => {
+            const input = document.getElementById(field);
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                missingFields.push(input.previousElementSibling.textContent.trim().replace('*', ''));
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (missingFields.length > 0) {
+            e.preventDefault();
+            const message = 'Silakan lengkapi field berikut: ' + missingFields.join(', ');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-100 text-red-700 px-4 py-2 rounded mb-4';
+            errorDiv.textContent = message;
+            profileForm.insertBefore(errorDiv, profileForm.firstChild);
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
     });
+}
+});    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+let cropper;
+const inputFile = document.getElementById('foto');
+const cropperModal = document.getElementById('cropperModal');
+const cropperImage = document.getElementById('cropperImage');
+const cropCancel = document.getElementById('cropCancel');
+const cropSave = document.getElementById('cropSave');
 
-    if (missingFields.length > 0) {
-        e.preventDefault();
-        const message = 'Silakan lengkapi field berikut: ' + missingFields.join(', ');
-        
-        // Show error message
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'bg-red-100 text-red-700 px-4 py-2 rounded mb-4';
-        errorDiv.textContent = message;
-        
-        const form = document.querySelector('form');
-        form.insertBefore(errorDiv, form.firstChild);
-        
-        // Scroll to top
-        window.scrollTo({top: 0, behavior: 'smooth'});
+inputFile.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            cropperImage.src = ev.target.result;
+            cropperModal.classList.remove('hidden');
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(cropperImage, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 1,
+            });
+        };
+        reader.readAsDataURL(file);
     }
 });
-});   
+
+// Batal crop
+cropCancel.addEventListener('click', function() {
+    cropperModal.classList.add('hidden');
+    if (cropper) cropper.destroy();
+    inputFile.value = '';
+});
+
+// Simpan hasil crop
+cropSave.addEventListener('click', function() {
+    if (cropper) {
+        cropper.getCroppedCanvas({
+            width: 300,
+            height: 300,
+        }).toBlob(function(blob) {
+            // Buat file baru dari blob hasil crop
+            const croppedFile = new File([blob], "cropped.jpg", {type: "image/jpeg"});
+            // Ganti file input dengan hasil crop
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(croppedFile);
+            inputFile.files = dataTransfer.files;
+
+            // Preview hasil crop
+            const previewContainer = document.getElementById('avatarPreview');
+            const url = URL.createObjectURL(blob);
+            previewContainer.innerHTML = `
+                <img src="${url}" alt="Foto Profil" class="w-full h-full object-cover">
+                
+            `;
+            previewContainer.classList.remove('border-red-300');
+            previewContainer.classList.add('border-green-300');
+
+            cropperModal.classList.add('hidden');
+            cropper.destroy();
+        }, 'image/jpeg', 0.9);
+    }
+});
     </script>
 </body>
 </html>
