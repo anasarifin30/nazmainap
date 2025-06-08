@@ -96,29 +96,52 @@ class UserController extends Controller
     public function historycart(Request $request)
     {
         $query = Booking::where('user_id', Auth::id())
-            ->where('status', '!=', 'cart')  // Exclude cart status
+            ->where('status', '!=', 'cart')  
             ->with(['homestay', 'homestay.coverPhoto']);
 
-        // Filter by status if provided
+        
         if ($request->has('status') && $request->status !== 'semua') {
             $query->where('status', $request->status);
         }
 
-        $riwayats = $query->latest()->paginate(10);
+        $riwayats = $query->latest()->paginate(9);
 
         return view('users.historycart', compact('riwayats'));
     }
 
-    public function historyDetail($bookingId)
+    public function historyDetail(Booking $booking)
     {
-        $riwayat = \App\Models\Booking::with([
-            'homestay',
-            'bookingDetails.room'
-        ])->where('id', $bookingId)
-          ->where('user_id', Auth::id())
-          ->firstOrFail();
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
 
-        return view('users.detailbooking', compact('riwayat'));
+        // Cari transaksi pending yang belum expire
+        $pendingTransaction = $booking->transaction()
+            ->where('payment_status', 'pending')
+            ->latest()
+            ->first();
+
+        // Jika ada transaksi pending dan sudah expire, update status
+        if ($pendingTransaction && $pendingTransaction->expires_at < now()) {
+            $pendingTransaction->update(['payment_status' => 'expire']);
+            $booking->update(['status' => 'dibatalkan']);
+        }
+
+        // Ambil ulang transaksi pending yang belum expire (jika ada)
+        $activeTransaction = $booking->transaction()
+            ->where('payment_status', 'pending')
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->first();
+
+        $remaining_seconds = null;
+        if ($activeTransaction) {
+            $remaining_seconds = (int) now()->diffInSeconds($activeTransaction->expires_at);
+        }
+        return view('users.detailbooking', [
+            'riwayat' => $booking,
+            'remaining_seconds' => $remaining_seconds,
+        ]);
     }
 
     public function cart()

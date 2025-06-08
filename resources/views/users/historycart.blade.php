@@ -18,24 +18,6 @@
             
             
             <div class="history-content">
-                <!-- Sidebar -->
-                <div class="sidebar">
-                    <div class="sidebar-menu">
-                        <a href="{{ route('users.profile') }}" class="menu-item">
-                            <i class="fas fa-user"></i> Profil
-                        </a>
-                        <a href="{{ route('users.historycart') }}" class="menu-item active">
-                            <i class="fas fa-history"></i> Riwayat
-                        </a>
-                        <a href="{{ route('logout') }}" class="menu-item"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i> Keluar
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                            @csrf
-                        </form>
-                    </div>
-                </div>
                 
                 <!-- Main History Content -->
                 <div class="main-content">

@@ -21,14 +21,12 @@
         <div class="confirmation-card">
             <!-- Add Timer at the top -->
             @if($riwayat->status == 'belum dibayar')
-                <div class="countdown-timer" style="display: none;">
-                    <div class="timer-wrapper">
-                        <div class="timer-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="timer-content">
-                            <div class="timer-label">Selesaikan pembayaran dalam</div>
-                            <div class="timer-countdown" id="countdown">10:00</div>
+                <div class="countdown-wrapper">
+                    <div class="countdown-timer">
+                        <i class="fas fa-clock"></i>
+                        <span>Selesaikan pembayaran dalam:</span>
+                        <div id="countdown">
+                            {{ gmdate('i:s', isset($remaining_seconds) && $remaining_seconds > 0 ? $remaining_seconds : 600) }}
                         </div>
                     </div>
                 </div>
@@ -151,366 +149,145 @@
                 </div>
             </div>
 
-            <!-- Syarat & Tombol -->
+            <!-- Tombol Aksi -->
             @if($riwayat->status == 'belum dibayar')
-                <div class="terms-conditions">
-                    <input type="checkbox" id="terms" required>
-                    <label for="terms">Saya setuju dengan <a href="{{ route('users.syaratketentuan') }}">Syarat dan Ketentuan</a> pemesanan</label>
-                    <div id="terms-warning" style="display:none;color:#e53935;font-size:0.97rem;margin-top:6px;">
-                        Silakan centang persetujuan syarat dan ketentuan terlebih dahulu.
-                    </div>
+                <div class="action-buttons">
+                    <a href="{{ route('users.historycart') }}" class="btn-secondary">Kembali</a>
+                    <button type="button" class="btn-primary" id="btn-bayar"
+                        data-url="{{ route('bookings.pay', $riwayat->id) }}">
+                        Bayar
+                    </button>
                 </div>
-            @endif
-
-            <div class="action-buttons">
-                <a href="{{ route('users.historycart') }}" class="btn-secondary">Kembali</a>
-                @if($riwayat->status == 'belum dibayar')
-                    <form action="{{ route('bookings.pay', $riwayat->id) }}" method="POST" id="form-bayar">
-                        @csrf
-                        <button type="submit" class="btn-primary" id="btn-bayar">
-                            Konfirmasi dan Bayar
-                        </button>
-                    </form>
-                @elseif(in_array($riwayat->status, ['menunggu', 'aktif', 'selesai', 'dibatalkan']))
+            @elseif(in_array($riwayat->status, ['menunggu', 'aktif', 'selesai', 'dibatalkan']))
+                <div class="action-buttons">
+                    <a href="{{ route('users.historycart') }}" class="btn-secondary">Kembali</a>
                     <a href="{{ route('bookings.invoice', $riwayat->id) }}" class="btn-primary" target="_blank">
                         <i class="fas fa-download"></i> Unduh Invoice
                     </a>
-                @endif
-            </div>
+                </div>
+            @endif
         </div>
     </div>
 
+
+
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const btnBayar = document.getElementById("btn-bayar");
-    const checkbox = document.getElementById("terms");
-    const warning = document.getElementById("terms-warning");
-    const form = document.getElementById("form-bayar");
-
-    // Initial checkbox state
+    const btnBayar = document.getElementById('btn-bayar');
     if (btnBayar) {
-        btnBayar.disabled = !checkbox?.checked;
-    }
-
-    // Checkbox event listener
-    checkbox?.addEventListener('change', function() {
-        if (btnBayar) {
-            btnBayar.disabled = !this.checked;
-            warning.style.display = 'none';
-        }
-    });
-
-    // Form submit handler
-    form?.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if (!checkbox.checked) {
-            warning.style.display = 'block';
-            return false;
-        }
-
-        try {
+        btnBayar.disabled = false;
+        btnBayar.addEventListener('click', async function() {
             btnBayar.disabled = true;
             btnBayar.textContent = 'Memproses...';
-
-            const formData = new FormData();
-            formData.append('_token', '{{ csrf_token() }}');
-
-            const response = await fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: formData
-            });
-            
-            const data = await response.json();
-            console.log('Payment response:', data);
-
-            if (data.status === 'success' && data.snap_token) {
-                const countdownDiv = document.querySelector('.countdown-timer');
-                const countdownDisplay = document.getElementById('countdown');
-                
-                if (data.remaining_seconds) {
-                    countdownDiv.style.display = 'block';
-                    startCountdown(data.remaining_seconds, countdownDisplay);
-                }
-
-                window.snap.pay(data.snap_token, {
-                    onSuccess: async function(result) {
-                        localStorage.removeItem('paymentEndTime');
-                        if (window.countdownInterval) {
-                            clearInterval(window.countdownInterval);
-                        }
-                        console.log('Payment success:', result);
-                        try {
-                            const updateResponse = await fetch("{{ route('bookings.update-status', $riwayat->id) }}", {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                                },
-                                body: JSON.stringify({
-                                    status: 'menunggu',
-                                    payment_result: result
-                                })
-                            });
-
-                            if (updateResponse.ok) {
+            try {
+                const response = await fetch(btnBayar.dataset.url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                if (data.status === 'success' && data.snap_token) {
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: async function(result) {
+                            await updatePaymentStatus('settlement', result.payment_type);
+                        },
+                        onPending: function(result) {},
+                        onError: async function(result) {
+                            if (result.status_code === "407") {
                                 await Swal.fire({
-                                    icon: 'success',
-                                    title: 'Pembayaran Berhasil',
-                                    text: 'Terima kasih atas pembayaran Anda.',
+                                    icon: 'error',
+                                    title: 'Pembayaran Gagal',
+                                    text: 'Waktu pembayaran telah habis.',
                                     confirmButtonColor: '#0B3B86'
                                 });
                                 window.location.href = "{{ route('users.historycart') }}";
-                            } else {
-                                await Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Perhatian',
-                                    text: 'Pembayaran berhasil tetapi status gagal diperbarui',
-                                    confirmButtonColor: '#0B3B86'
-                                });
                             }
-                        } catch (error) {
-                            console.error('Status update error:', error);
-                            alert('Pembayaran berhasil tetapi status gagal diperbarui');
+                        },
+                        onClose: function() {
+                            window.location.reload();
                         }
-                    },
-                    onPending: function(result) {
-                        console.log('Payment pending:', result);
-                        window.location.href = "{{ route('users.historycart') }}";
-                    },
-                    onError: async function(result) {
-                        if (result.status_code === "407") {
-                            await Swal.fire({
-                                icon: 'error',
-                                title: 'Pembayaran Gagal',
-                                text: 'Waktu pembayaran telah habis.',
-                                confirmButtonColor: '#0B3B86'
-                            });
-                            window.location.href = "{{ route('users.historycart') }}";
-                        } else {
-                            await Swal.fire({
-                                icon: 'error',
-                                title: 'Pembayaran Gagal',
-                                text: result.status_message || 'Terjadi kesalahan saat memproses pembayaran',
-                                confirmButtonColor: '#0B3B86'
-                            });
-                            btnBayar.disabled = false;
-                            btnBayar.textContent = 'Konfirmasi dan Bayar';
-                        }
-                    },
-                    onClose: function() {
-                        btnBayar.disabled = false;
-                        btnBayar.textContent = 'Konfirmasi dan Bayar';
-                    }
-                });
-            } else {
-                console.error('Payment setup error:', data);
-                alert(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                    });
+                } else {
+                    alert(data.message || 'Terjadi kesalahan');
+                    btnBayar.disabled = false;
+                    btnBayar.textContent = 'Bayar';
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan saat memproses pembayaran');
                 btnBayar.disabled = false;
-                btnBayar.textContent = 'Konfirmasi dan Bayar';
+                btnBayar.textContent = 'Bayar';
             }
-        } catch (error) {
-            console.error('Fetch error:', error);
-            alert('Terjadi kesalahan pada sistem pembayaran');
-            btnBayar.disabled = false;
-            btnBayar.textContent = 'Konfirmasi dan Bayar';
-        }
-    });
-
-    let globalCountdown = null;
-
-    function startCountdown(initialSeconds, display) {
-        if (globalCountdown) {
-            clearInterval(globalCountdown);
-        }
-
-        let endTime = Date.now() + (initialSeconds * 1000);
-        localStorage.setItem('paymentEndTime', endTime);
-
-        function updateDisplay() {
-            let now = Date.now();
-            let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
-
-            if (timeLeft <= 0) {
-                clearInterval(globalCountdown);
-                localStorage.removeItem('paymentEndTime');
-                
-                // Automatically cancel booking when timer expires
-                cancelExpiredBooking();
-                return;
-            }
-
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            display.textContent = formattedTime;
-
-            if (timeLeft <= 120) {
-                display.classList.add('timer-warning');
-            }
-        }
-
-        updateDisplay();
-        globalCountdown = setInterval(updateDisplay, 1000);
-        return globalCountdown;
+        });
     }
 
-    async function cancelExpiredBooking() {
+    async function updatePaymentStatus(status, paymentMethod = null) {
         try {
-            // Show loading state using SweetAlert2
-            Swal.fire({
-                title: 'Memproses Pembatalan',
-                html: 'Mohon tunggu sebentar...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            const response = await fetch("{{ route('bookings.cancel', $riwayat->id) }}", {
+            const response = await fetch("{{ route('bookings.update-status', $riwayat->id) }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
+                },
+                body: JSON.stringify({ payment_status: status, payment_method: paymentMethod })
             });
-
             const data = await response.json();
-
             if (data.success) {
-                // Clear timer data
-                localStorage.removeItem('paymentEndTime');
-                
-                // Update UI elements
-                const paymentForm = document.getElementById('form-bayar');
-                const countdownTimer = document.querySelector('.countdown-timer');
-                const termsConditions = document.querySelector('.terms-conditions');
-                
-                if (paymentForm) paymentForm.style.display = 'none';
-                if (countdownTimer) countdownTimer.style.display = 'none';
-                if (termsConditions) termsConditions.style.display = 'none';
-
-                // Update status display
-                const statusElement = document.querySelector('.booking-status');
-                if (statusElement) {
-                    statusElement.className = 'booking-status status-dibatalkan';
-                    statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Dibatalkan';
-                }
-
-                // Show success message and redirect
-                await Swal.fire({
-                    icon: 'info',
-                    title: 'Pemesanan Dibatalkan',
-                    text: 'Waktu pembayaran telah habis. Pemesanan otomatis dibatalkan.',
-                    confirmButtonColor: '#0B3B86',
-                    allowOutsideClick: false
-                });
-
-                window.location.href = data.redirect;
+                window.location.reload();
             } else {
-                throw new Error(data.message || 'Gagal membatalkan pemesanan');
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message,
+                    confirmButtonColor: '#0B3B86'
+                });
             }
         } catch (error) {
-            console.error('Error:', error);
-            await Swal.fire({
-                icon: 'error',
-                title: 'Terjadi Kesalahan',
-                text: 'Gagal membatalkan pemesanan. Sistem akan memuat ulang halaman.',
-                confirmButtonColor: '#0B3B86'
-            });
-            window.location.reload();
+            console.error('There was a problem with your fetch operation:', error);
         }
     }
 
-    function updateDisplay() {
-        let now = Date.now();
-        let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
-
-        if (timeLeft <= 0) {
-            clearInterval(globalCountdown);
-            localStorage.removeItem('paymentEndTime');
-            cancelExpiredBooking();
-            return;
-        }
-
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        display.textContent = formattedTime;
-
-        if (timeLeft <= 120) {
-            display.classList.add('timer-warning');
-        }
-    }
-
-    // Add check on page load
-    window.addEventListener('load', function() {
-        const savedEndTime = localStorage.getItem('paymentEndTime');
-        if (savedEndTime && Date.now() >= parseInt(savedEndTime)) {
-            cancelExpiredBooking();
-        }
-    });
-
-    // --- TIMER LOGIC AGAR TIDAK RESET SAAT REFRESH ---
-
-    const countdownDiv = document.querySelector('.countdown-timer');
+    // Timer
     const countdownDisplay = document.getElementById('countdown');
+    let remainingSeconds = {{ isset($remaining_seconds) && $remaining_seconds > 0 ? (int)$remaining_seconds : 600 }};
+    if (countdownDisplay && "{{ $riwayat->status }}" === "belum dibayar") {
+        startCountdown(remainingSeconds, countdownDisplay);
+    }
 
-    @if($riwayat->status == 'belum dibayar')
-        // Ambil waktu kadaluarsa dari backend (waktu kadaluarsa invoice midtrans)
-        // Pastikan backend mengirimkan $riwayat->midtrans_expiry (timestamp detik)
-        @php
-            $expiryTimestamp = isset($riwayat->midtrans_expiry) ? $riwayat->midtrans_expiry : null;
-        @endphp
+    function startCountdown(seconds, display) {
+        let timer = seconds;
+        updateDisplay(timer, display);
+        const interval = setInterval(function() {
+            timer--;
+            updateDisplay(timer, display);
+            if (timer <= 0) {
+                clearInterval(interval);
+                autoCancelBooking();
+            }
+        }, 1000);
+    }
 
-        @if($expiryTimestamp)
-            // Jika ada expiry dari backend, gunakan itu
-            const expiryTimestamp = {{ $expiryTimestamp }};
-            const nowTimestamp = Math.floor(Date.now() / 1000);
-            let remainingSeconds = expiryTimestamp - nowTimestamp;
+    function updateDisplay(timer, display) {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        display.textContent = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    }
 
-            // Cek localStorage, jika ada dan lebih kecil dari expiry, gunakan yang lebih kecil
-            const savedEndTime = localStorage.getItem('paymentEndTime');
-            if (savedEndTime) {
-                const savedRemaining = Math.ceil((savedEndTime - Date.now()) / 1000);
-                if (savedRemaining > 0 && savedRemaining < remainingSeconds) {
-                    remainingSeconds = savedRemaining;
-                }
-            }
-
-            if (remainingSeconds > 0 && countdownDiv && countdownDisplay) {
-                countdownDiv.style.display = 'flex';
-                startCountdown(remainingSeconds, countdownDisplay);
-            } else {
-                localStorage.removeItem('paymentEndTime');
-                if (countdownDiv) countdownDiv.style.display = 'none';
-            }
-        @else
-            // Fallback: jika tidak ada expiry dari backend, pakai default 10 menit
-            const totalTime = 10 * 60;
-            const savedEndTime = localStorage.getItem('paymentEndTime');
-            let remainingSeconds = totalTime;
-            if (savedEndTime) {
-                const savedRemaining = Math.ceil((savedEndTime - Date.now()) / 1000);
-                if (savedRemaining > 0) {
-                    remainingSeconds = savedRemaining;
-                }
-            }
-            if (remainingSeconds > 0 && countdownDiv && countdownDisplay) {
-                countdownDiv.style.display = 'flex';
-                startCountdown(remainingSeconds, countdownDisplay);
-            } else {
-                localStorage.removeItem('paymentEndTime');
-                if (countdownDiv) countdownDiv.style.display = 'none';
-            }
-        @endif
-    @endif
+    async function autoCancelBooking() {
+        try {
+            await fetch("{{ route('bookings.update-status', $riwayat->id) }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ payment_status: 'expire' })
+            });
+        } catch (e) {}
+        window.location.reload();
+    }
 });
-
 </script>
 </body>
 </html>

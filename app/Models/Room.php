@@ -21,7 +21,7 @@ class Room extends Model
     {
         return $this->hasMany(Booking::class);
     }
-    
+
     public function bookingDetails()
     {
         return $this->hasMany(BookingDetail::class);
@@ -51,14 +51,14 @@ class Room extends Model
     public function getAvailableRoomsCount($checkIn, $checkOut)
     {
         // Get total booked rooms for the given date range
+        // Use correct overlap logic: [new_check_in, new_check_out) overlaps with [existing_check_in, existing_check_out)
+        // This happens if new_check_in < existing_check_out AND new_check_out > existing_check_in
         $bookedRooms = BookingDetail::whereHas('booking', function ($query) use ($checkIn, $checkOut) {
             $query->where(function ($q) use ($checkIn, $checkOut) {
-                // Check for overlapping dates
-                $q->where(function ($inner) use ($checkIn, $checkOut) {
-                    $inner->where('check_in', '<=', $checkOut)
-                          ->where('check_out', '>=', $checkIn);
-                });
-            })->whereIn('status', ['menunggu', 'aktif', 'belum dibayar']);
+                // Corrected Check for overlapping dates
+                $q->where('check_in', '<', $checkOut) // New booking starts BEFORE existing booking ends
+                  ->where('check_out', '>', $checkIn); // New booking ends AFTER existing booking starts
+            })->whereIn('status', ['menunggu', 'aktif', 'belum dibayar']); // Only count relevant statuses
         })
         ->where('room_id', $this->id)
         ->sum('quantity');

@@ -459,6 +459,117 @@ body {
     box-shadow: 0 4px 6px rgba(230, 81, 0, 0.1);
 }
 
+/* Terms & Conditions Styling */
+.terms-conditions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1rem 0;
+}
+
+.terms-conditions input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #e65100;
+    cursor: pointer;
+}
+
+.terms-conditions label {
+    font-size: 0.9rem;
+    color: #475569;
+    cursor: pointer;
+}
+
+.terms-conditions a {
+    color: #e65100;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-conditions a:hover {
+    text-decoration: underline;
+}
+
+/* Checkout Button Styling */
+.btn-checkout {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    background: #e65100;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-checkout:not(:disabled):hover {
+    background: #d84315;
+    transform: translateY(-1px);
+}
+
+.btn-checkout:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading-spinner {
+    display: none;
+}
+
+.loading-spinner i {
+    font-size: 1.25rem;
+    animation: spin 1s linear infinite;
+}
+
+/* Cart Checkout Bar */
+.cart-checkout-bar {
+    background: white;
+    border-top: 1.5px solid #e2e8f0;
+    padding: 1.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 2rem;
+    align-items: center;
+}
+
+.price-breakdown {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.25rem;
+    min-width: 300px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.price-row.total {
+    border-top: 2px solid #e2e8f0;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    color: #2c2f75;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Responsive: Stack columns on mobile */
 @media (max-width: 900px) {
     .cart-content {

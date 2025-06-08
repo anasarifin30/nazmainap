@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Models\BookingDetail;
-use App\Models\Booking;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Midtrans\Snap; // Import Midtrans Snap
+use App\Models\Transaction as Transaction; // Pastikan alias ini benar
 
 class CartController extends Controller
 {
@@ -17,10 +19,10 @@ class CartController extends Controller
         $booking = Booking::where('user_id', Auth::id())
             ->where('status', 'cart')
             ->with([
-                'homestay', 
-                'homestay.coverPhoto', 
-                'bookingDetails', 
-                'bookingDetails.room', 
+                'homestay',
+                'homestay.coverPhoto',
+                'bookingDetails',
+                'bookingDetails.room',
                 'bookingDetails.room.roomPhotos'
             ])
             ->latest()
@@ -40,22 +42,9 @@ class CartController extends Controller
         try {
             $room = $bookingDetail->room;
             $booking = $bookingDetail->booking;
-            
-            // Check for checkout conflicts
-            $existingCheckout = Booking::where('homestay_id', $booking->homestay_id)
-                ->where('id', '!=', $booking->id)
-                ->whereIn('status', ['menunggu', 'aktif', 'belum dibayar'])
-                ->whereDate('check_out', $booking->check_in)
-                ->exists();
-
-            if ($existingCheckout) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tidak dapat menambah kamar karena ada checkout di tanggal check-in yang dipilih.'
-                ]);
-            }
 
             // Check room availability for the period
+            // This method should correctly handle check-in on the same day as checkout
             $availableRooms = $room->getAvailableRoomsCount($booking->check_in, $booking->check_out);
             $currentQuantity = $bookingDetail->quantity;
             $action = $request->input('action');
@@ -93,7 +82,7 @@ class CartController extends Controller
                 'total_base_price' => $booking->base_price,
                 'service_price' => $booking->service_price,
                 'total_price' => $booking->total_price,
-                'max_rooms' => $availableRooms
+                'max_rooms' => $availableRooms // Return max available rooms
             ]);
 
         } catch (\Exception $e) {
@@ -114,7 +103,7 @@ class CartController extends Controller
     {
         $totalBasePrice = $booking->bookingDetails->sum('subtotal_price');
         $servicePrice = $totalBasePrice * 0.05;
-        
+
         $booking->update([
             'base_price' => $totalBasePrice,
             'service_price' => $servicePrice,
@@ -124,26 +113,94 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
-        $booking = Booking::where('user_id', Auth::id())
-            ->where('status', 'cart')
-            ->firstOrFail();
-
         try {
             DB::beginTransaction();
             
-            // Set payment deadline to exactly 10 minutes from now
-            $booking->payment_deadline = now()->addMinutes(10);
-            $booking->status = 'belum dibayar';
-            $booking->save();
+            $booking = Booking::where('user_id', Auth::id())
+                ->where('status', 'cart')
+                ->firstOrFail();
+
+            // Validasi booking
+            if ($booking->bookingDetails->isEmpty()) {
+                throw new \Exception('Keranjang kosong');
+            }
+
+            // Create new transaction
+            $orderId = 'BOOK-'.$booking->id.'-'.time();
+            $expiryTime = now()->addMinutes(10);
+
+            // Midtrans configuration
+            \Midtrans\Config::$serverKey = config('midtrans.server_key');
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            \Midtrans\Config::$isSanitized = true;
+            \Midtrans\Config::$is3ds = true;
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $orderId,
+                    'gross_amount' => (int) $booking->total_price,
+                ],
+                'customer_details' => [
+                    'first_name' => $booking->user->name,
+                    'email' => $booking->user->email,
+                    'phone' => $booking->user->nomorhp,
+                ],
+                'expiry' => [
+                    'unit' => 'minutes',
+                    'duration' => 10,
+                ],
+                'enabled_payments' => [
+                    'credit_card', 'bca_va', 'bni_va', 'bri_va',
+                    'mandiri_clickpay', 'gopay', 'shopeepay'
+                ],
+            ];
+
+            $snapToken = Snap::getSnapToken($params);
+
+            // Create transaction record
+            $transaction = Transaction::create([
+                'booking_id' => $booking->id,
+                'amount' => $booking->total_price,
+                'payment_status' => 'pending',
+                'midtrans_order_id' => $orderId,
+                'snap_token' => $snapToken,
+                'expires_at' => $expiryTime
+            ]);
+
+            $remainingSeconds = now()->diffInSeconds($transaction->expires_at);
+
+            // Update booking status
+            $booking->update(['status' => 'belum dibayar']);
 
             DB::commit();
-            
+
+            // Return untuk AJAX request
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'snap_token' => $snapToken
+                ]);
+            }
+
+            // Regular form submit - redirect dengan snap token
             return redirect()->route('users.detailbooking', $booking->id)
-                ->with('success', 'Silahkan selesaikan pembayaran dalam 10 menit');
+                ->with([
+                    'snap_token' => $snapToken,
+                    'remaining_seconds' => $remainingSeconds // dari diffInSeconds(expires_at)
+                ]);
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Checkout error: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat checkout.');
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 422);
+            }
+
+            return back()->with('error', $e->getMessage());
         }
     }
 }
