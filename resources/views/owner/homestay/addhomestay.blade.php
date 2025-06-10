@@ -3,90 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Homestay - Mandhapa</title>
+    <title>Tambah Penginapan - Owner Dashboard</title>
     @vite(['resources/css/owner/homestay/addhomestay.css'])
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar -->
-    @include('components.sidebar-owner')
-    
-    <main class="main-content">
-        <div class="page-header">
-            <div class="header-content">
-                <h1>Tambahkan Homestay</h1>
-                <p>Yuk, bantu calon penyewa mengetahui homestay yang akan Anda sewakan.</p>
+    <div class="container">
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h2>Tambah Penginapan Baru</h2>
+                <p>Lengkapi data penginapan Anda untuk mulai menerima tamu</p>
             </div>
-        </div>
 
-        <div class="form-container">
-            <form action="/owner/homestay/store" method="POST" enctype="multipart/form-data">
-                <div class="form-section">
-                    <h2>Data Homestay</h2>
-                    
-                    <div class="form-group">
-                        <label for="nama">Nama Homestay</label>
-                        <input type="text" id="nama" name="nama" placeholder="Contoh: Kos Spasi">
-                        <small>Saran: Kos (spasi) Nama Kos, Tanpa Nama Kecamatan dan Kota</small>
+            <div class="form-container">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step active">
+                        <div class="step-number">1</div>
+                        <span>Data Penginapan</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="alamat">Alamat Lengkap</label>
-                        <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <span>Alamat</span>
                     </div>
-
-                    <div class="form-group">
-                        <label for="foto">Foto Homestay</label>
-                        <div class="file-upload">
-                            <input type="file" id="foto" name="foto[]" multiple accept="image/*">
-                            <label for="foto" class="file-label">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <span>Pilih foto atau seret ke sini</span>
-                            </label>
-                        </div>
-                        <div id="preview" class="preview-container"></div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <span>Foto Utama</span>
                     </div>
-                </div>
-
-                <div class="form-section">
-                    <h2>Informasi Tambahan</h2>
-                    
-                    <div class="form-group">
-                        <label>Tipe Kamar</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox">
-                                <input type="checkbox" name="multiple_rooms">
-                                <span>Homestay ini punya lebih dari 1 tipe kamar</span>
-                            </label>
-                        </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <span>Foto Kamar</span>
                     </div>
-
-                    <div class="form-group">
-                        <label>Disewakan Untuk</label>
-                        <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="gender" value="putra">
-                                <span>Putra</span>
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="gender" value="putri">
-                                <span>Putri</span>
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="gender" value="campur">
-                                <span>Campur</span>
-                            </label>
-                        </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <span>Fasilitas</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <span>Ketersediaan</span>
                     </div>
                 </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="window.location.href='/owner/homestay'">Kembali</button>
-                    <button type="submit" class="btn-primary">Lanjutkan</button>
+                <!-- Form Content -->
+                <div class="form-content">
+                    <h3>Silakan lengkapi data penginapan</h3>
+                    <p class="form-subtitle">Bantu calon tamu mengetahui penginapan yang akan Anda tawarkan.</p>
+
+                    <form class="homestay-form">
+                        <!-- Nama Penginapan -->
+                        <div class="form-group">
+                            <label for="nama-penginapan">Nama Penginapan</label>
+                            <p class="form-hint">Berikan nama yang menarik dan mudah diingat untuk penginapan Anda</p>
+                            <input type="text" id="nama-penginapan" name="nama-penginapan" placeholder="Masukkan nama penginapan Anda" required>
+                        </div>
+
+                        <!-- Deskripsi Penginapan -->
+                        <div class="form-group">
+                            <label for="deskripsi-penginapan">Deskripsi Penginapan</label>
+                            <p class="form-hint">Ceritakan tentang penginapan Anda, fasilitas unggulan, dan hal menarik lainnya</p>
+                            <textarea id="deskripsi-penginapan" name="deskripsi-penginapan" rows="5" placeholder="Deskripsi lengkap tentang penginapan Anda, lokasi strategis, fasilitas yang tersedia, dan keunggulan lainnya..." required></textarea>
+                        </div>
+
+                        <!-- Status Verifikasi -->
+                        <div class="form-group">
+                            <label>Status Verifikasi BUMDes</label>
+                            <p class="form-hint">Status verifikasi penginapan dari BUMDes</p>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="terverifikasi" name="status-verifikasi" value="terverifikasi">
+                                    <label for="terverifikasi">✅ Terverifikasi BUMDes</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="pending" name="status-verifikasi" value="pending" checked>
+                                    <label for="pending">⏳ Menunggu Verifikasi</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="ditolak" name="status-verifikasi" value="ditolak">
+                                    <label for="ditolak">❌ Ditolak</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Peraturan Penginapan -->
+                        <div class="form-group">
+                            <label>Peraturan Penginapan</label>
+                            <p class="form-hint">Pilih peraturan yang berlaku di penginapan Anda</p>
+                            <div class="checkbox-group-vertical">
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="checkin-time" name="peraturan" value="checkin-time">
+                                    <label for="checkin-time">Check-in: 14:00 - 22:00, Check-out: 12:00</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="no-smoking" name="peraturan" value="no-smoking">
+                                    <label for="no-smoking">Dilarang merokok di dalam kamar</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="no-pets" name="peraturan" value="no-pets">
+                                    <label for="no-pets">Dilarang membawa hewan peliharaan</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="cleanliness" name="peraturan" value="cleanliness">
+                                    <label for="cleanliness">Tamu wajib menjaga kebersihan</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="damage-fee" name="peraturan" value="damage-fee">
+                                    <label for="damage-fee">Kerusakan fasilitas akan dikenakan denda</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="curfew" name="peraturan" value="curfew">
+                                    <label for="curfew">Jam malam: 23:00 WIB</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="noise" name="peraturan" value="noise">
+                                    <label for="noise">Tidak diperbolehkan membuat keributan</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="visitors" name="peraturan" value="visitors">
+                                    <label for="visitors">Tamu luar tidak diperbolehkan menginap</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary">Kembali</button>
+                            <button type="submit" class="btn btn-primary">Lanjutkan</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </main>
+            </div>
+        </main>
+    </div>
 </body>
 </html>
