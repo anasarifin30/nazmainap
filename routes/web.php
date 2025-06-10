@@ -112,6 +112,7 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::view('/homestayowner', 'owner.homestayowner')->name('homestayowner');
     Route::view('/profilowner', 'owner.profilowner')->name('profilowner');
     Route::view('/1', 'owner.homestay.addhomestay')->name('addhomestay');
+    Route::view('/addalamat', 'owner.homestay.addalamat')->name('addalamat');
     Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestays.index');
 });
 Route::get('/profilowner', function() {
