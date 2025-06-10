@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Include Sidebar -->
+    <!-- Sidebar -->
     @include('components.sidebar-owner')
     
     <main class="main-content">
