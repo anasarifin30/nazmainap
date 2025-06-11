@@ -44,7 +44,6 @@
                             <div class="homestay-details">
                                 <h2>{{ $booking->homestay->name }}</h2>
                                 <p class="homestay-location">
-                                    <i class="bx bx-map"></i>
                                     {{ $booking->homestay->kabupaten }}, {{ $booking->homestay->provinsi }}
                                 </p>
 
@@ -94,16 +93,16 @@
                                 <label>Jumlah Kamar:</label>
                                 @if($detail->room->total_rooms == 1)
                                     <div class="quantity-value">
-                                        <span>1</span>
-                                        <p class="text-xs text-gray-500 mt-1">*Hanya tersedia 1 kamar</p>
+                                        <span class="quantity-number">1</span>
+                                        <p class="room-availability-note">*Hanya tersedia 1 kamar</p>
                                     </div>
                                 @else
-                                    <div class="quantity-controls">
+                                    <div class="quantity-controls" data-max-rooms="{{ $detail->room->total_rooms }}">
                                         <button type="button"
                                                 class="qty-btn decrease"
                                                 data-detail-id="{{ $detail->id }}"
-                                                {{ $detail->quantity <= 1 ? 'disabled' : '' }}>
-                                            -
+                                                title="Kurangi jumlah kamar">
+                                            <i class='bx bx-minus'></i>
                                         </button>
                                         <input type="text"
                                                value="{{ $detail->quantity }}"
@@ -112,8 +111,8 @@
                                         <button type="button"
                                                 class="qty-btn increase"
                                                 data-detail-id="{{ $detail->id }}"
-                                                {{ $detail->quantity >= $detail->room->total_rooms ? 'disabled' : '' }}>
-                                            +
+                                                title="Tambah jumlah kamar">
+                                            <i class='bx bx-plus'></i>
                                         </button>
                                     </div>
                                 @endif
@@ -219,6 +218,134 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // =====================================
+    // QUANTITY CONTROLS
+    // =====================================
+    const quantityButtons = document.querySelectorAll('.qty-btn');
+    
+    quantityButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const detailId = this.dataset.detailId;
+            const action = this.classList.contains('increase') ? 'increment' : 'decrement';
+            const cartItem = this.closest('.cart-item');
+            const quantityInput = cartItem.querySelector('.quantity-input');
+            const totalPriceElement = cartItem.querySelector('.total-price');
+            
+            // Disable button sementara
+            this.disabled = true;
+            this.style.opacity = '0.6';
+            
+            try {
+                const response = await fetch(`/cart/update/${detailId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ action: action })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update quantity input
+                    quantityInput.value = data.quantity;
+                    
+                    // Update total price for this item
+                    totalPriceElement.textContent = `Rp ${data.subtotal_price.toLocaleString('id-ID')}`;
+                    
+                    // Update overall totals
+                    updateCartTotals(data);
+                    
+                    // Update button states
+                    updateQuantityButtons(cartItem, data.quantity, data.max_rooms);
+                    
+                    showSuccessMessage('Jumlah kamar berhasil diperbarui');
+                } else {
+                    showErrorMessage(data.message || 'Gagal memperbarui jumlah kamar');
+                }
+            } catch (error) {
+                console.error('Update error:', error);
+                showErrorMessage('Terjadi kesalahan saat memperbarui keranjang');
+            } finally {
+                // Re-enable button
+                this.disabled = false;
+                this.style.opacity = '1';
+            }
+        });
+    });
+
+    function updateCartTotals(data) {
+        // Update subtotal kamar
+        const subtotalElement = document.querySelector('.price-row:nth-child(1) span:last-child');
+        if (subtotalElement) {
+            subtotalElement.textContent = `Rp ${data.total_base_price.toLocaleString('id-ID')}`;
+        }
+        
+        // Update biaya layanan
+        const serviceElement = document.querySelector('.price-row:nth-child(2) span:last-child');
+        if (serviceElement) {
+            serviceElement.textContent = `Rp ${data.service_price.toLocaleString('id-ID')}`;
+        }
+        
+        // Update total pembayaran
+        const totalElement = document.querySelector('.price-row.total span:last-child');
+        if (totalElement) {
+            totalElement.textContent = `Rp ${data.total_price.toLocaleString('id-ID')}`;
+        }
+    }
+
+    function updateQuantityButtons(cartItem, currentQuantity, maxRooms) {
+        const decreaseBtn = cartItem.querySelector('.qty-btn.decrease');
+        const increaseBtn = cartItem.querySelector('.qty-btn.increase');
+        
+        // Update button states
+        if (decreaseBtn) {
+            decreaseBtn.disabled = currentQuantity <= 1;
+            decreaseBtn.style.opacity = currentQuantity <= 1 ? '0.5' : '1';
+            decreaseBtn.style.cursor = currentQuantity <= 1 ? 'not-allowed' : 'pointer';
+        }
+        
+        if (increaseBtn) {
+            increaseBtn.disabled = currentQuantity >= maxRooms;
+            increaseBtn.style.opacity = currentQuantity >= maxRooms ? '0.5' : '1';
+            increaseBtn.style.cursor = currentQuantity >= maxRooms ? 'not-allowed' : 'pointer';
+        }
+    }
+
+    function showSuccessMessage(message) {
+        showMessage(message, 'success');
+    }
+
+    function showErrorMessage(message) {
+        showMessage(message, 'error');
+    }
+
+    function showMessage(message, type) {
+        // Remove existing alerts
+        const existingAlerts = document.querySelectorAll('.alert');
+        existingAlerts.forEach(alert => alert.remove());
+        
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const alertHtml = `
+            <div class="alert ${alertClass}" role="alert" style="margin: 1rem 0; padding: 0.75rem 1rem; border-radius: 8px; background: ${type === 'success' ? '#d4edda' : '#f8d7da'}; color: ${type === 'success' ? '#155724' : '#721c24'}; border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'}; font-size: 0.9rem;">
+                ${message}
+            </div>
+        `;
+        
+        const container = document.querySelector('.container');
+        if (container) {
+            container.insertAdjacentHTML('afterbegin', alertHtml);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) alert.remove();
+            }, 3000);
+        }
+    }
+
     // Form submit handler
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', async function(e) {
@@ -253,6 +380,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Initialize quantity button states on page load
+    document.querySelectorAll('.cart-item').forEach(cartItem => {
+        const quantityInput = cartItem.querySelector('.quantity-input');
+        const maxRoomsElement = cartItem.querySelector('[data-max-rooms]');
+        
+        if (quantityInput && maxRoomsElement) {
+            const currentQuantity = parseInt(quantityInput.value);
+            const maxRooms = parseInt(maxRoomsElement.dataset.maxRooms);
+            updateQuantityButtons(cartItem, currentQuantity, maxRooms);
+        }
+    });
 });
 </script>
 </body>

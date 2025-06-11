@@ -4,9 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Room extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'homestay_id',
+        'name',
+        'description',
+        'price',
+        'max_guests',
+        'total_rooms'
+    ];
+
     public function homestay()
     {
         return $this->belongsTo(Homestay::class);
@@ -45,25 +57,61 @@ class Room extends Model
         return $this->hasMany(RoomFacility::class);
     }
 
-    /** @use HasFactory<\Database\Factories\RoomFactory> */
-    use HasFactory;
-
     public function getAvailableRoomsCount($checkIn, $checkOut)
     {
-        // Get total booked rooms for the given date range
-        // Use correct overlap logic: [new_check_in, new_check_out) overlaps with [existing_check_in, existing_check_out)
-        // This happens if new_check_in < existing_check_out AND new_check_out > existing_check_in
-        $bookedRooms = BookingDetail::whereHas('booking', function ($query) use ($checkIn, $checkOut) {
-            $query->where(function ($q) use ($checkIn, $checkOut) {
-                // Corrected Check for overlapping dates
-                $q->where('check_in', '<', $checkOut) // New booking starts BEFORE existing booking ends
-                  ->where('check_out', '>', $checkIn); // New booking ends AFTER existing booking starts
-            })->whereIn('status', ['menunggu', 'aktif', 'belum dibayar']); // Only count relevant statuses
-        })
-        ->where('room_id', $this->id)
-        ->sum('quantity');
+        // Debug: Log input parameters
+        Log::info('=== CHECKING ROOM AVAILABILITY ===', [
+            'room_id' => $this->id,
+            'room_name' => $this->name,
+            'check_in' => $checkIn,
+            'check_out' => $checkOut,
+            'total_rooms' => $this->total_rooms
+        ]);
 
-        // Return available rooms
-        return max(0, $this->total_rooms - $bookedRooms);
+        // Status yang aktif (booking yang masih berlaku)
+        $activeStatuses = ['belum dibayar', 'menunggu', 'aktif'];
+
+        // Pastikan kelas BookingDetail digunakan dengan namespace penuh
+        $bookedRoomsQuery = \App\Models\BookingDetail::whereHas('booking', function ($query) use ($checkIn, $checkOut, $activeStatuses) {
+            $query->where(function ($q) use ($checkIn, $checkOut) {
+                // Check overlapping dates:
+                // Overlap jika: new_check_in < existing_check_out AND new_check_out > existing_check_in
+                $q->where('check_in', '<', $checkOut)
+                  ->where('check_out', '>', $checkIn);
+            })
+            ->whereIn('status', $activeStatuses);
+        })
+        ->where('room_id', $this->id);
+
+        // Get detailed information
+        $overlappingBookings = $bookedRoomsQuery->with('booking')->get();
+        $bookedRooms = $overlappingBookings->sum('quantity');
+
+        Log::info('=== BOOKING DETAILS ===', [
+            'room_id' => $this->id,
+            'overlapping_bookings_count' => $overlappingBookings->count(),
+            'overlapping_details' => $overlappingBookings->map(function($bd) {
+                return [
+                    'booking_id' => $bd->booking_id,
+                    'quantity' => $bd->quantity,
+                    'status' => $bd->booking->status,
+                    'check_in' => $bd->booking->check_in,
+                    'check_out' => $bd->booking->check_out,
+                ];
+            })->toArray(),
+            'total_booked_rooms' => $bookedRooms
+        ]);
+
+        $availableRooms = max(0, $this->total_rooms - $bookedRooms);
+
+        Log::info('=== FINAL CALCULATION ===', [
+            'room_id' => $this->id,
+            'total_rooms' => $this->total_rooms,
+            'booked_rooms' => $bookedRooms,
+            'available_rooms' => $availableRooms,
+            'formula' => "{$this->total_rooms} - {$bookedRooms} = {$availableRooms}"
+        ]);
+
+        return $availableRooms;
     }
 }

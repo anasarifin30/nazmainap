@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Homestay;
+use App\Models\Faq;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -27,8 +28,11 @@ class UserController extends Controller
             ->distinct()
             ->get();
 
+        // Ambil FAQ yang aktif dan terurut
+        $faqs = Faq::active()->ordered()->get();
+
         // Kirim data ke view landing page
-        return view('users.landingpage', compact('homestaysslide', 'kabupatens'));
+        return view('users.landingpage', compact('homestaysslide', 'kabupatens', 'faqs'));
     }
 
 

@@ -121,22 +121,30 @@ class BookingController extends Controller
             $transaction = Transaction::where('midtrans_order_id', $notification->order_id)->first();
             
             if ($transaction) {
-                $transaction->payment_status = $notification->transaction_status;
-                $transaction->payment_method = $notification->payment_type;
-                $transaction->save();
+                // Update transaction status
+                $transaction->update([
+                    'payment_status' => $notification->transaction_status,
+                    'payment_method' => $notification->payment_type ?? null
+                ]);
 
-                // Update booking status
+                // Auto update booking status based on payment
+                $booking = $transaction->booking;
+                
                 if (in_array($notification->transaction_status, ['capture', 'settlement'])) {
-                    $transaction->booking->update(['status' => 'menunggu']);
-
-                    // === Tambahkan di sini ===
+                    $booking->update(['status' => 'menunggu']);
                     $this->createCommission($transaction);
-                } elseif (in_array($notification->transaction_status, ['deny', 'cancel', 'expire'])) {
-                    $transaction->booking->update(['status' => 'dibatalkan']);
+                    
+                    Log::info("Payment successful for booking {$booking->id}, status updated to menunggu");
+                    
+                } elseif (in_array($notification->transaction_status, ['deny', 'cancel', 'expire', 'failure'])) {
+                    $booking->update(['status' => 'dibatalkan']);
+                    
+                    Log::info("Payment failed for booking {$booking->id}, status updated to dibatalkan");
                 }
             }
 
             return response()->json(['status' => 'success']);
+            
         } catch (\Exception $e) {
             Log::error('Midtrans Callback Error: ' . $e->getMessage());
             return response()->json(['status' => 'error'], 500);

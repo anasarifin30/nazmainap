@@ -214,14 +214,9 @@
                             <select id="quantity" 
                                     name="quantity" 
                                     class="quantity-select w-full" 
-                                    required 
-                                    {{ $otherRoomsInCart || !isset($availableRooms) ? 'disabled' : '' }}>
+                                    required>
                                 <option value="">Pilih jumlah kamar</option>
-                                @if(isset($availableRooms) && $availableRooms > 0)
-                                    @for($i = 1; $i <= min($availableRooms, 5); $i++)
-                                        <option value="{{ $i }}">{{ $i }} Kamar</option>
-                                    @endfor
-                                @endif
+                                <!-- Options akan diisi oleh JavaScript -->
                             </select>
                         </div>
 
@@ -233,7 +228,7 @@
                             </div>
                             <div class="price-row">
                                 <span>Total Kamar</span>
-                                <span id="totalRooms">1 kamar</span>
+                                <span id="totalRooms">0 kamar</span>
                             </div>
                             <div class="price-row total">
                                 <span>Total Harga</span>
@@ -243,21 +238,16 @@
 
                         <!-- Action Buttons -->
                         <div class="booking-buttons">
-                            @if(!$existingDetail && $availableRooms > 0)
-                                <button type="submit" class="book-button" id="bookButton">
-                                    <i class="bx bx-check-circle"></i>
-                                    {{ $otherRoomsInCart ? 'Tambah ke Keranjang' : 'Pesan Sekarang' }}
+                            @if(!$existingDetail)
+                                <button type="submit" class="book-button" id="bookButton" disabled>
+                                    <i class="bx bx-loader-alt bx-spin"></i>
+                                    Mengecek Ketersediaan...
                                 </button>
-                            @elseif($existingDetail)
+                            @else
                                 <a href="{{ route('users.cart') }}" class="book-button">
                                     <i class="bx bx-cart"></i>
                                     Lihat Keranjang
                                 </a>
-                            @else
-                                <button type="button" class="book-button" disabled>
-                                    <i class="bx bx-x-circle"></i>
-                                    Kamar Tidak Tersedia
-                                </button>
                             @endif
                             
                             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $room->homestay->user->phone ?? '') }}" 
@@ -344,299 +334,269 @@
 <x-footer></x-footer>
 
 <script>
-    // JavaScript for gallery image switching
-    document.addEventListener('DOMContentLoaded', function() {
-        const mainImage = document.querySelector('.gallery-main-image');
-        const thumbnails = document.querySelectorAll('.gallery-thumbnail');
-        
-        thumbnails.forEach(thumb => {
-            thumb.addEventListener('click', function() {
-                mainImage.src = this.src;
-                
-                // Remove active class from all thumbnails
-                thumbnails.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked thumbnail
-                this.classList.add('active');
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    // Gallery functionality
+    const mainImage = document.querySelector('.gallery-main-image');
+    const thumbnails = document.querySelectorAll('.gallery-thumbnail');
+    
+    thumbnails.forEach(thumb => {
+        thumb.addEventListener('click', function() {
+            mainImage.src = this.src;
+            thumbnails.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // Main booking functionality
     const checkInInput = document.getElementById('check_in');
     const checkOutInput = document.getElementById('check_out');
     const quantitySelect = document.getElementById('quantity');
+    const totalNightsElement = document.getElementById('totalNights');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const totalRoomsElement = document.getElementById('totalRooms');
+    const bookingForm = document.getElementById('bookingForm');
+    const bookButton = document.getElementById('bookButton');
+    const availabilityInfo = document.getElementById('availabilityInfo');
+    
     const roomId = {{ $room->id }};
+    const roomPrice = {{ $room->price }};
+    const otherRoomsInCart = @json($otherRoomsInCart);
+    const existingBooking = @json($existingBooking ?? null);
 
-    // If there's an existing booking, update available rooms immediately
-    @if($otherRoomsInCart && $existingBooking)
-        const existingCheckIn = "{{ $existingBooking->check_in }}";
-        const existingCheckOut = "{{ $existingBooking->check_out }}";
-        
-        // Set the dates from existing booking
-        if (checkInInput) checkInInput.value = existingCheckIn;
-        if (checkOutInput) checkOutInput.value = existingCheckOut;
-        
-        // Update available rooms based on existing booking dates
-        updateAvailableRooms();
-    @endif
+    console.log('=== PAGE LOADED ===', {
+        roomId,
+        roomPrice,
+        otherRoomsInCart,
+        existingBooking,
+        elements: {
+            checkInInput: !!checkInInput,
+            checkOutInput: !!checkOutInput,
+            bookButton: !!bookButton,
+            availabilityInfo: !!availabilityInfo
+        }
+    });
 
+    // Set minimum dates
+    if (checkInInput && checkOutInput) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        checkInInput.min = today.toISOString().split('T')[0];
+        checkOutInput.min = tomorrow.toISOString().split('T')[0];
+        
+        // Set default dates jika belum ada
+        if (!checkInInput.value && !otherRoomsInCart) {
+            checkInInput.value = today.toISOString().split('T')[0];
+            checkOutInput.value = tomorrow.toISOString().split('T')[0];
+        }
+    }
+
+    // SINGLE updateAvailableRooms function
     async function updateAvailableRooms() {
         let checkIn, checkOut;
         
-        if (@json($otherRoomsInCart)) {
-            // Use existing booking dates
-            checkIn = "{{ $existingBooking->check_in ?? '' }}";
-            checkOut = "{{ $existingBooking->check_out ?? '' }}";
+        if (otherRoomsInCart && existingBooking) {
+            checkIn = existingBooking.check_in;
+            checkOut = existingBooking.check_out;
         } else {
-            // Use selected dates
-            checkIn = checkInInput.value;
-            checkOut = checkOutInput.value;
+            checkIn = checkInInput?.value;
+            checkOut = checkOutInput?.value;
         }
+        
+        console.log('=== CHECKING AVAILABILITY ===', {checkIn, checkOut, roomId});
         
         if (checkIn && checkOut) {
             try {
-                const response = await fetch(`/api/rooms/${roomId}/available?check_in=${checkIn}&check_out=${checkOut}`);
+                const response = await fetch(`/rooms/${roomId}/available?check_in=${checkIn}&check_out=${checkOut}`);
                 const data = await response.json();
                 
-                const availabilityInfo = document.getElementById('availabilityInfo');
+                console.log('=== API RESPONSE ===', data);
+                
+                if (data.error) {
+                    console.error('API Error:', data.error);
+                    return;
+                }
+                
                 const availableRooms = data.available_rooms;
                 
                 // Update availability message
                 if (availabilityInfo) {
                     if (availableRooms > 0) {
-                        availabilityInfo.innerHTML = `<p class="text-green-600">Tersedia ${availableRooms} kamar</p>`;
+                        availabilityInfo.innerHTML = `<p class="text-green-600">✅ Tersedia ${availableRooms} dari ${data.total_rooms} kamar</p>`;
                     } else {
-                        availabilityInfo.innerHTML = '<p class="text-red-600">Tidak ada kamar tersedia untuk tanggal yang dipilih</p>';
+                        availabilityInfo.innerHTML = '<p class="text-red-600">❌ Tidak ada kamar tersedia untuk tanggal yang dipilih</p>';
                     }
                 }
                 
-                // Update quantity select options
-                quantitySelect.innerHTML = '<option value="">Pilih jumlah kamar</option>';
-                
-                if (availableRooms > 0) {
-                    for (let i = 1; i <= Math.min(availableRooms, 5); i++) {
+                // Update quantity select
+                if (quantitySelect) {
+                    quantitySelect.innerHTML = '<option value="">Pilih jumlah kamar</option>';
+                    
+                    if (availableRooms > 0) {
+                        for (let i = 1; i <= Math.min(availableRooms, 5); i++) {
+                            const option = document.createElement('option');
+                            option.value = i;
+                            option.textContent = `${i} Kamar`;
+                            quantitySelect.appendChild(option);
+                        }
+                        quantitySelect.disabled = false;
+                    } else {
                         const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = `${i} Kamar`;
+                        option.value = '';
+                        option.textContent = 'Tidak tersedia';
                         quantitySelect.appendChild(option);
+                        quantitySelect.disabled = true;
                     }
-                    quantitySelect.disabled = false;
-                    
-                    if (document.getElementById('bookButton')) {
-                        document.getElementById('bookButton').disabled = false;
-                    }
-                } else {
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'Tidak tersedia';
-                    quantitySelect.appendChild(option);
-                    quantitySelect.disabled = true;
-                    
-                    if (document.getElementById('bookButton')) {
-                        document.getElementById('bookButton').disabled = true;
+                }
+                
+                // Update book button - INI YANG PENTING!
+                if (bookButton) {
+                    if (availableRooms > 0) {
+                        bookButton.disabled = false;
+                        bookButton.innerHTML = `
+                            <i class="bx bx-check-circle"></i>
+                            ${otherRoomsInCart ? 'Tambah ke Keranjang' : 'Pesan Sekarang'}
+                        `;
+                        bookButton.style.backgroundColor = '#ed7e21';
+                        bookButton.style.cursor = 'pointer';
+                        bookButton.style.opacity = '1';
+                    } else {
+                        bookButton.disabled = true;
+                        bookButton.innerHTML = `
+                            <i class="bx bx-x-circle"></i>
+                            Kamar Tidak Tersedia
+                        `;
+                        bookButton.style.backgroundColor = '#9ca3af';
+                        bookButton.style.cursor = 'not-allowed';
+                        bookButton.style.opacity = '0.7';
                     }
                 }
                 
                 updateTotalPrice();
+                
             } catch (error) {
-                console.error('Error fetching available rooms:', error);
+                console.error('=== FETCH ERROR ===', error);
+                if (availabilityInfo) {
+                    availabilityInfo.innerHTML = 
+                        '<p class="text-yellow-600">⚠️ Tidak dapat mengecek ketersediaan kamar</p>';
+                }
+                // Jika error, enable button with warning
+                if (bookButton) {
+                    bookButton.disabled = false;
+                    bookButton.innerHTML = `
+                        <i class="bx bx-error-circle"></i>
+                        ${otherRoomsInCart ? 'Tambah ke Keranjang' : 'Pesan Sekarang'}
+                    `;
+                    bookButton.style.backgroundColor = '#f59e0b';
+                }
+            }
+        } else {
+            // Jika tidak ada tanggal, disable button
+            if (bookButton) {
+                bookButton.disabled = true;
+                bookButton.innerHTML = `
+                    <i class="bx bx-calendar"></i>
+                    Pilih Tanggal Check-in & Check-out
+                `;
+                bookButton.style.backgroundColor = '#9ca3af';
             }
         }
     }
 
-    // Add event listeners only if not using existing booking dates
-    if (!@json($otherRoomsInCart)) {
-        checkInInput?.addEventListener('change', updateAvailableRooms);
-        checkOutInput?.addEventListener('change', updateAvailableRooms);
+    function updateTotalPrice() {
+        if (!checkInInput || !checkOutInput || !quantitySelect) return;
+        
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        const quantity = parseInt(quantitySelect.value) || 0;
+        
+        if (checkIn && checkOut && checkOut > checkIn && quantity > 0) {
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const totalPrice = nights * roomPrice * quantity;
+            
+            if (totalNightsElement) totalNightsElement.textContent = `${nights} malam`;
+            if (totalRoomsElement) totalRoomsElement.textContent = `${quantity} kamar`;
+            if (totalPriceElement) totalPriceElement.textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+        } else {
+            if (totalNightsElement) totalNightsElement.textContent = '0 malam';
+            if (totalRoomsElement) totalRoomsElement.textContent = '0 kamar';
+            if (totalPriceElement) totalPriceElement.textContent = 'Rp 0';
+        }
+    }
+
+    // Event listeners
+    if (!otherRoomsInCart) {
+        checkInInput?.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const nextDay = new Date(selectedDate);
+            nextDay.setDate(nextDay.getDate() + 1);
+            
+            if (checkOutInput) {
+                checkOutInput.min = nextDay.toISOString().split('T')[0];
+                
+                if (new Date(checkOutInput.value) <= selectedDate) {
+                    checkOutInput.value = nextDay.toISOString().split('T')[0];
+                }
+            }
+            
+            updateAvailableRooms();
+        });
+
+        checkOutInput?.addEventListener('change', function() {
+            const checkIn = new Date(checkInInput.value);
+            const checkOut = new Date(this.value);
+            
+            if (checkOut <= checkIn) {
+                const nextDay = new Date(checkIn);
+                nextDay.setDate(nextDay.getDate() + 1);
+                this.value = nextDay.toISOString().split('T')[0];
+            }
+            
+            updateAvailableRooms();
+        });
     }
 
     quantitySelect?.addEventListener('change', updateTotalPrice);
-});
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const checkInInput = document.getElementById('check_in');
-    const checkOutInput = document.getElementById('check_out');
-    const totalNightsElement = document.getElementById('totalNights');
-    const totalPriceElement = document.getElementById('totalPrice');
-    const roomPrice = {{ $room->price }};
-    const quantitySelect = document.getElementById('quantity');
-    const bookingForm = document.getElementById('bookingForm');
-    const roomId = {{ $room->id }};
-
-    // Set minimum dates
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    checkInInput.min = today.toISOString().split('T')[0];
-    checkOutInput.min = tomorrow.toISOString().split('T')[0];
-
-    checkInInput?.addEventListener('change', function() {
-        const selectedDate = new Date(this.value);
-        const nextDay = new Date(selectedDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        
-        checkOutInput.min = nextDay.toISOString().split('T')[0];
-        
-        if (new Date(checkOutInput.value) <= selectedDate) {
-            checkOutInput.value = nextDay.toISOString().split('T')[0];
-        }
-        
-        updateAvailableRooms();
-    });
-
-    checkOutInput?.addEventListener('change', function() {
-        const checkIn = new Date(checkInInput.value);
-        const checkOut = new Date(this.value);
-        
-        if (checkOut <= checkIn) {
-            const nextDay = new Date(checkIn);
-            nextDay.setDate(nextDay.getDate() + 1);
-            this.value = nextDay.toISOString().split('T')[0];
-        }
-        
-        updateAvailableRooms();
-    });
-
-    async function updateAvailableRooms() {
-        const checkIn = checkInInput.value;
-        const checkOut = checkOutInput.value;
-        
-        if (checkIn && checkOut) {
-            try {
-                const response = await fetch(`/api/rooms/${roomId}/available?check_in=${checkIn}&check_out=${checkOut}`);
-                const data = await response.json();
-                
-                const quantitySelect = document.getElementById('quantity');
-                const bookButton = document.getElementById('bookButton');
-                const availabilityInfo = document.getElementById('availabilityInfo');
-                const availableRooms = data.available_rooms;
-                
-                // Update availability message
-                if (availabilityInfo) {
-                    if (availableRooms > 0) {
-                        availabilityInfo.innerHTML = `<p class="text-green-600">Tersedia ${availableRooms} kamar</p>`;
-                    } else {
-                        availabilityInfo.innerHTML = '<p class="text-red-600">Tidak ada kamar tersedia untuk tanggal yang dipilih</p>';
-                    }
-                }
-                
-                // Update quantity select options
-                quantitySelect.innerHTML = '';
-                
-                if (availableRooms > 0) {
-                    for (let i = 1; i <= Math.min(availableRooms, 5); i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = `${i} Kamar`;
-                        quantitySelect.appendChild(option);
-                    }
-                    bookButton.disabled = false;
-                } else {
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'Tidak tersedia';
-                    quantitySelect.appendChild(option);
-                    bookButton.disabled = true;
-                }
-                
-                updateTotalPrice();
-            } catch (error) {
-                console.error('Error fetching available rooms:', error);
-            }
-        }
-    }
-
-    // Form submission handler
-    bookingForm.addEventListener('submit', function(e) {
+    // Form submission
+    bookingForm?.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const checkIn = checkInInput.value;
-        const checkOut = checkOutInput.value;
+        const checkIn = checkInInput?.value;
+        const checkOut = checkOutInput?.value;
+        const quantity = quantitySelect?.value;
 
         if (!checkIn || !checkOut) {
             showError('Silakan pilih tanggal check-in dan check-out');
             return;
         }
 
-        if (new Date(checkOut) <= new Date(checkIn)) {
-            showError('Tanggal check-out harus lebih besar dari tanggal check-in');
+        if (!quantity) {
+            showError('Silakan pilih jumlah kamar');
             return;
         }
 
         // Show loading state
-        const bookButton = document.getElementById('bookButton');
         if (bookButton) {
-            const originalText = bookButton.innerHTML;
             bookButton.disabled = true;
             bookButton.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Memproses...';
-
-            // Submit form
-            this.submit();
         }
+
+        this.submit();
     });
 
-    function updateTotalPrice() {
-        const checkIn = new Date(checkInInput.value);
-        const checkOut = new Date(checkOutInput.value);
-        const quantity = parseInt(quantitySelect.value);
-        
-        if (checkIn && checkOut && checkOut > checkIn) {
-            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-            const totalPrice = nights * roomPrice * quantity;
-            
-            totalNightsElement.textContent = `${nights} malam`;
-            document.getElementById('totalRooms').textContent = `${quantity} kamar`;
-            totalPriceElement.textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
-        }
+    // JALANKAN AVAILABILITY CHECK PADA LOAD - INI YANG PENTING!
+    console.log('=== INITIAL LOAD CHECK ===');
+    if (otherRoomsInCart && existingBooking) {
+        if (checkInInput) checkInInput.value = existingBooking.check_in;
+        if (checkOutInput) checkOutInput.value = existingBooking.check_out;
     }
-
-    // Add this to your existing JavaScript
-async function updateAvailableRooms() {
-    const checkIn = checkInInput.value;
-    const checkOut = checkOutInput.value;
     
-    if (checkIn && checkOut) {
-        try {
-            const response = await fetch(`/api/rooms/${roomId}/available?check_in=${checkIn}&check_out=${checkOut}`);
-            const data = await response.json();
-            
-            const quantitySelect = document.getElementById('quantity');
-            const availableRooms = data.available_rooms;
-            
-            // Clear existing options
-            quantitySelect.innerHTML = '';
-            
-            if (availableRooms > 0) {
-                for (let i = 1; i <= Math.min(availableRooms, 5); i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = `${i} Kamar`;
-                    quantitySelect.appendChild(option);
-                }
-                document.getElementById('bookButton').disabled = false;
-            } else {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'Tidak tersedia';
-                quantitySelect.appendChild(option);
-                document.getElementById('bookButton').disabled = true;
-            }
-            
-            updateTotalPrice();
-        } catch (error) {
-            console.error('Error fetching available rooms:', error);
-        }
-    }
-}
-
-checkInInput?.addEventListener('change', updateAvailableRooms);
-checkOutInput?.addEventListener('change', updateAvailableRooms);
-    // Event listeners for date and quantity changes
-    checkInInput?.addEventListener('change', updateTotalPrice);
-    checkOutInput?.addEventListener('change', updateTotalPrice);
-    quantitySelect?.addEventListener('change', updateTotalPrice);
+    // Selalu jalankan availability check saat load
+    setTimeout(() => {
+        updateAvailableRooms();
+    }, 100);
 });
 
 function showError(message) {
@@ -651,17 +611,18 @@ function showError(message) {
     `;
     
     const container = document.querySelector('.container');
-    container.insertAdjacentHTML('afterbegin', alertHtml);
-    
-    // Auto dismiss after 5 seconds
-    const alert = container.querySelector('.alert');
-    setTimeout(() => {
-        alert.style.transition = 'opacity 0.5s ease';
-        alert.style.opacity = '0';
+    if (container) {
+        container.insertAdjacentHTML('afterbegin', alertHtml);
+        
         setTimeout(() => {
-            alert.remove();
-        }, 500);
-    }, 5000);
+            const alert = container.querySelector('.alert');
+            if (alert) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 5000);
+    }
 }
 
 // Auto dismiss alerts

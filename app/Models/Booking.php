@@ -10,11 +10,11 @@ class Booking extends Model
 {
     protected $fillable = [
         'user_id',
-        'homestay_id',
+        'homestay_id', 
         'check_in',
         'check_out',
         'base_price',
-        'service_price',
+        'service_price', 
         'total_price',
         'status'
     ];

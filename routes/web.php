@@ -62,7 +62,7 @@ Route::middleware(['auth', 'role:guest'])->group(function () {
     Route::post('/cart/update/{bookingDetail}', [CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/rooms/{room}/book', [RoomController::class, 'book'])->name('rooms.book');
-    Route::get('/api/rooms/{room}/available', [RoomController::class, 'checkAvailability'])->name('rooms.checkAvailability');
+    Route::get('/rooms/{room}/available', [RoomController::class, 'checkAvailability'])->name('rooms.checkAvailability');
     Route::post('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel')->middleware('web');
     Route::post('/bookings/midtrans-callback', [BookingController::class, 'callback'])->name('bookings.midtrans-callback');

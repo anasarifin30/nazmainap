@@ -23,6 +23,7 @@ class RoomController extends Controller
             ->where('status', 'cart')
             ->first();
 
+        // PASTIKAN availableRooms selalu dihitung
         $availableRooms = $room->getAvailableRoomsCount(
             $existingBooking ? $existingBooking->check_in : $checkIn,
             $existingBooking ? $existingBooking->check_out : $checkOut
@@ -50,13 +51,22 @@ class RoomController extends Controller
             ->take(3)
             ->get();
 
+        // LOG untuk debug
+        Log::info('Controller - Room Show Data:', [
+            'room_id' => $room->id,
+            'available_rooms' => $availableRooms,
+            'existing_booking' => $existingBooking ? $existingBooking->id : null,
+            'existing_detail' => $existingDetail ? $existingDetail->id : null,
+            'other_rooms_in_cart' => $otherRoomsInCart
+        ]);
+
         return view('users.detailrooms', compact(
             'room', 
-            'availableRooms',
+            'availableRooms', 
             'existingBooking',
             'existingDetail',
             'otherRoomsInCart',
-            'relatedRooms' // Add this line
+            'relatedRooms'
         ));
     }
 
@@ -99,34 +109,58 @@ class RoomController extends Controller
                 ->with('show_required_fields', true);
         }
 
+        DB::beginTransaction(); // HANYA SATU KALI
+
         try {
+            // Validate request
+            $request->validate([
+                'check_in' => 'required|date|after_or_equal:today',
+                'check_out' => 'required|date|after:check_in',
+                'quantity' => 'required|integer|min:1|max:5'
+            ]);
+            
             // Validate check-in and check-out dates
-            $checkIn = strtotime($request->check_in);
-            $checkOut = strtotime($request->check_out);
+            $checkIn = $request->check_in;
+            $checkOut = $request->check_out;
             
             if ($checkIn === $checkOut) {
+                DB::rollBack();
                 return back()->with('error', 'Tanggal check-in dan check-out tidak boleh sama.');
             }
 
             // Check room availability
-            $availableRooms = $room->getAvailableRoomsCount($request->check_in, $request->check_out);
+            $availableRooms = $room->getAvailableRoomsCount($checkIn, $checkOut);
             if ($availableRooms < $request->quantity) {
+                DB::rollBack();
                 return back()->with('error', "Hanya tersedia {$availableRooms} kamar untuk periode yang dipilih.");
             }
 
             // Check existing booking in cart
             $booking = Booking::where('user_id', Auth::id())
                 ->where('status', 'cart')
-                ->where('check_in', $request->check_in)
-                ->where('check_out', $request->check_out)
+                ->where('check_in', $checkIn)
+                ->where('check_out', $checkOut)
                 ->first();
 
+            // If no booking exists, create a new one
+            if (!$booking) {
+                $booking = Booking::create([
+                    'user_id' => Auth::id(),
+                    'homestay_id' => $room->homestay_id,
+                    'check_in' => $checkIn,
+                    'check_out' => $checkOut,
+                    'base_price' => 0,
+                    'service_price' => 0,
+                    'total_price' => 0,
+                    'status' => 'cart'
+                ]);
+                
+                Log::info('New booking created:', ['booking_id' => $booking->id]);
+            }
+
+            // Check if this room is already in the cart for the same dates
             $existingDetail = BookingDetail::where('booking_id', $booking->id)
                 ->where('room_id', $room->id)
-                ->whereHas('booking', function($q) use ($request) {
-                    $q->where('check_in', $request->check_in)
-                      ->where('check_out', $request->check_out);
-                })
                 ->first();
 
             if ($existingDetail) {
@@ -137,31 +171,43 @@ class RoomController extends Controller
             }
 
             // Calculate prices
-            $nights = $this->calculateNights($request->check_in, $request->check_out);
+            $nights = $this->calculateNights($checkIn, $checkOut);
             $basePrice = $room->price * $nights;
 
             // Add booking detail
-            BookingDetail::create([
+            $bookingDetail = BookingDetail::create([
                 'booking_id' => $booking->id,
                 'room_id' => $room->id,
                 'quantity' => $request->quantity,
                 'price_per_night' => $room->price,
                 'subtotal_price' => $basePrice * $request->quantity
             ]);
+            
+            Log::info('Booking detail created:', ['detail_id' => $bookingDetail->id]);
 
             // Update total booking price
             $this->updateBookingTotalPrice($booking);
 
             DB::commit();
             
-            // Redirect ke route yang benar
+            Log::info('Booking process completed successfully', [
+                'booking_id' => $booking->id,
+                'room_id' => $room->id,
+                'user_id' => Auth::id()
+            ]);
+            
             return redirect()->route('users.cart')
                 ->with('success', 'Kamar berhasil ditambahkan ke keranjang');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Booking error: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat menambahkan ke keranjang.');
+            Log::error('Booking error: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'room_id' => $room->id,
+                'request_data' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'Terjadi kesalahan saat menambahkan ke keranjang: ' . $e->getMessage());
         }
     }
 
@@ -187,10 +233,25 @@ class RoomController extends Controller
         $checkIn = $request->check_in;
         $checkOut = $request->check_out;
         
+        Log::info('Check availability API called', [
+            'room_id' => $room->id,
+            'check_in' => $checkIn,
+            'check_out' => $checkOut
+        ]);
+        
+        if (!$checkIn || !$checkOut) {
+            return response()->json([
+                'error' => 'Check-in and check-out dates are required',
+                'available_rooms' => 0
+            ], 400);
+        }
+        
         $availableRooms = $room->getAvailableRoomsCount($checkIn, $checkOut);
 
         return response()->json([
-            'available_rooms' => $availableRooms
+            'available_rooms' => $availableRooms,
+            'total_rooms' => $room->total_rooms,
+            'room_name' => $room->name
         ]);
     }
 }

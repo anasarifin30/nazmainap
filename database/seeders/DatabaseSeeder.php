@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         FacilitySeeder::class,
         RoomFacilitySeeder::class,
         RuleSeeder::class,
+        FaqSeeder::class,
         // BookingSeeder::class,
         // BookingDetailSeeder::class,
         // TransactionSeeder::class,

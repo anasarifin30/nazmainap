@@ -13,6 +13,7 @@
 
     <!-- Header -->
     <x-header></x-header>
+    
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
@@ -41,13 +42,13 @@
                     @foreach ($homestaysslide as $homestay)
                         <div class="swiper-slide">
                             <div class="card">
-                                    <img
-                                        src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
-                                            ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
-                                            : asset('storage/images-room/default-room.jpg') }}"
-                                        alt="{{ $homestay->name }}"
-                                    />                                
-                                    <div class="card-body">
+                                <img
+                                    src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
+                                        ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
+                                        : asset('storage/images-room/default-room.jpg') }}"
+                                    alt="{{ $homestay->name }}"
+                                />                                
+                                <div class="card-body">
                                     <h3>{{ $homestay->name }}</h3>
                                     <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
                                     <div class="tags">{{ $homestay->kodebumdes }}</div>
@@ -129,7 +130,37 @@
             </div>
         </section>
 
-        
+        <!-- FAQ Section -->
+        @if($faqs->count() > 0)
+        <section class="faq-section" id="faq">
+            <div class="faq-container">
+                <h2>Pertanyaan yang Sering Diajukan</h2>
+                <p class="subtitle">Temukan jawaban atas pertanyaan umum tentang Nazmainap</p>
+                
+                <div class="faq-list">
+                    @foreach($faqs as $index => $faq)
+                        <div class="faq-item" data-faq="{{ $index }}">
+                            <div class="faq-question">
+                                <h3>{{ $faq->question }}</h3>
+                                <i class="fas fa-chevron-down faq-icon"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>{{ $faq->answer }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                
+                <div class="faq-contact">
+                    <p>Tidak menemukan jawaban yang Anda cari?</p>
+                    <a href="mailto:info@nazmainap.com" class="contact-button">
+                        <i class="fas fa-envelope"></i>
+                        Kirim Email
+                    </a>
+                </div>
+            </div>
+        </section>
+        @endif
     </div>
 
     <!-- Script -->
@@ -174,7 +205,7 @@
                         spaceBetween: 20,
                     },
                     1024: {
-                        slidesPerView: 4, // 4 card per baris di desktop
+                        slidesPerView: 4,
                         spaceBetween: 30,
                     },
                     768: {
@@ -182,6 +213,33 @@
                         spaceBetween: 30,
                     },
                 },
+            });
+
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach((item, index) => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const icon = item.querySelector('.faq-icon');
+                
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all FAQ items
+                    faqItems.forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                        faqItem.querySelector('.faq-answer').style.maxHeight = '0';
+                        faqItem.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+                    });
+                    
+                    // If not currently active, open this item
+                    if (!isActive) {
+                        item.classList.add('active');
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
             });
         });
     </script>
