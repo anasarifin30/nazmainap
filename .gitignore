@@ -9,6 +9,10 @@
 .env
 .env.backup
 .env.production
+<<<<<<< HEAD
+=======
+secrets.env
+>>>>>>> e39cf76cfc70aa0d562cd83370df5aed87e1a022
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -20,4 +24,8 @@ yarn-error.log
 /.idea
 /.nova
 /.vscode
+<<<<<<< HEAD
 /.zed
+=======
+/.zed
+>>>>>>> e39cf76cfc70aa0d562cd83370df5aed87e1a022
