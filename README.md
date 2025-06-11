@@ -7,6 +7,88 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+# Homestay Booking Application
+
+Aplikasi booking homestay dengan fitur authentication, Google OAuth, manajemen room, dan sistem invoice.
+
+## Setup Environment
+
+### 1. Clone dan Install Dependencies
+```bash
+git clone https://github.com/anasarifin30/nazmainap.git
+cd nazmainap
+composer install
+npm install
+```
+
+### 2. Setup Environment File
+```bash
+# Copy template .env
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+### 3. Setup Database
+1. Buat database MySQL dengan nama `homestay`
+2. Update konfigurasi database di file `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=homestay
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 4. Setup Google OAuth (Required)
+1. Buka [Google Cloud Console](https://console.cloud.google.com/)
+2. Buat project baru atau pilih project yang sudah ada
+3. Enable Google+ API
+4. Buat OAuth 2.0 Client ID
+5. Update file `.env` dengan credentials Google OAuth:
+```env
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+```
+
+⚠️ **PENTING**: Jangan commit file `.env` ke Git! File ini sudah ada di `.gitignore`
+
+### 5. Run Migration dan Seeder
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### 6. Storage Link
+```bash
+php artisan storage:link
+```
+
+### 7. Run Development Server
+```bash
+# Terminal 1: Laravel server
+php artisan serve
+
+# Terminal 2: Asset compilation
+npm run dev
+```
+
+Aplikasi akan berjalan di: http://localhost:8000
+
+## Features
+- 🔐 Authentication (Login/Register)
+- 🔑 Google OAuth Integration
+- 🏠 Homestay Management
+- 🛏️ Room Booking System
+- 🛒 Shopping Cart
+- 📄 Invoice Generation (PDF)
+- 👤 User Profile Management
+- ❓ FAQ System
+- 🔔 Notification System
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
