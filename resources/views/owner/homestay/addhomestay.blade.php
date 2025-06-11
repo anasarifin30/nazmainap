@@ -29,18 +29,10 @@
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
-                        <span>Foto Utama</span>
+                        <span>Foto Penginapan</span>
                     </div>
                     <div class="step">
                         <div class="step-number">4</div>
-                        <span>Foto Kamar</span>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">5</div>
-                        <span>Fasilitas</span>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">6</div>
                         <span>Ketersediaan</span>
                     </div>
                 </div>
@@ -127,8 +119,7 @@
 
                         <!-- Form Actions -->
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary">Kembali</button>
-                            <button type="submit" class="btn btn-primary">Lanjutkan</button>
+                            <a href="/owner/addaddress" class="btn btn-primary">Lanjutkan</a>
                         </div>
                     </form>
                 </div>

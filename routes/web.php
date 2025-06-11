@@ -112,7 +112,11 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::view('/homestayowner', 'owner.homestayowner')->name('homestayowner');
     Route::view('/profilowner', 'owner.profilowner')->name('profilowner');
     Route::view('/1', 'owner.homestay.addhomestay')->name('addhomestay');
-    Route::view('/addalamat', 'owner.homestay.addalamat')->name('addalamat');
+    Route::view('/addaddress', 'owner.homestay.addaddress')->name('addaddress');
+    Route::view('/addphoto', 'owner.homestay.addphoto')->name('addphoto');
+    Route::view('/addavailability', 'owner.homestay.addavailability')->name('addavailability');
+
+    Route::view('/addroom', 'owner.rooms.addroom')->name('addroom');
     Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestays.index');
 });
 Route::get('/profilowner', function() {

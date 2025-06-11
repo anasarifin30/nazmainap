@@ -29,7 +29,11 @@
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
-                        <span>Foto</span>
+                        <span>Foto Penginapan</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <span>Ketersediaan</span>
                     </div>
                 </div>
 
