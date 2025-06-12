@@ -5,15 +5,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Homestay;
 
-
-
-
 class HomestayController extends Controller
 {
     // Display a listing of the homestays
     public function index(Request $request)
     {
-        $query = Homestay::with(['coverPhoto', 'rooms']);
+        $query = Homestay::with(['coverPhoto', 'rooms.roomFacilities.facility']); // Load room facilities
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -55,5 +52,4 @@ class HomestayController extends Controller
 
         return view('users.allphotohomestay', compact('homestay', 'categories'));
     }
-    
 }

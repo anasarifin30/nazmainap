@@ -40,14 +40,26 @@
                             @if(Auth::user()->foto)
                                 @php
                                     // Cek apakah foto adalah URL (Google) atau file di storage lokal
-                                    $foto = filter_var(Auth::user()->foto, FILTER_VALIDATE_URL)
-                                        ? Auth::user()->foto
-                                        : asset('storage/' . Auth::user()->foto);
+                                    $userFoto = Auth::user()->foto;
+                                    $isGooglePhoto = filter_var($userFoto, FILTER_VALIDATE_URL);
+                                    
+                                    if ($isGooglePhoto) {
+                                        // Jika URL Google, hapus parameter size dan ganti dengan ukuran yang lebih besar
+                                        $foto = preg_replace('/=s\d+-c$/', '=s200-c', $userFoto);
+                                    } else {
+                                        // Jika file lokal, buat URL asset
+                                        $foto = asset('storage/' . $userFoto);
+                                    }
                                 @endphp
                                 <img src="{{ $foto }}" 
                                      alt="User Avatar" 
                                      class="user-avatar" 
-                                     onclick="toggleDropdown()">
+                                     onclick="toggleDropdown()"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                     onload="console.log('Image loaded successfully:', this.src);">
+                                <div class="default-avatar" onclick="toggleDropdown()" style="display: none;">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
                             @else
                                 <div class="default-avatar" onclick="toggleDropdown()">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
@@ -114,58 +126,68 @@
                         <a href="/login" class="login-btn sidebar-login-btn">Masuk</a>
                     @else
                         <div class="user-menu w-full">
-            <div class="user-menu w-full">
-    <div class="dropdown-header" style="padding-left:0;padding-right:0; text-align:center;">
-        @if(Auth::user()->foto)
-            @php
-                $foto = filter_var(Auth::user()->foto, FILTER_VALIDATE_URL)
-                    ? Auth::user()->foto
-                    : asset('storage/' . Auth::user()->foto);
-            @endphp
-            <img src="{{ $foto }}"
-                 alt="User Avatar"
-                 style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid #ff8000;">
-        @else
-            <div class="default-avatar-large">
-                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                <div class="dropdown-header" style="padding-left:0;padding-right:0; text-align:center;">
+                    @if(Auth::user()->foto)
+                        @php
+                            $userFoto = Auth::user()->foto;
+                            $isGooglePhoto = filter_var($userFoto, FILTER_VALIDATE_URL);
+                            
+                            if ($isGooglePhoto) {
+                                // Untuk sidebar, gunakan ukuran yang lebih besar
+                                $foto = preg_replace('/=s\d+-c$/', '=s200-c', $userFoto);
+                            } else {
+                                $foto = asset('storage/' . $userFoto);
+                            }
+                        @endphp
+                        <img src="{{ $foto }}"
+                             alt="User Avatar"
+                             style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:2px solid #ff8000;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="default-avatar-large" style="display: none;">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                    @else
+                        <div class="default-avatar-large">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <div class="dropdown-name" style="font-weight:600;font-size:1.1rem;color:#2a3990;">{{ Auth::user()->name }}</div>
+                    <div class="dropdown-email" style="color:#6b7280;font-size:0.95rem;margin-bottom:8px;">{{ Auth::user()->email }}</div>
+                    <div class="guest-badge" style="display:inline-block;background:#ff8000;color:#fff;padding:2px 14px;border-radius:12px;font-size:0.85rem;font-weight:500;margin-bottom:18px;">
+                        {{ ucfirst(Auth::user()->role) }}
+                    </div>
+                    <!-- Rest of sidebar content... -->
+                    <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+                        <a href="{{ route('users.profile') }}" class="dropdown-item"
+                           style="width:100%;max-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
+                            <span style="display:inline-block;">
+                                <svg width="18" height="18" fill="none" stroke="#2a3990" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
+                            </span>
+                            Profil
+                        </a>
+                        <a href="{{ route('users.historycart') }}" class="dropdown-item"
+                           style="width:100%;max-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
+                            <span style="display:inline-block;">
+                                <svg width="18" height="18" fill="none" stroke="#ff8000" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="6" width="18" height="13" rx="2"/>
+                                    <path d="M16 3v3M8 3v3"/>
+                                </svg>
+                            </span>
+                            Riwayat
+                        </a>
+                        <form class="logout-form" method="POST" action="{{ route('logout') }}" style="width:100%;max-width:180px;">
+                            @csrf
+                            <button type="submit" class="dropdown-item logout-btn"
+                                    style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
+                                <span style="display:inline-block;">
+                                    <svg width="18" height="18" fill="none" stroke="#e53e3e" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7"/><path d="M9 20H5a2 2 0 01-2-2V6a2 2 0 012-2h4"/></svg>
+                                </span>
+                                Keluar
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-        @endif
-        <div class="dropdown-name" style="font-weight:600;font-size:1.1rem;color:#2a3990;">{{ Auth::user()->name }}</div>
-        <div class="dropdown-email" style="color:#6b7280;font-size:0.95rem;margin-bottom:8px;">{{ Auth::user()->email }}</div>
-        <div class="guest-badge" style="display:inline-block;background:#ff8000;color:#fff;padding:2px 14px;border-radius:12px;font-size:0.85rem;font-weight:500;margin-bottom:18px;">
-            Guest
-        </div>
-        <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
-            <a href="{{ route('users.profile') }}" class="dropdown-item"
-               style="width:100%;max-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
-                <span style="display:inline-block;">
-                    <svg width="18" height="18" fill="none" stroke="#2a3990" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
-                </span>
-                Profil
-            </a>
-            <a href="{{ route('users.historycart') }}" class="dropdown-item"
-               style="width:100%;max-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
-                <span style="display:inline-block;">
-                    <svg width="18" height="18" fill="none" stroke="#ff8000" stroke-width="2" viewBox="0 0 24 24">
-                        <rect x="3" y="6" width="18" height="13" rx="2"/>
-                        <path d="M16 3v3M8 3v3"/>
-                    </svg>
-                </span>
-                Riwayat
-            </a>
-            <form class="logout-form" method="POST" action="{{ route('logout') }}" style="width:100%;max-width:180px;">
-                @csrf
-                <button type="submit" class="dropdown-item logout-btn"
-                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:8px;text-align:center;transition:background 0.18s;">
-                    <span style="display:inline-block;">
-                        <svg width="18" height="18" fill="none" stroke="#e53e3e" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7"/><path d="M9 20H5a2 2 0 01-2-2V6a2 2 0 012-2h4"/></svg>
-                    </span>
-                    Keluar
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
                     @endif
                 </div>
             </div>

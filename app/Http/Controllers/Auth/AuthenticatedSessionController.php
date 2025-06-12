@@ -24,47 +24,62 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $role = $request->input('login_role'); // 'guest' atau 'owner'
+        // Validasi input
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+            'login_role' => ['required', 'string', 'in:guest,owner']
+        ]);
 
+        $role = $request->input('login_role'); // 'guest' atau 'owner'
         $credentials = $request->only('email', 'password');
-        if (!Auth::attempt($credentials)) {
-            return back()->with('error', 'Email atau password salah.')->withInput();
+
+        // Attempt login
+        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+            return back()->withErrors([
+                'email' => 'Email atau password salah.',
+            ])->withInput($request->only('email'));
         }
 
         $request->session()->regenerate();
-
         $user = Auth::user();
 
-        if ($role && $role !== $user->role) {
+        // Validasi role sesuai dengan yang dipilih
+        if ($role !== $user->role) {
             Auth::logout();
-            return redirect()->back()->withErrors([
-                'email' => 'Anda tidak memiliki akses sebagai ' . $role,
-            ]);
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return back()->withErrors([
+                'email' => "Anda tidak memiliki akses sebagai {$role}. Akun Anda terdaftar sebagai {$user->role}.",
+            ])->withInput($request->only('email'));
         }
 
-        return redirect()->intended(match ($user->role) {
-            'admin' => '/admin',
-            'subadmin' => '/subadmin',
-            'owner' => '/owner',
-            'guest' => '/',
-            default => '/',
-        })->with('success', 'Berhasil masuk sebagai ' . $user->role);
+        // Redirect berdasarkan role
+        $redirectPath = match ($user->role) {
+            'admin' => route('admin.dashboard'),
+            'subadmin' => route('subadmin.dashboard'),
+            'owner' => route('owner.dashboard'),
+            'guest' => route('users.landingpage'), // Pastikan route ini benar
+            default => route('users.landingpage'),
+        };
+
+        return redirect()->intended($redirectPath)
+            ->with('success', "Selamat datang, {$user->name}!");
     }
-    
 
     /**
      * Destroy an authenticated session.
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Logout pengguna
         Auth::guard('web')->logout();
 
-        // Hapus sesi
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Redirect ke halaman login umum
-        return redirect('/login');
+        // Redirect ke auth page, bukan login
+        return redirect()->route('auth')
+            ->with('success', 'Anda telah berhasil logout.');
     }
 }

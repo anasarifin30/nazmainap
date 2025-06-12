@@ -7,6 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Homestay extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'name',
+        'description',
+        'address',
+        'provinsi',
+        'kabupaten',
+        'kecamatan',
+        'kelurahan',
+        'kodebumdes',
+        'status'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -17,11 +32,6 @@ class Homestay extends Model
         return $this->hasMany(Room::class);
     }
 
-    public function rules()
-    {
-        return $this->hasMany(Rule::class);
-    }
-
     public function photos()
     {
         return $this->hasMany(HomestayPhoto::class);
@@ -29,17 +39,51 @@ class Homestay extends Model
 
     public function coverPhoto()
     {
-        return $this->hasOne(HomestayPhoto::class)->where('is_cover', 1);
+        return $this->hasOne(HomestayPhoto::class)->where('is_cover', true);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
     
-    /** @use HasFactory<\Database\Factories\HomestayFactory> */
-    use HasFactory;
-    protected $fillable = [
-        'name',
-        'description',
-        'address',
-        'kodebumdes',
-        'status',
-        'user_id',
-    ];
+    public function rules()
+    {
+        return $this->hasMany(Rule::class);
+    }
+
+    // Method untuk mendapatkan semua fasilitas dari rooms
+    public function getAllFacilities()
+    {
+        return $this->rooms()
+            ->with('roomFacilities.facility')
+            ->get()
+            ->pluck('roomFacilities')
+            ->flatten()
+            ->pluck('facility')
+            ->filter()
+            ->unique('id');
+    }
+
+    // Method untuk mendapatkan fasilitas terpopuler (yang paling banyak ada di room)
+    public function getPopularFacilities($limit = 3)
+    {
+        $facilityCount = [];
+        
+        foreach($this->rooms as $room) {
+            foreach($room->roomFacilities as $roomFacility) {
+                if($roomFacility->facility) {
+                    $facilityId = $roomFacility->facility->id;
+                    $facilityCount[$facilityId] = ($facilityCount[$facilityId] ?? 0) + 1;
+                }
+            }
+        }
+        
+        // Sort by count descending
+        arsort($facilityCount);
+        
+        // Get facility objects
+        $popularFacilityIds = array_slice(array_keys($facilityCount), 0, $limit);
+        return Facility::whereIn('id', $popularFacilityIds)->get();
+    }
 }

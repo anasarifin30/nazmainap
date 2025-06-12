@@ -16,9 +16,12 @@ class UserController extends Controller
 {
     public function landingPage()
     {
-        // Ambil data homestay untuk ditampilkan di landing page
+        // Ambil data homestay dengan room facilities untuk ditampilkan di landing page
         $homestaysslide = Homestay::where('status', 'terverifikasi')
-            ->with(['rooms', 'coverPhoto'])
+            ->with([
+                'rooms.roomFacilities.facility', // Load room facilities
+                'coverPhoto'
+            ])
             ->paginate(6);
 
         // Ambil daftar kabupaten unik dari homestay terverifikasi

@@ -12,7 +12,18 @@ class RoomFacility extends Model
 
     protected $table = 'room_facility';
 
-    public function facility() {
+    protected $fillable = [
+        'room_id',
+        'facility_id'
+    ];
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+    public function facility()
+    {
         return $this->belongsTo(Facility::class);
     }
 }

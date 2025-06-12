@@ -55,7 +55,7 @@
                     <!-- Login Guest -->
                     <div class="tab-content active" id="login-guest">
                         <h1>Masuk Akun Pengunjung</h1>
-                        <form action="{{ route('login') }}" method="POST">
+                        <form action="{{ route('login.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="login_role" value="guest">
                             <div class="form-group">
@@ -75,7 +75,7 @@
                     <!-- Login Owner -->
                     <div class="tab-content" id="login-owner">
                         <h1>Masuk Akun Pemilik</h1>
-                        <form action="{{ route('login') }}" method="POST">
+                        <form action="{{ route('login.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="login_role" value="owner">
                             <div class="form-group">

@@ -41,31 +41,73 @@
                 <div class="swiper-wrapper">
                     @foreach ($homestaysslide as $homestay)
                         <div class="swiper-slide">
-                            <div class="card">
-                                <img
-                                    src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
-                                        ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
-                                        : asset('storage/images-room/default-room.jpg') }}"
-                                    alt="{{ $homestay->name }}"
-                                />                                
-                                <div class="card-body">
-                                    <h3>{{ $homestay->name }}</h3>
-                                    <p>{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
-                                    <div class="tags">{{ $homestay->kodebumdes }}</div>
-                                    <div class="price-detail">
-                                        <div>
-                                            @if ($homestay->rooms->isNotEmpty())
-                                                <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
-                                                <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+                            <a href="{{ route('homestays.show', $homestay->id) }}" class="card-link">
+                                <div class="card">
+                                    <img
+                                        src="{{ $homestay->coverPhoto && $homestay->coverPhoto->photo_path
+                                            ? asset('storage/images-homestay/' . $homestay->coverPhoto->photo_path)
+                                            : asset('storage/images-room/default-room.jpg') }}"
+                                        alt="{{ $homestay->name }}"
+                                    />                                
+                                    <div class="card-body">
+                                        <h3>{{ $homestay->name }}</h3>
+                                        <p class="location">{{ $homestay->kecamatan }}, {{ $homestay->kabupaten }}</p>
+                                        
+                                        <!-- Fasilitas -->
+                                        <div class="facilities">
+                                            @php
+                                                // Ambil fasilitas dari semua room di homestay ini
+                                                $allFacilities = collect();
+                                                
+                                                foreach($homestay->rooms as $room) {
+                                                    if($room->roomFacilities && $room->roomFacilities->count() > 0) {
+                                                        foreach($room->roomFacilities as $roomFacility) {
+                                                            if($roomFacility->facility) {
+                                                                $allFacilities->push($roomFacility->facility);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                // Remove duplicates berdasarkan ID fasilitas
+                                                $uniqueFacilities = $allFacilities->unique('id');
+                                            @endphp
+                                            
+                                            @if($uniqueFacilities->count() > 0)
+                                                @foreach($uniqueFacilities->take(3) as $facility)
+                                                    <span class="facility-tag">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        {{ $facility->name }}
+                                                    </span>
+                                                @endforeach
+                                                @if($uniqueFacilities->count() > 3)
+                                                    <span class="facility-more">+{{ $uniqueFacilities->count() - 3 }} lainnya</span>
+                                                @endif
                                             @else
-                                                <p class="price">Harga tidak tersedia</p>
-                                                <p class="stock">Kamar tidak tersedia</p>
+                                                <span class="facility-tag">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Fasilitas lengkap
+                                                </span>
                                             @endif
                                         </div>
-                                        <a href="{{ route('homestays.show', $homestay->id) }}" class="btn-detail">Detail</a>
+                                        
+                                        <div class="price-detail">
+                                            <div class="price-info">
+                                                @if ($homestay->rooms->isNotEmpty())
+                                                    <p class="price">Rp{{ number_format($homestay->rooms->min('price'), 0, ',', '.') }}</p>
+                                                    <p class="stock">Sisa {{ $homestay->rooms->sum('total_rooms') }} Kamar</p>
+                                                @else
+                                                    <p class="price">Harga tidak tersedia</p>
+                                                    <p class="stock">Kamar tidak tersedia</p>
+                                                @endif
+                                            </div>
+                                            <div class="click-indicator">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     @endforeach
                 </div>
@@ -213,6 +255,14 @@
                         spaceBetween: 30,
                     },
                 },
+            });
+
+            // Card click analytics (opsional)
+            document.querySelectorAll('.card-link').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Optional: Add analytics tracking
+                    console.log('Homestay card clicked:', this.href);
+                });
             });
 
             // FAQ Accordion
