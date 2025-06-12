@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nazmainap - Penginapan Desa di Pacitan</title>
+    <title>Mandhapa - Penginapan Desa di Pacitan</title>
     @vite(['resources/css/landingpage.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
@@ -17,7 +17,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <h1 class="hero-title font-bold">Nikmati kemudahan mencari, memesan, dan mengelola<br class="desktop-only">penginapan desa di Pacitan.</h1>
+            <h1 class="hero-title font-bold">Nikmati kemudahan mencari, memesan, dan mengelola penginapan desa di <br class="desktop-only">berbagai daerah dengan lebih mudah.</h1>
 
             <!-- Search Bar -->
             <div class="search-bar">
@@ -35,7 +35,7 @@
     <!-- Main Content -->
     <div class="container">
         <!-- Catalog -->
-        <h2>Katalog Penginapan di Pacitan</h2>
+        <h2>Katalog Penginapan</h2>
         <section class="catalog">
             <div class="swiper mySwiper">
                 <div class="swiper-wrapper">
@@ -119,8 +119,8 @@
         <section id="about" class="about-section">
             <div class="about-container">
                 <div class="about-content">
-                    <h2>Selamat datang di Nazmainap</h2>
-                    <p>Nazmainap adalah platform pemesanan homestay milik warga desa wisata Pacitan. Temukan pengalaman menginap yang unik dan nyaman di sini.</p>
+                    <h2>Selamat datang di Mandhapa</h2>
+                    <p>Mandhapa adalah platform pemesanan homestay yang dikelola langsung oleh warga desa wisata dari berbagai daerah. Temukan pengalaman menginap yang autentik, nyaman, dan penuh kehangatan lokal bersama Mandhapa.</p>
                     <a href="{{ route('users.kataloghomestay') }}" class="about-button">Pesan</a>
                 </div>
                 <div class="about-image">
@@ -131,8 +131,8 @@
 
         <!-- Why Choose Us -->
         <section class="features-section">
-            <h2>Kenapa Pilih Nazmainap?</h2>
-            <p class="subtitle">Nikmati Kemudahan mencari, memesan, dan mengelola penginapan desa di Pacitan</p>
+            <h2>Kenapa Pilih Mandhapa?</h2>
+            <p class="subtitle">Nikmati Kemudahan mencari, memesan, dan mengelola penginapan desa di berbagai daerah</p>
             <div class="features-grid">
                 <div class="feature-item"><i class="fas fa-home feature-icon"></i><p>Penginapan milik warga</p></div>
                 <div class="feature-item"><i class="fas fa-id-card feature-icon"></i><p>Dikelola BumDes</p></div>
@@ -177,7 +177,7 @@
         <section class="faq-section" id="faq">
             <div class="faq-container">
                 <h2>Pertanyaan yang Sering Diajukan</h2>
-                <p class="subtitle">Temukan jawaban atas pertanyaan umum tentang Nazmainap</p>
+                <p class="subtitle">Temukan jawaban atas pertanyaan umum tentang Mandhapa</p>
                 
                 <div class="faq-list">
                     @foreach($faqs as $index => $faq)
@@ -195,7 +195,7 @@
                 
                 <div class="faq-contact">
                     <p>Tidak menemukan jawaban yang Anda cari?</p>
-                    <a href="mailto:info@nazmainap.com" class="contact-button">
+                    <a href="mailto:info@mandhapa.com" class="contact-button">
                         <i class="fas fa-envelope"></i>
                         Kirim Email
                     </a>
