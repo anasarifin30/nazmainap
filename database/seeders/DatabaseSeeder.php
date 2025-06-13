@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         RoomPhotoSeeder::class,
         FacilitySeeder::class,
         RoomFacilitySeeder::class,
-        RuleSeeder::class,
+        RuleTemplateSeeder::class,
         FaqSeeder::class,
         // BookingSeeder::class,
         // BookingDetailSeeder::class,

@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Facility extends Model
+class RuleTemplate extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'icon',
+        'rule_text',
         'category',
         'is_active',
         'sort_order'
@@ -22,7 +21,7 @@ class Facility extends Model
     ];
 
     /**
-     * Scope untuk facility yang aktif
+     * Scope untuk rule yang aktif
      */
     public function scopeActive($query)
     {
@@ -42,22 +41,22 @@ class Facility extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('sort_order')->orderBy('name');
+        return $query->orderBy('sort_order')->orderBy('rule_text');
     }
 
     /**
-     * Rooms yang menggunakan facility ini
+     * Rules yang menggunakan template ini
      */
-    public function rooms()
+    public function rules()
     {
-        return $this->belongsToMany(Room::class, 'room_facility');
+        return $this->hasMany(Rule::class);
     }
 
     /**
-     * Homestays yang menggunakan facility ini
+     * Homestays yang menggunakan rule ini
      */
     public function homestays()
     {
-        return $this->belongsToMany(Homestay::class, 'homestay_facilities');
+        return $this->hasManyThrough(Homestay::class, Rule::class);
     }
 }

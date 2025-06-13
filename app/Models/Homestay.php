@@ -22,6 +22,11 @@ class Homestay extends Model
         'status'
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -30,6 +35,11 @@ class Homestay extends Model
     public function rooms()
     {
         return $this->hasMany(Room::class);
+    }
+
+    public function homestayPhotos()
+    {
+        return $this->hasMany(HomestayPhoto::class);
     }
 
     public function photos()

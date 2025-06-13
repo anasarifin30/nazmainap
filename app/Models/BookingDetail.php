@@ -18,6 +18,11 @@ class BookingDetail extends Model
         'subtotal_price'
     ];
 
+    protected $casts = [
+        'price_per_night' => 'decimal:2',
+        'subtotal_price' => 'decimal:2',
+    ];
+
     public function booking()
     {
         return $this->belongsTo(Booking::class);

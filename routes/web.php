@@ -11,6 +11,7 @@ use App\Http\Controllers\User\HomestayController as UserHomestayController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomestayController;
 use App\Http\Controllers\Owner\HomestayController as OwnerHomestayController;
+use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -28,7 +29,7 @@ Route::view('/syarat-ketentuan', 'users.syaratketentuan')->name('users.syaratket
 
 Route::get('/kataloghomestay', [UserHomestayController::class, 'index'])->name('users.kataloghomestay');
 Route::get('/homestay/{id}', [UserHomestayController::class, 'show'])->name('homestays.show');
-Route::get('/homestay/{homestay}/photos', [UserHomestayController::class, 'photos'])->name('homestays.photos');
+Route::get('/homestay/{homestay}/photos', [UserHomestayController::class, 'homestayPhotos'])->name('homestays.photos');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 
 /*
@@ -37,7 +38,6 @@ Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show')
 |--------------------------------------------------------------------------
 */
 
-// Hapus routes auth.php yang konflik dan gunakan custom routes
 Route::middleware('guest')->group(function () {
     Route::get('/auth', [AuthenticatedSessionController::class, 'create'])->name('auth');
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login'); // Fallback untuk Laravel default
@@ -56,12 +56,6 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
-
-// Redirect route lama ke /auth
-Route::get('/loginowner', fn() => redirect()->route('auth'));
-Route::get('/loginguest', fn() => redirect()->route('auth'));
-Route::get('/registerowner', fn() => redirect()->route('auth'));
-Route::get('/registerguest', fn() => redirect()->route('auth'));
 
 /*
 |--------------------------------------------------------------------------
@@ -117,16 +111,43 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 | Owner Routes
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
-    Route::get('/', function() { return view('owner.dashboard'); })->name('dashboard');
-    Route::view('/homestayowner', 'owner.homestayowner')->name('homestayowner');
-    Route::view('/profilowner', 'owner.profilowner')->name('profilowner');
-    Route::view('/1', 'owner.homestay.addhomestay')->name('addhomestay');
-    Route::view('/addaddress', 'owner.homestay.addaddress')->name('addaddress');
-    Route::view('/addphoto', 'owner.homestay.addphoto')->name('addphoto');
-    Route::view('/addavailability', 'owner.homestay.addavailability')->name('addavailability');
-    Route::view('/addroom', 'owner.rooms.addroom')->name('addroom');
-    Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestays.index');
+    Route::get('/', [OwnerDashboardController::class, 'index'])->name('dashboard');
+    
+    // Homestay Management - Main routes
+    Route::get('/homestay', [OwnerHomestayController::class, 'index'])->name('homestay');
+    Route::get('/homestay/{homestay}', [OwnerHomestayController::class, 'show'])->name('homestay.show');
+    Route::get('/homestay/{homestay}/edit', [OwnerHomestayController::class, 'edit'])->name('homestay.edit');
+    Route::put('/homestay/{homestay}', [OwnerHomestayController::class, 'update'])->name('homestay.update');
+    Route::delete('/homestay/{homestay}', [OwnerHomestayController::class, 'destroy'])->name('homestay.destroy');
+    
+    // Multi-step homestay creation routes
+    Route::get('/homestay/create/step1', [OwnerHomestayController::class, 'createStep1'])->name('homestay.create.step1');
+    Route::post('/homestay/create/step1', [OwnerHomestayController::class, 'storeStep1'])->name('homestay.store.step1');
+    
+    Route::get('/homestay/create/step2', [OwnerHomestayController::class, 'createStep2'])->name('homestay.create.step2');
+    Route::post('/homestay/create/step2', [OwnerHomestayController::class, 'storeStep2'])->name('homestay.store.step2');
+    
+    Route::get('/homestay/create/step3', [OwnerHomestayController::class, 'createStep3'])->name('homestay.create.step3');
+    Route::post('/homestay/create/step3', [OwnerHomestayController::class, 'storeStep3'])->name('homestay.store.step3');
+    
+    Route::get('/homestay/create/step4', [OwnerHomestayController::class, 'createStep4'])->name('homestay.create.step4');
+    Route::post('/homestay/create/step4', [OwnerHomestayController::class, 'storeStep4'])->name('homestay.store.step4');
+
+    // Room Management
+    Route::get('/homestay/{homestay}/rooms/create', [OwnerHomestayController::class, 'createRoom'])->name('homestay.rooms.create');
+    Route::post('/homestay/{homestay}/rooms', [OwnerHomestayController::class, 'storeRoom'])->name('homestay.rooms.store');
+    Route::delete('/homestay/rooms/{room}', [OwnerHomestayController::class, 'destroyRoom'])->name('homestay.rooms.destroy');
+
+    // Stats API
+    Route::get('/homestay/stats', [OwnerHomestayController::class, 'getStats'])->name('homestay.stats');
+
+    // Legacy routes (for backward compatibility)
+    Route::get('/addhomestay', [OwnerHomestayController::class, 'addHomestay'])->name('addhomestay');
+    Route::get('/addaddress', [OwnerHomestayController::class, 'addAddress'])->name('addaddress');
+    Route::get('/addphoto', [OwnerHomestayController::class, 'addPhoto'])->name('addphoto');
+    Route::get('/addavailability', [OwnerHomestayController::class, 'addAvailability'])->name('addavailability');
 });
 
 /*
@@ -137,7 +158,4 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
 Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin.')->group(function () {
     Route::get('/', function() { return view('subadmin.dashboard'); })->name('dashboard');
 });
-
-// Hapus require auth.php untuk menghindari konflik
-// require __DIR__.'/auth.php';
 

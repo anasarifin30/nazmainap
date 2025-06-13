@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 class Booking extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'homestay_id', 
@@ -16,7 +18,8 @@ class Booking extends Model
         'base_price',
         'service_price', 
         'total_price',
-        'status'
+        'status',
+        'payment_deadline',
     ];
 
     // Remove the attributes that don't exist in database
@@ -27,11 +30,13 @@ class Booking extends Model
         'status' => 'cart'  // Tambahkan default status
     ];
 
-    protected $dates = [
-        'check_in',
-        'check_out',
-        'created_at',
-        'updated_at'
+    protected $casts = [
+        'check_in' => 'date',
+        'check_out' => 'date',
+        'base_price' => 'decimal:2',
+        'service_price' => 'decimal:2',
+        'total_price' => 'decimal:2',
+        'payment_deadline' => 'datetime',
     ];
 
     public function user()
@@ -60,5 +65,11 @@ class Booking extends Model
     public function getTotalNights()
     {
         return Carbon::parse($this->check_in)->diffInDays(Carbon::parse($this->check_out));
+    }
+
+    // Get duration in days
+    public function getDurationAttribute()
+    {
+        return $this->check_in->diffInDays($this->check_out);
     }
 }

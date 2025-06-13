@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: #f8fafc;
     color: #334155;
     line-height: 1.6;
@@ -529,13 +529,368 @@ body {
     background: #d97706;
 }
 
+/* Tambahan CSS untuk dashboard dinamis */
+
+/* Today Section */
+.today-section {
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+}
+
+.today-section h3 {
+    color: #2a3990;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.today-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.today-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.today-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.today-header h4 {
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkin .today-header {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.checkin .today-header h4 {
+    color: white;
+}
+
+.checkout .today-header {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.checkout .today-header h4 {
+    color: white;
+}
+
+.today-list {
+    padding: 1rem 1.5rem;
+}
+
+.today-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.today-item:last-child {
+    border-bottom: none;
+}
+
+.guest-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.guest-info strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.guest-info span {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.guest-info time {
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+
+.today-more {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+    font-style: italic;
+}
+
+/* Chart Legend */
+.chart-legend {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-color.booking {
+    background: #3b82f6;
+}
+
+.legend-color.revenue {
+    background: #10b981;
+}
+
+/* Room Stats */
+.room-stats {
+    padding: 1.5rem;
+}
+
+.room-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.room-stat-item:last-child {
+    border-bottom: none;
+}
+
+.room-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.room-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.room-detail {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.room-bookings {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.booking-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2a3990;
+}
+
+.booking-label {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* Status Colors */
+.stat-status.good {
+    color: #10b981;
+}
+
+.stat-status.average {
+    color: #f59e0b;
+}
+
+.stat-status.low {
+    color: #ef4444;
+}
+
+.stat-status.available {
+    color: #10b981;
+}
+
+.stat-status.full {
+    color: #ef4444;
+}
+
+/* Activity Status Icons */
+.activity-icon.menunggu_pembayaran {
+    background: #f59e0b;
+}
+
+.activity-icon.dibayar {
+    background: #3b82f6;
+}
+
+.activity-icon.selesai {
+    background: #10b981;
+}
+
+.activity-icon.checkin {
+    background: #8b5cf6;
+}
+
+/* Alerts Section */
+.alerts-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.alerts-section h4 {
+    color: #ef4444;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #fef2f2;
+}
+
+.alert-item:last-child {
+    border-bottom: none;
+}
+
+.alert-item span {
+    font-weight: 500;
+    color: #dc2626;
+    font-size: 0.875rem;
+}
+
+.alert-item small {
+    color: #7f1d1d;
+    font-size: 0.75rem;
+}
+
+/* Alerts Section Updates */
+.alert-item.payment {
+    border-left: 4px solid #f59e0b;
+    background: #fef3c7;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.alert-item.upcoming {
+    border-left: 4px solid #3b82f6;
+    background: #dbeafe;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.alert-item.payment span {
+    color: #92400e;
+    font-weight: 600;
+}
+
+.alert-item.upcoming span {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.alert-item.payment small {
+    color: #78350f;
+}
+
+.alert-item.upcoming small {
+    color: #1e3a8a;
+}
+
+.alert-more {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+/* Status Icons Updates */
+.activity-icon.belum_dibayar {
+    background: #f59e0b;
+}
+
+.activity-icon.menunggu {
+    background: #3b82f6;
+}
+
+.activity-icon.aktif {
+    background: #10b981;
+}
+
+.activity-icon.selesai {
+    background: #6b7280;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Stat Card Updates */
+.bookings .stat-icon {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.occupancy .stat-icon {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+/* Action Button Links */
+.action-btn {
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-btn:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .charts-grid,
     .bottom-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -545,35 +900,55 @@ body {
     .sidebar {
         transform: translateX(-100%);
     }
-    
+
     .sidebar.open {
         transform: translateX(0);
     }
-    
+
     .main-content {
         margin-left: 0;
     }
-    
+
     .main-header {
         padding: 1rem;
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-    
+
     .stats-section,
     .charts-section,
     .dashboard-bottom {
         padding: 0 1rem;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .header-actions {
         order: -1;
         align-self: flex-end;
+    }
+
+    .today-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-legend {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .room-stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .room-bookings {
+        align-items: flex-start;
     }
 }
 
@@ -582,13 +957,13 @@ body {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .activity-item {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
-    
+
     .quick-actions {
         grid-template-columns: 1fr;
     }

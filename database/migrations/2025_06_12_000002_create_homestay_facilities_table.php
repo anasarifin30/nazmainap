@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rules', function (Blueprint $table) {
+        Schema::create('homestay_facilities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('homestay_id')
                   ->constrained('homestays')
                   ->onDelete('cascade');
-            $table->foreignId('rule_template_id')
-                  ->constrained('rule_templates')
+            $table->foreignId('facility_id')
+                  ->constrained('facilities')
                   ->onDelete('cascade');
-            $table->text('custom_rule_text')->nullable(); // Jika owner ingin custom text
             $table->timestamps();
             
-            // Prevent duplicate rules for same homestay
-            $table->unique(['homestay_id', 'rule_template_id']);
+            // Prevent duplicate facilities for same homestay
+            $table->unique(['homestay_id', 'facility_id']);
         });
     }
 
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rules');
+        Schema::dropIfExists('homestay_facilities');
     }
 };

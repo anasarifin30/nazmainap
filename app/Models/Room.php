@@ -19,6 +19,10 @@ class Room extends Model
         'total_rooms'
     ];
 
+    protected $casts = [
+        'price' => 'decimal:2',
+    ];
+
     public function homestay()
     {
         return $this->belongsTo(Homestay::class);
@@ -31,7 +35,9 @@ class Room extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->belongsToMany(Booking::class, 'booking_details')
+                    ->withPivot('quantity', 'price_per_night', 'subtotal_price')
+                    ->withTimestamps();
     }
 
     public function bookingDetails()
